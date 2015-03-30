@@ -1,0 +1,100 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+<LinearLayout 
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    <LinearLayout android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center_vertical">
+        
+    <ImageButton android:id="@+id/back_to_homepage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_menu_back"
+        android:background="@null"
+        android:layout_gravity="center_vertical"/>
+        
+    <TextView android:id="@+id/tv_contact_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        android:text="齐天大圣"
+        android:textSize="30sp"
+        android:layout_margin="20dp"/>
+    </LinearLayout>
+    <RelativeLayout android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical">
+    <ImageButton android:id="@+id/btn_call_phone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/sym_action_call"
+        android:background="@null"
+        android:layout_margin="5dp"
+        android:textSize="20sp"/>
+    
+    <TextView android:id="@+id/tv_phone_show"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="12345678909"
+        android:layout_toRightOf="@id/btn_call_phone"
+        android:layout_centerVertical="true"
+        android:textSize="22sp"/>
+    <ImageButton android:id="@+id/btn_send_sms"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/sym_action_email"
+        android:layout_alignParentRight="true"
+        android:layout_margin="5dp"
+        android:background="@null"
+        android:textSize="20dp"/>
+	</RelativeLayout>
+    <TextView android:id="@+id/tv_contact_adress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/address"
+        android:textSize="20sp"/>
+    
+    <TextView android:id="@+id/tv_adress_show"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="中山大学"
+        android:textSize="20sp"/>
+    
+    <TextView android:id="@+id/tv_contact_note"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/note"
+        android:textSize="20sp"/>
+    
+    <TextView android:id="@+id/tv_note_show"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="他是个逗比"
+        android:textSize="20sp"/>
+    
+    <TextView android:id="@+id/tv_contact_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/label"
+        android:textSize="20sp"/>
+    
+    <TextView android:id="@+id/tv_label_show"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="逗比"
+        android:textSize="20sp"/>
+    <TextView 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="别看我丑，其实我很温柔"
+        android:textSize="40sp"
+        android:layout_gravity="center"/>
+
+</LinearLayout>
+</ScrollView>

@@ -1,0 +1,66 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="bottom"
+    android:orientation="vertical" >
+
+    <com.wecall.contacts.view.ClearableEditText
+        android:id="@+id/ed_input"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/search_bar_edit_selector"
+        android:drawableLeft="@drawable/search_bar_icon_normal"
+        android:padding="5dp"
+        android:singleLine="true"
+        android:textSize="15sp" />
+
+    <FrameLayout
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" >
+
+        <ListView
+            android:id="@+id/lv_contacts"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center"
+            android:scrollbars="none" >
+        </ListView>
+
+        <TextView
+            android:id="@+id/tv_show_ahead"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_gravity="center"
+            android:background="@drawable/show_head_bg"
+            android:gravity="center"
+            android:textColor="#ffffff"
+            android:textSize="40sp"
+            android:visibility="invisible" />
+
+        <com.wecall.contacts.view.SideBar
+            android:id="@+id/sidebar"
+            android:layout_width="25dp"
+            android:layout_height="fill_parent"
+            android:layout_gravity="right|center" />
+    </FrameLayout>
+
+    <LinearLayout android:layout_width="fill_parent"
+        android:layout_height="80dp"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:divider="@android:color/background_dark"
+        android:showDividers="beginning"
+        >
+        <ImageButton android:id="@+id/ibtn_addcontact"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_menu_btn_add"
+            android:background="@null"
+            />
+    </LinearLayout>
+
+</LinearLayout>
