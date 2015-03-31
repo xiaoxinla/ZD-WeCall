@@ -1,5 +1,6 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
@@ -27,33 +28,19 @@
         android:textSize="30sp"
         android:layout_margin="20dp"/>
     </LinearLayout>
-    <RelativeLayout android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical">
-    <ImageButton android:id="@+id/btn_call_phone"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/sym_action_call"
-        android:background="@null"
-        android:layout_margin="5dp"
-        android:textSize="20sp"/>
     
-    <TextView android:id="@+id/tv_phone_show"
-        android:layout_width="wrap_content"
+	<com.wecall.contacts.view.DetailBar 
+	    android:id="@+id/phone_num"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="12345678909"
-        android:layout_toRightOf="@id/btn_call_phone"
-        android:layout_centerVertical="true"
-        android:textSize="22sp"/>
-    <ImageButton android:id="@+id/btn_send_sms"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/sym_action_email"
-        android:layout_alignParentRight="true"
-        android:layout_margin="5dp"
-        android:background="@null"
-        android:textSize="20dp"/>
-	</RelativeLayout>
+        custom:infoText="1234567890"
+        custom:infoTextColor="#ffffff"
+        custom:infoTextSize="20sp"
+        custom:leftBackground="@drawable/sym_action_call"
+        custom:rightBackground="@drawable/sym_action_email"
+        >
+        
+    </com.wecall.contacts.view.DetailBar>
     <TextView android:id="@+id/tv_contact_adress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

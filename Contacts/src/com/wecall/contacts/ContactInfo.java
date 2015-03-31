@@ -8,19 +8,22 @@ import android.os.Bundle;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.wecall.contacts.util.StringUtil;
+import com.wecall.contacts.view.DetailBar;
+import com.wecall.contacts.view.DetailBar.DetailBarClickListener;
+
 public class ContactInfo extends Activity {
 
-	private TextView nameTV,phoneTV;
+	private TextView nameTV;
 	private ImageButton backIB;
-	private ImageButton sendSMSBtn,makePhonecall;
-	
-	
+	private DetailBar phoneNumBar;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -29,47 +32,45 @@ public class ContactInfo extends Activity {
 	}
 
 	private void initView() {
-		nameTV = (TextView)findViewById(R.id.tv_contact_name);
-		phoneTV = (TextView)findViewById(R.id.tv_phone_show);
-		backIB = (ImageButton)findViewById(R.id.back_to_homepage);
-		sendSMSBtn = (ImageButton)findViewById(R.id.btn_send_sms);
-		makePhonecall = (ImageButton)findViewById(R.id.btn_call_phone);
+		nameTV = (TextView) findViewById(R.id.tv_contact_name);
+		backIB = (ImageButton) findViewById(R.id.back_to_homepage);
+		phoneNumBar = (DetailBar) findViewById(R.id.phone_num);
 		Bundle bundle = getIntent().getExtras();
-		
-		SpannableStringBuilder styled = new SpannableStringBuilder(bundle.getString("cname"));
 
-		// i 未起始字符索引，j 为结束字符索引
-		styled.setSpan(new ForegroundColorSpan(Color.RED), 1, 2,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-
+		SpannableStringBuilder styled = StringUtil.colorString(
+				bundle.getString("cname"), 1, 2, Color.RED);
 		nameTV.setText(styled);
-		//nameTV.setText(bundle.getString("cname"));
-		
+		// nameTV.setText(bundle.getString("cname"));
+
 		backIB.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View arg0) {
 				finish();
 			}
 		});
-		
-		makePhonecall.setOnClickListener(new OnClickListener() {
-			
+
+		phoneNumBar.setOnDetailBarClickListener(new DetailBarClickListener() {
+
 			@Override
-			public void onClick(View arg0) {
-				String phoneNumber = phoneTV.getText().toString();
-				Intent intent = new Intent(Intent.ACTION_CALL,Uri.parse("tel:"+phoneNumber));
+			public void leftClick() {
+				String phoneNumber = phoneNumBar.getInfo().toString();
+				Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:"
+						+ phoneNumber));
 				ContactInfo.this.startActivity(intent);
 			}
-		});
-		
-		sendSMSBtn.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
-			public void onClick(View arg0) {
-				// TODO Auto-generated method stub
-				String phoneNumber = phoneTV.getText().toString();
-				Intent intent = new Intent(Intent.ACTION_SENDTO,Uri.parse("smsto:"+phoneNumber));
+			public void rightClick() {
+				String phoneNumber = phoneNumBar.getInfo().toString();
+				Intent intent = new Intent(Intent.ACTION_SENDTO, Uri
+						.parse("smsto:" + phoneNumber));
 				ContactInfo.this.startActivity(intent);
+			}
+
+			@Override
+			public void infoClick() {
+				Log.v("TAG", "info");
 			}
 		});
 	}

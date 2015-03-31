@@ -12,6 +12,105 @@ public final class R {
         public static final int date=0x7f040000;
     }
     public static final class attr {
+        /** <p>May be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
+or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
+<p>May be a color value, in the form of "<code>#<i>rgb</i></code>", "<code>#<i>argb</i></code>",
+"<code>#<i>rrggbb</i></code>", or "<code>#<i>aarrggbb</i></code>".
+         */
+        public static final int infoBackground=0x7f010003;
+        /** <p>Must be a string value, using '\\;' to escape characters such as '\\n' or '\\uxxxx' for a unicode character.
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int infoText=0x7f010000;
+        /** <p>Must be a color value, in the form of "<code>#<i>rgb</i></code>", "<code>#<i>argb</i></code>",
+"<code>#<i>rrggbb</i></code>", or "<code>#<i>aarrggbb</i></code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int infoTextColor=0x7f010002;
+        /** <p>Must be a dimension value, which is a floating point number appended with a unit such as "<code>14.5sp</code>".
+Available units are: px (pixels), dp (density-independent pixels), sp (scaled pixels based on preferred font size),
+in (inches), mm (millimeters).
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int infoTextSize=0x7f010001;
+        /** <p>May be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
+or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
+<p>May be a color value, in the form of "<code>#<i>rgb</i></code>", "<code>#<i>argb</i></code>",
+"<code>#<i>rrggbb</i></code>", or "<code>#<i>aarrggbb</i></code>".
+         */
+        public static final int leftBackground=0x7f010007;
+        /** <p>Must be a string value, using '\\;' to escape characters such as '\\n' or '\\uxxxx' for a unicode character.
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int leftText=0x7f010004;
+        /** <p>Must be a color value, in the form of "<code>#<i>rgb</i></code>", "<code>#<i>argb</i></code>",
+"<code>#<i>rrggbb</i></code>", or "<code>#<i>aarrggbb</i></code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int leftTextColor=0x7f010006;
+        /** <p>Must be a dimension value, which is a floating point number appended with a unit such as "<code>14.5sp</code>".
+Available units are: px (pixels), dp (density-independent pixels), sp (scaled pixels based on preferred font size),
+in (inches), mm (millimeters).
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int leftTextSize=0x7f010005;
+        /** <p>May be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
+or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
+<p>May be a color value, in the form of "<code>#<i>rgb</i></code>", "<code>#<i>argb</i></code>",
+"<code>#<i>rrggbb</i></code>", or "<code>#<i>aarrggbb</i></code>".
+         */
+        public static final int rightBackground=0x7f01000b;
+        /** <p>Must be a string value, using '\\;' to escape characters such as '\\n' or '\\uxxxx' for a unicode character.
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int rightText=0x7f010008;
+        /** <p>Must be a color value, in the form of "<code>#<i>rgb</i></code>", "<code>#<i>argb</i></code>",
+"<code>#<i>rrggbb</i></code>", or "<code>#<i>aarrggbb</i></code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int rightTextColor=0x7f01000a;
+        /** <p>Must be a dimension value, which is a floating point number appended with a unit such as "<code>14.5sp</code>".
+Available units are: px (pixels), dp (density-independent pixels), sp (scaled pixels based on preferred font size),
+in (inches), mm (millimeters).
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int rightTextSize=0x7f010009;
     }
     public static final class color {
         /** 蜜色 
@@ -458,42 +557,47 @@ public final class R {
         public static final int ic_menu_btn_add=0x7f020003;
         public static final int ic_menu_call=0x7f020004;
         public static final int ic_menu_compose=0x7f020005;
-        public static final int search_bar_edit_normal=0x7f020006;
-        public static final int search_bar_edit_pressed=0x7f020007;
-        public static final int search_bar_edit_selector=0x7f020008;
-        public static final int search_bar_icon_normal=0x7f020009;
-        public static final int show_head_bg=0x7f02000a;
-        public static final int sidebar_bg=0x7f02000b;
-        public static final int sym_action_add=0x7f02000c;
-        public static final int sym_action_call=0x7f02000d;
-        public static final int sym_action_email=0x7f02000e;
+        public static final int ic_menu_manage=0x7f020006;
+        public static final int qrcodetest=0x7f020007;
+        public static final int search_bar_edit_normal=0x7f020008;
+        public static final int search_bar_edit_pressed=0x7f020009;
+        public static final int search_bar_edit_selector=0x7f02000a;
+        public static final int search_bar_icon_normal=0x7f02000b;
+        public static final int show_head_bg=0x7f02000c;
+        public static final int sidebar_bg=0x7f02000d;
+        public static final int sym_action_add=0x7f02000e;
+        public static final int sym_action_call=0x7f02000f;
+        public static final int sym_action_email=0x7f020010;
     }
     public static final class id {
         public static final int back_to_homepage=0x7f080005;
-        public static final int btn_call_phone=0x7f080007;
-        public static final int btn_send_sms=0x7f080009;
-        public static final int catalog=0x7f080010;
+        public static final int catalog=0x7f08000e;
         public static final int ed_input=0x7f080000;
         public static final int ibtn_addcontact=0x7f080004;
-        public static final int ibtn_phone=0x7f080012;
+        public static final int ibtn_phone=0x7f080014;
+        public static final int iv_owner_photo=0x7f080010;
+        public static final int iv_owner_qrcode=0x7f080013;
         public static final int lv_contacts=0x7f080001;
+        public static final int phone_num=0x7f080007;
         public static final int sidebar=0x7f080003;
-        public static final int title=0x7f080011;
-        public static final int tv_adress_show=0x7f08000b;
-        public static final int tv_contact_adress=0x7f08000a;
-        public static final int tv_contact_label=0x7f08000e;
+        public static final int title=0x7f08000f;
+        public static final int tv_adress_show=0x7f080009;
+        public static final int tv_contact_adress=0x7f080008;
+        public static final int tv_contact_label=0x7f08000c;
         public static final int tv_contact_name=0x7f080006;
-        public static final int tv_contact_note=0x7f08000c;
-        public static final int tv_label_show=0x7f08000f;
-        public static final int tv_note_show=0x7f08000d;
-        public static final int tv_phone_show=0x7f080008;
+        public static final int tv_contact_note=0x7f08000a;
+        public static final int tv_label_show=0x7f08000d;
+        public static final int tv_note_show=0x7f08000b;
+        public static final int tv_owner_name=0x7f080011;
+        public static final int tv_owner_phone=0x7f080012;
         public static final int tv_show_ahead=0x7f080002;
     }
     public static final class layout {
         public static final int activity_main=0x7f030000;
         public static final int contact_info=0x7f030001;
         public static final int contactitem=0x7f030002;
-        public static final int phone_sms_tuple=0x7f030003;
+        public static final int leftmenu=0x7f030003;
+        public static final int phone_sms_tuple=0x7f030004;
     }
     public static final class string {
         public static final int address=0x7f060004;
@@ -532,4 +636,214 @@ public final class R {
          */
         public static final int AppTheme=0x7f070001;
     }
+    public static final class styleable {
+        /** Attributes that can be used with a Detailbar.
+           <p>Includes the following attributes:</p>
+           <table>
+           <colgroup align="left" />
+           <colgroup align="left" />
+           <tr><th>Attribute</th><th>Description</th></tr>
+           <tr><td><code>{@link #Detailbar_infoBackground com.wecall.contacts:infoBackground}</code></td><td></td></tr>
+           <tr><td><code>{@link #Detailbar_infoText com.wecall.contacts:infoText}</code></td><td></td></tr>
+           <tr><td><code>{@link #Detailbar_infoTextColor com.wecall.contacts:infoTextColor}</code></td><td></td></tr>
+           <tr><td><code>{@link #Detailbar_infoTextSize com.wecall.contacts:infoTextSize}</code></td><td></td></tr>
+           <tr><td><code>{@link #Detailbar_leftBackground com.wecall.contacts:leftBackground}</code></td><td></td></tr>
+           <tr><td><code>{@link #Detailbar_leftText com.wecall.contacts:leftText}</code></td><td></td></tr>
+           <tr><td><code>{@link #Detailbar_leftTextColor com.wecall.contacts:leftTextColor}</code></td><td></td></tr>
+           <tr><td><code>{@link #Detailbar_leftTextSize com.wecall.contacts:leftTextSize}</code></td><td></td></tr>
+           <tr><td><code>{@link #Detailbar_rightBackground com.wecall.contacts:rightBackground}</code></td><td></td></tr>
+           <tr><td><code>{@link #Detailbar_rightText com.wecall.contacts:rightText}</code></td><td></td></tr>
+           <tr><td><code>{@link #Detailbar_rightTextColor com.wecall.contacts:rightTextColor}</code></td><td></td></tr>
+           <tr><td><code>{@link #Detailbar_rightTextSize com.wecall.contacts:rightTextSize}</code></td><td></td></tr>
+           </table>
+           @see #Detailbar_infoBackground
+           @see #Detailbar_infoText
+           @see #Detailbar_infoTextColor
+           @see #Detailbar_infoTextSize
+           @see #Detailbar_leftBackground
+           @see #Detailbar_leftText
+           @see #Detailbar_leftTextColor
+           @see #Detailbar_leftTextSize
+           @see #Detailbar_rightBackground
+           @see #Detailbar_rightText
+           @see #Detailbar_rightTextColor
+           @see #Detailbar_rightTextSize
+         */
+        public static final int[] Detailbar = {
+            0x7f010000, 0x7f010001, 0x7f010002, 0x7f010003,
+            0x7f010004, 0x7f010005, 0x7f010006, 0x7f010007,
+            0x7f010008, 0x7f010009, 0x7f01000a, 0x7f01000b
+        };
+        /**
+          <p>This symbol is the offset where the {@link com.wecall.contacts.R.attr#infoBackground}
+          attribute's value can be found in the {@link #Detailbar} array.
+
+
+          <p>May be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
+or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
+<p>May be a color value, in the form of "<code>#<i>rgb</i></code>", "<code>#<i>argb</i></code>",
+"<code>#<i>rrggbb</i></code>", or "<code>#<i>aarrggbb</i></code>".
+          @attr name com.wecall.contacts:infoBackground
+        */
+        public static final int Detailbar_infoBackground = 3;
+        /**
+          <p>This symbol is the offset where the {@link com.wecall.contacts.R.attr#infoText}
+          attribute's value can be found in the {@link #Detailbar} array.
+
+
+          <p>Must be a string value, using '\\;' to escape characters such as '\\n' or '\\uxxxx' for a unicode character.
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name com.wecall.contacts:infoText
+        */
+        public static final int Detailbar_infoText = 0;
+        /**
+          <p>This symbol is the offset where the {@link com.wecall.contacts.R.attr#infoTextColor}
+          attribute's value can be found in the {@link #Detailbar} array.
+
+
+          <p>Must be a color value, in the form of "<code>#<i>rgb</i></code>", "<code>#<i>argb</i></code>",
+"<code>#<i>rrggbb</i></code>", or "<code>#<i>aarrggbb</i></code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name com.wecall.contacts:infoTextColor
+        */
+        public static final int Detailbar_infoTextColor = 2;
+        /**
+          <p>This symbol is the offset where the {@link com.wecall.contacts.R.attr#infoTextSize}
+          attribute's value can be found in the {@link #Detailbar} array.
+
+
+          <p>Must be a dimension value, which is a floating point number appended with a unit such as "<code>14.5sp</code>".
+Available units are: px (pixels), dp (density-independent pixels), sp (scaled pixels based on preferred font size),
+in (inches), mm (millimeters).
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name com.wecall.contacts:infoTextSize
+        */
+        public static final int Detailbar_infoTextSize = 1;
+        /**
+          <p>This symbol is the offset where the {@link com.wecall.contacts.R.attr#leftBackground}
+          attribute's value can be found in the {@link #Detailbar} array.
+
+
+          <p>May be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
+or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
+<p>May be a color value, in the form of "<code>#<i>rgb</i></code>", "<code>#<i>argb</i></code>",
+"<code>#<i>rrggbb</i></code>", or "<code>#<i>aarrggbb</i></code>".
+          @attr name com.wecall.contacts:leftBackground
+        */
+        public static final int Detailbar_leftBackground = 7;
+        /**
+          <p>This symbol is the offset where the {@link com.wecall.contacts.R.attr#leftText}
+          attribute's value can be found in the {@link #Detailbar} array.
+
+
+          <p>Must be a string value, using '\\;' to escape characters such as '\\n' or '\\uxxxx' for a unicode character.
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name com.wecall.contacts:leftText
+        */
+        public static final int Detailbar_leftText = 4;
+        /**
+          <p>This symbol is the offset where the {@link com.wecall.contacts.R.attr#leftTextColor}
+          attribute's value can be found in the {@link #Detailbar} array.
+
+
+          <p>Must be a color value, in the form of "<code>#<i>rgb</i></code>", "<code>#<i>argb</i></code>",
+"<code>#<i>rrggbb</i></code>", or "<code>#<i>aarrggbb</i></code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name com.wecall.contacts:leftTextColor
+        */
+        public static final int Detailbar_leftTextColor = 6;
+        /**
+          <p>This symbol is the offset where the {@link com.wecall.contacts.R.attr#leftTextSize}
+          attribute's value can be found in the {@link #Detailbar} array.
+
+
+          <p>Must be a dimension value, which is a floating point number appended with a unit such as "<code>14.5sp</code>".
+Available units are: px (pixels), dp (density-independent pixels), sp (scaled pixels based on preferred font size),
+in (inches), mm (millimeters).
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name com.wecall.contacts:leftTextSize
+        */
+        public static final int Detailbar_leftTextSize = 5;
+        /**
+          <p>This symbol is the offset where the {@link com.wecall.contacts.R.attr#rightBackground}
+          attribute's value can be found in the {@link #Detailbar} array.
+
+
+          <p>May be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
+or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
+<p>May be a color value, in the form of "<code>#<i>rgb</i></code>", "<code>#<i>argb</i></code>",
+"<code>#<i>rrggbb</i></code>", or "<code>#<i>aarrggbb</i></code>".
+          @attr name com.wecall.contacts:rightBackground
+        */
+        public static final int Detailbar_rightBackground = 11;
+        /**
+          <p>This symbol is the offset where the {@link com.wecall.contacts.R.attr#rightText}
+          attribute's value can be found in the {@link #Detailbar} array.
+
+
+          <p>Must be a string value, using '\\;' to escape characters such as '\\n' or '\\uxxxx' for a unicode character.
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name com.wecall.contacts:rightText
+        */
+        public static final int Detailbar_rightText = 8;
+        /**
+          <p>This symbol is the offset where the {@link com.wecall.contacts.R.attr#rightTextColor}
+          attribute's value can be found in the {@link #Detailbar} array.
+
+
+          <p>Must be a color value, in the form of "<code>#<i>rgb</i></code>", "<code>#<i>argb</i></code>",
+"<code>#<i>rrggbb</i></code>", or "<code>#<i>aarrggbb</i></code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name com.wecall.contacts:rightTextColor
+        */
+        public static final int Detailbar_rightTextColor = 10;
+        /**
+          <p>This symbol is the offset where the {@link com.wecall.contacts.R.attr#rightTextSize}
+          attribute's value can be found in the {@link #Detailbar} array.
+
+
+          <p>Must be a dimension value, which is a floating point number appended with a unit such as "<code>14.5sp</code>".
+Available units are: px (pixels), dp (density-independent pixels), sp (scaled pixels based on preferred font size),
+in (inches), mm (millimeters).
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name com.wecall.contacts:rightTextSize
+        */
+        public static final int Detailbar_rightTextSize = 9;
+    };
 }

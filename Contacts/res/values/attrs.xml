@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+ 
+    <declare-styleable name="Detailbar">
+        <attr name="infoText" format="string"></attr>
+        <attr name="infoTextSize" format="dimension"></attr>
+        <attr name="infoTextColor" format="color"></attr>
+        <attr name="infoBackground" format="reference|color"></attr>
+        
+        <attr name="leftText" format="string"></attr>
+        <attr name="leftTextSize" format="dimension"></attr>
+        <attr name="leftTextColor" format="color"></attr>
+        <attr name="leftBackground" format="reference|color"></attr>
+        
+        <attr name="rightText" format="string"></attr>
+        <attr name="rightTextSize" format="dimension"></attr>
+        <attr name="rightTextColor" format="color"></attr>
+        <attr name="rightBackground" format="reference|color"></attr>
+    </declare-styleable>
+</resources>
