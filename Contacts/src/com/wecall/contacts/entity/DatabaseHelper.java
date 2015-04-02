@@ -24,7 +24,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
      */    
     private final static 
     String MAIN_TABLE = "CREATE TABLE IF NOT EXISTS main( "
-    					+ "c_id INTEGER PRIMARY KEY AUTOINCREMENT, "
+    					+ "c_id INTEGER PRIMARY KEY, "
     					+ "name VARCHAR(100), "
     					+ "fullPinyin VARCHAR(100), "
     					+ "simplePinyin VARCHAR(20), "
