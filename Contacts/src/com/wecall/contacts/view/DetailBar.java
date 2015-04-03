@@ -59,7 +59,7 @@ public class DetailBar extends RelativeLayout {
 	//实现两个参数的构造方法，其中第二个参数为传入的参数集合
 	public DetailBar(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		//初始化惨呼
+		//初始化参数
 		initAttrs(context,attrs);
 		//初始化内部控件
 		initView(context);
@@ -68,6 +68,10 @@ public class DetailBar extends RelativeLayout {
 	
 	public String getInfo(){
 		return tvInfo.getText().toString();
+	}
+	
+	public void setInfo(String text){
+		tvInfo.setText(text);
 	}
 
 	private void initAttrs(Context context, AttributeSet attrs) {
@@ -92,6 +96,7 @@ public class DetailBar extends RelativeLayout {
 		ta.recycle();
 	}
 
+	@SuppressWarnings("deprecation")
 	private void initView(Context context) {
 		leftBtn = new Button(context);
 		rightBtn = new Button(context);
@@ -100,20 +105,20 @@ public class DetailBar extends RelativeLayout {
 		leftBtn.setText(leftText);
 		leftBtn.setTextColor(leftTextColor);
 		leftBtn.setTextSize(leftTextSize);
-		leftBtn.setBackground(leftBackground);
+		leftBtn.setBackgroundDrawable(leftBackground);
 		
 		rightBtn.setText(rightText);
 		rightBtn.setTextColor(rightTextColor);
 		rightBtn.setTextSize(rightTextSize);
-		rightBtn.setBackground(rightBackground);
+		rightBtn.setBackgroundDrawable(rightBackground);
 		
 		tvInfo.setText(infoText);
 		tvInfo.setTextColor(infoTextColor);
 		tvInfo.setTextSize(infoTextSize);
-		tvInfo.setBackground(infoBackground);
+		tvInfo.setBackgroundDrawable(infoBackground);
 		tvInfo.setGravity(Gravity.CENTER);
 		
-		setBackgroundColor(0xfff59563);
+		//setBackgroundColor(0xfff59563);
 		
 		leftParams = new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT);
 		leftParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT,TRUE);

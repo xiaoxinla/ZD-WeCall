@@ -18,7 +18,7 @@
             <ImageView android:id="@+id/iv_owner_photo"
                 android:layout_width="80dp"
                 android:layout_height="80dp"
-                android:src="@drawable/qrcodetest"
+                android:src="@drawable/ic_contact_picture"
                 android:background="@null"/>
         <TextView
             android:id="@+id/tv_owner_name"

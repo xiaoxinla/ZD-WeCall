@@ -5,14 +5,20 @@
     android:versionName="1.0" >
 
     <uses-sdk
-        android:minSdkVersion="16"
+        android:minSdkVersion="14"
         android:targetSdkVersion="21" />
-	<uses-permission android:name="android.permission.CALL_PHONE"/>
-	<uses-permission android:name="android.permission.SEND_SMS"/>
-    
+
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.SEND_SMS" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+
     <application
         android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@drawable/icon_1"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
@@ -27,8 +33,18 @@
         </activity>
         <activity
             android:name=".ContactInfo"
-            android:theme="@android:style/Theme.Light.NoTitleBar"
-            android:label="@string/title_activity_contact_info" >
+            android:label="@string/title_activity_contact_info"
+            android:theme="@android:style/Theme.Light.NoTitleBar" >
+        </activity>
+        <activity
+            android:name=".MipcaActivityCapture"
+            android:label="@string/title_activity_contact_info"
+            android:theme="@android:style/Theme.Light.NoTitleBar" >
+        </activity>
+        <activity
+            android:name=".ContactEditor"
+            android:label="@string/title_activity_add_contact"
+            android:theme="@android:style/Theme.Light.NoTitleBar"  >
         </activity>
     </application>
 

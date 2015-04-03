@@ -1,0 +1,76 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">"
+    
+    <com.wecall.contacts.view.DetailBar 
+        android:id="@+id/db_topbar"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/mmtitle_bg_alpha"
+        custom:infoText="@string/addcontact"
+        custom:infoTextColor="#ffffff"
+        custom:infoTextSize="10sp"
+        custom:leftText="@string/cancel"
+        custom:leftTextColor="#ffffff"
+        custom:leftTextSize="10sp"
+        custom:leftBackground="@drawable/mm_title_back_btn"
+        custom:rightText="@string/sure"
+        custom:rightTextColor="#ffffff"
+        custom:rightTextSize="10sp"
+        custom:rightBackground="@drawable/btn_erase_selected"
+        >
+        
+    </com.wecall.contacts.view.DetailBar>
+
+	<LinearLayout android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:orientation="horizontal"
+	    android:gravity="center_vertical"
+	    
+	    >
+	    <ImageView android:id="@+id/img_photo_add"
+	        android:layout_width="96dp"
+	        android:layout_height="96dp"
+	        android:src="@drawable/ic_contact_picture"
+	        android:background="@null"/>
+	    
+	    <EditText android:id="@+id/et_name_add"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:singleLine="true"
+	        android:textSize="15sp"
+	        android:hint="@string/name"
+	        />
+	</LinearLayout>
+	
+	<EditText android:id="@+id/et_phone_add"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:singleLine="true"
+	        android:textSize="15sp"
+	        android:inputType="phone"
+	        android:hint="@string/phone"
+	        />
+	<EditText android:id="@+id/et_address_add"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:singleLine="true"
+	        android:textSize="15sp"
+	        android:hint="@string/address"
+	        />
+	<EditText android:id="@+id/et_note_add"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:singleLine="true"
+	        android:textSize="15sp"
+	        android:hint="@string/note"
+	        />
+	<Button android:id="@+id/btn_scan"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:text="@string/scanQR"/>"
+
+</LinearLayout>

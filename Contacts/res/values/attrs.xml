@@ -17,4 +17,9 @@
         <attr name="rightTextColor" format="color"></attr>
         <attr name="rightBackground" format="reference|color"></attr>
     </declare-styleable>
+    
+    <declare-styleable name="IconTextView">
+        <attr name="text" format="string"></attr>
+        <attr name="icon" format="reference|color"></attr>
+    </declare-styleable>
 </resources>

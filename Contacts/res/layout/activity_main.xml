@@ -1,66 +1,87 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_gravity="bottom"
-    android:orientation="vertical" >
+    android:layout_height="match_parent" >
 
-    <com.wecall.contacts.view.ClearableEditText
-        android:id="@+id/ed_input"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:layout_marginTop="15dp"
-        android:background="@drawable/search_bar_edit_selector"
-        android:drawableLeft="@drawable/search_bar_icon_normal"
-        android:padding="5dp"
-        android:singleLine="true"
-        android:textSize="15sp" />
+    <com.wecall.contacts.view.SlidingPage
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="none" >
 
-    <FrameLayout
-        android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal" >
 
-        <ListView
-            android:id="@+id/lv_contacts"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_gravity="center"
-            android:scrollbars="none" >
-        </ListView>
+            <include layout="@layout/leftmenu" />
 
-        <TextView
-            android:id="@+id/tv_show_ahead"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_gravity="center"
-            android:background="@drawable/show_head_bg"
-            android:gravity="center"
-            android:textColor="#ffffff"
-            android:textSize="40sp"
-            android:visibility="invisible" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="bottom"
+                android:orientation="vertical" >
 
-        <com.wecall.contacts.view.SideBar
-            android:id="@+id/sidebar"
-            android:layout_width="25dp"
-            android:layout_height="fill_parent"
-            android:layout_gravity="right|center" />
-    </FrameLayout>
+                <com.wecall.contacts.view.ClearableEditText
+                    android:id="@+id/ed_input"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:layout_marginTop="15dp"
+                    android:background="@drawable/search_bar_edit_selector"
+                    android:drawableLeft="@drawable/search_bar_icon_normal"
+                    android:padding="5dp"
+                    android:singleLine="true"
+                    android:textSize="15sp" />
 
-    <LinearLayout android:layout_width="fill_parent"
-        android:layout_height="80dp"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:divider="@android:color/background_dark"
-        android:showDividers="beginning"
-        >
-        <ImageButton android:id="@+id/ibtn_addcontact"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_menu_btn_add"
-            android:background="@null"
-            />
-    </LinearLayout>
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" >
 
-</LinearLayout>
+                    <ListView
+                        android:id="@+id/lv_contacts"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:layout_gravity="center"
+                        android:scrollbars="none" >
+                    </ListView>
+
+                    <TextView
+                        android:id="@+id/tv_show_ahead"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:layout_gravity="center"
+                        android:background="@drawable/show_head_bg"
+                        android:gravity="center"
+                        android:textColor="#ffffff"
+                        android:textSize="40sp"
+                        android:visibility="invisible" />
+
+                    <com.wecall.contacts.view.SideBar
+                        android:id="@+id/sidebar"
+                        android:layout_width="25dp"
+                        android:layout_height="fill_parent"
+                        android:layout_gravity="right|center" />
+                </FrameLayout>
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="80dp"
+                    android:divider="@android:color/background_dark"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:showDividers="beginning" >
+
+                    <ImageButton
+                        android:id="@+id/ibtn_addcontact"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@null"
+                        android:src="@drawable/ic_menu_btn_add" />
+                </LinearLayout>
+            </LinearLayout>
+            <include layout="@layout/rightmenu"/>
+        </LinearLayout>
+    </com.wecall.contacts.view.SlidingPage>
+
+</RelativeLayout>

@@ -2,6 +2,7 @@ package com.wecall.contacts.entity;
 
 import java.util.ArrayList;
 
+import android.annotation.SuppressLint;
 import com.wecall.contacts.util.PinYin;
 
 /**
@@ -36,30 +37,18 @@ public class ContactItem implements Comparable {
 
 	}
 
-	public ContactItem(int id, String name, String phoneNumber, String address,
-			String note, ArrayList<String> labels, String sortLetter,
-			String fullPinyin, String simplePinyin) {
+	public ContactItem(String name, String phoneNumber, String address,
+			String note, ArrayList<String> labels) {
 		super();
-		this.id = id;
 		this.name = name;
-		this.sortLetter = sortLetter;
 		this.phoneNumber = phoneNumber;
 		this.note = note;
 		this.address = address;
 		this.labels = labels;
-		this.fullPinyin = fullPinyin;
-		this.simplePinyin = simplePinyin;
-	}
 
-	public ContactItem(String name, String sortLetter, String phoneNumber,
-			String note, String address, ArrayList<String> labels) {
-		super();
-		this.name = name;
-		this.sortLetter = sortLetter;
-		this.phoneNumber = phoneNumber;
-		this.note = note;
-		this.address = address;
-		this.labels = labels;
+		fullPinyin = PinYin.getPinYin(this.name);
+		simplePinyin = PinYin.getSimplePinYin(this.name);
+		setSortLetter(fullPinyin);
 	}
 
 	public String getName() {
@@ -70,10 +59,7 @@ public class ContactItem implements Comparable {
 		this.name = name;
 		fullPinyin = PinYin.getPinYin(this.name);
 		simplePinyin = PinYin.getSimplePinYin(this.name);
-	}
-
-	public void setSortLetter(String sortLetter) {
-		this.sortLetter = sortLetter;
+		setSortLetter(fullPinyin);
 	}
 
 	public String getSortLetter() {
@@ -129,14 +115,34 @@ public class ContactItem implements Comparable {
 	}
 
 	@Override
+	public String toString() {
+		return "ContactItem [id=" + id + ", name=" + name + ", sortLetter="
+				+ sortLetter + ", phoneNumber=" + phoneNumber + ", note="
+				+ note + ", address=" + address + ", labels=" + labels
+				+ ", fullPinyin=" + fullPinyin + ", simplePinyin="
+				+ simplePinyin + "]";
+	}
+
+	@Override
 	public int compareTo(Object arg0) {
 		ContactItem tmpItem = (ContactItem) arg0;
-		if(tmpItem.getSortLetter().equals("#")&&!getSortLetter().equals("#")){
+		if (tmpItem.getSortLetter().equals("#") && !getSortLetter().equals("#")) {
 			return -1;
-		}else if(!tmpItem.getSortLetter().equals("#")&&getSortLetter().equals("#")){
+		} else if (!tmpItem.getSortLetter().equals("#")
+				&& getSortLetter().equals("#")) {
 			return 1;
 		}
 		return getFullPinyin().compareTo(tmpItem.getFullPinyin());
+	}
+	
+	@SuppressLint("DefaultLocale") private void setSortLetter(String inputString){
+		String sortString = inputString.substring(0, 1).toUpperCase();
+		// 正则表达式，判断首字母是否是英文字母
+		if (sortString.matches("[A-Z]")) {
+			this.sortLetter = sortString;
+		} else {
+			this.sortLetter = "#";
+		}
 	}
 
 }

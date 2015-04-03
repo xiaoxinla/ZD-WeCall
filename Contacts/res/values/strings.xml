@@ -1,12 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Contacts</string>
+    <string name="app_name">微讯</string>
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_contact_info">ContactInfo</string>
     <string name="phone">电话</string>
     <string name="address">地址</string>
     <string name="note">备注</string>
     <string name="label">标签</string>
+    <string name="scan_text">将二维码放入框内, 即可自动扫描</string>
+    <string name="title_activity_add_contact">AddCOntact</string>
+    <string name="sure">确定</string>
+    <string name="cancel">取消</string>
+    <string name="addcontact">新建联系人</string>
+    <string name="name">姓名</string>
+    <string name="scanQR">扫二维码</string>
 
 </resources>

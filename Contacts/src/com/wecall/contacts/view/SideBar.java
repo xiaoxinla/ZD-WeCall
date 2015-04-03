@@ -1,7 +1,5 @@
 package com.wecall.contacts.view;
 
-import com.wecall.contacts.R;
-
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -9,10 +7,11 @@ import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
+
+import com.wecall.contacts.R;
 
 /**
  * 自定义侧边栏视图
@@ -22,7 +21,7 @@ import android.widget.TextView;
  */
 public class SideBar extends View {
 
-	private static final String TAG = "SideBar";
+	//private static final String TAG = "SideBar";
 	// 字母表
 	private static final String[] sAlphabet = { "A", "B", "C", "D", "E", "F",
 			"G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S",
@@ -107,6 +106,7 @@ public class SideBar extends View {
 	@SuppressWarnings("deprecation")
 	@Override
 	public boolean dispatchTouchEvent(MotionEvent event) {
+		
 		final int action = event.getAction();
 		// 点击的位置
 		final float yPos = event.getY();
@@ -116,7 +116,6 @@ public class SideBar extends View {
 		// 这次点击的字母索引
 		final int index = (int) (yPos / getHeight() * sAlphabet.length);
 
-		Log.v(TAG, "index: " + index);
 		switch (action) {
 		case MotionEvent.ACTION_UP:
 			setBackgroundDrawable(new ColorDrawable(0x00000000));

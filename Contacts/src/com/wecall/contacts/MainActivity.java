@@ -4,31 +4,46 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.zxing.WriterException;
 import com.wecall.contacts.adapter.SortAdapter;
+import com.wecall.contacts.database.DatabaseManager;
 import com.wecall.contacts.entity.ContactItem;
+import com.wecall.contacts.util.ImageUtil;
 import com.wecall.contacts.util.PinYin;
 import com.wecall.contacts.view.ClearableEditText;
 import com.wecall.contacts.view.SideBar;
 import com.wecall.contacts.view.SideBar.onTouchLetterChangeListener;
 
 public class MainActivity extends Activity {
+
+	private static final String TAG = "MainActivity";
+	private static final int REQUEST_CODE = 1;
 
 	// 联系人列表控件
 	private ListView contactListView;
@@ -38,10 +53,15 @@ public class MainActivity extends Activity {
 	private ClearableEditText inputEditText;
 	// 显示当前选中的字母索引的文本控件
 	private TextView showAheadTV;
+	private ImageView qrcodeIMG;
+	// 添加联系人按钮
+	private ImageButton addContactBtn;
 	// 排序的适配器
 	private SortAdapter adapter;
 	// 联系人信息
 	private List<ContactItem> contactList;
+	// 数据库管理实例
+	private DatabaseManager mManager;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +77,9 @@ public class MainActivity extends Activity {
 		sideBar = (SideBar) findViewById(R.id.sidebar);
 		inputEditText = (ClearableEditText) findViewById(R.id.ed_input);
 		showAheadTV = (TextView) findViewById(R.id.tv_show_ahead);
+		addContactBtn = (ImageButton) findViewById(R.id.ibtn_addcontact);
+		qrcodeIMG = (ImageView)findViewById(R.id.iv_owner_qrcode);
+		mManager = new DatabaseManager(this);
 		sideBar.setLetterShow(showAheadTV);
 
 		sideBar.setTouchLetterChangeListener(new onTouchLetterChangeListener() {
@@ -76,8 +99,8 @@ public class MainActivity extends Activity {
 					long arg3) {
 				Intent intent = new Intent(MainActivity.this, ContactInfo.class);
 				Bundle bundle = new Bundle();
-				bundle.putString("cname",
-						((ContactItem) adapter.getItem(arg2)).getName());
+				bundle.putInt("cid",
+						((ContactItem) adapter.getItem(arg2)).getId());
 				intent.putExtras(bundle);
 				startActivity(intent);
 			}
@@ -85,7 +108,7 @@ public class MainActivity extends Activity {
 
 		// 获取联系人信息
 		// TODO: use SQLite after
-		contactList = filledData(getResources().getStringArray(R.array.date));
+		filledData(getResources().getStringArray(R.array.date));
 
 		// 将联系人按照字母的顺序排序
 		Collections.sort(contactList);
@@ -116,6 +139,33 @@ public class MainActivity extends Activity {
 			}
 		});
 
+		addContactBtn.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				Intent intent = new Intent(MainActivity.this, ContactEditor.class);
+				Bundle bundle = new Bundle();
+				bundle.putInt("type", 1);
+				intent.putExtras(bundle);
+				startActivityForResult(intent, REQUEST_CODE);
+			}
+		});
+		
+		setOwerQRCode();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (requestCode == REQUEST_CODE) {
+			if (resultCode == RESULT_OK) {
+				Toast.makeText(this, "添加成功", Toast.LENGTH_SHORT).show();
+				contactList = mManager.queryAllContact();
+				Collections.sort(contactList);
+				adapter.updateListView(contactList);
+			}
+		}
 	}
 
 	@Override
@@ -162,28 +212,27 @@ public class MainActivity extends Activity {
 	 * 为ListView填充数据
 	 * 
 	 * @param date
-	 * @return
 	 */
 	@SuppressLint("DefaultLocale")
-	private List<ContactItem> filledData(String[] data) {
-		List<ContactItem> mSortList = new ArrayList<ContactItem>();
+	private void filledData(String[] data) {
 
-		for (int i = 0; i < data.length; i++) {
-			ContactItem contactItem = new ContactItem();
-			contactItem.setName(data[i]);
-			String sortString = contactItem.getFullPinyin().substring(0, 1)
-					.toUpperCase();
+		contactList = mManager.queryAllContact();
 
-			// 正则表达式，判断首字母是否是英文字母
-			if (sortString.matches("[A-Z]")) {
-				contactItem.setSortLetter(sortString.toUpperCase());
-			} else {
-				contactItem.setSortLetter("#");
+		Log.v(TAG, "size:" + contactList.size());
+		if (contactList == null || contactList.size() == 0) {
+			String areas[] = { "白云山", "广东广州", "成都", "NewYork", "周村", "泉州", "大山" };
+			for (int i = 0; i < data.length; i++) {
+
+				ContactItem contactItem = new ContactItem();
+				contactItem.setName(data[i]);
+				contactItem.setPhoneNumber(genRandomPhone());
+				int ind = (int) (Math.random() * areas.length);
+				contactItem.setAddress(areas[ind]);
+
+				contactList.add(contactItem);
 			}
-
-			mSortList.add(contactItem);
+			mManager.addContact(contactList);
 		}
-		return mSortList;
 
 	}
 
@@ -212,6 +261,36 @@ public class MainActivity extends Activity {
 			}
 		}
 		adapter.updateListView(filterDateList);
+	}
+
+	private void setOwerQRCode(){
+		String name = "小新";
+		String phone = "13929514504";
+		JSONObject jsonObject = new JSONObject();
+		Bitmap bitmap = null ;
+		try {
+			jsonObject.put("name", name);
+			jsonObject.put("phone", phone);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		try {
+			bitmap = ImageUtil.CreateQRCode(jsonObject.toString());
+		} catch (WriterException e) {
+			e.printStackTrace();
+		}
+		qrcodeIMG.setImageBitmap(bitmap);
+	}
+	
+	/** 产生随机号码，测试用
+	 * @return 随机号码
+	 */
+	private String genRandomPhone() {
+		String str = "";
+		for (int i = 0; i < 11; i++) {
+			str += (int) (Math.random() * 10);
+		}
+		return str;
 	}
 
 }
