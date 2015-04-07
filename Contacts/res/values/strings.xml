@@ -2,18 +2,40 @@
 <resources>
 
     <string name="app_name">微讯</string>
-    <string name="hello_world">Hello world!</string>
-    <string name="title_activity_contact_info">ContactInfo</string>
     <string name="phone">电话</string>
     <string name="address">地址</string>
     <string name="note">备注</string>
     <string name="label">标签</string>
     <string name="scan_text">将二维码放入框内, 即可自动扫描</string>
-    <string name="title_activity_add_contact">AddCOntact</string>
     <string name="sure">确定</string>
     <string name="cancel">取消</string>
     <string name="addcontact">新建联系人</string>
     <string name="name">姓名</string>
     <string name="scanQR">扫二维码</string>
+    <string name="setting">设置</string>
+    <string name="returnlast">返回</string>
+    <string name="about">关于微讯</string>
+    <string name="rules">
+#软件介绍：\n
+微讯作为一款通讯录管理软件，可以让用户方便的管理自己的联系人，支持关键词匹配，模糊查找，二维码扫码等功能\n\n
+#已实现功能：\n
+1.主界面显示联系人列表，点击联系人进入联系人详细信息界面;可通过首字母索引，关键字查询快速找到联系人，也可以通过下方的添加按钮进入添加联系人界面\n
+2.主界面向左侧滑，可以看到用户的姓名和联系方式以及二维码信息，用户可通过设置按钮进入设置界面设置用户相关信息\n
+3.向右侧滑显示标签界面\n
+4.在联系人详细信息界面，用户可以点击相对应的按钮直接向该联系人打电话或者发短信，下方有编辑和删除按钮，让用户可以修改联系人信息或者删除联系人\n
+5.在新建或者编辑联系人界面，用户可以手动填写用户信息，也可以通过扫描二维码获取部分用户信息\n\n
+#待完善功能：\n
+1.标签相关的功能与操作没有实现\n
+2.头像照片等图像相关的内容需要再完善\n
+3.联系人的匹配筛选需要转移到数据库上，匹配策略需要完善\n
+4.没有对数据进行安全保护\n
+5.部分界面的布局需要再优化\n
+6.推送功能还未实现\n\n
+#声明：\n
+本软件由WeCall团队自主开发，团队成员有下面6人组成（拼音排序）：\n
+陈驰、李国聪、黎坤旻、邱敏仪、谢凡、徐晓欣（组长）\n
+未经团队成员许可，请勿擅自使用或者修改软件的源代码\n
+感谢您的使用和尊重
+</string>
 
 </resources>

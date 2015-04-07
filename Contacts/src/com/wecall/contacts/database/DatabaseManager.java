@@ -11,6 +11,11 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+/**
+ * 数据库管理类
+ * 
+ * @author xiaoxin 2015-4-2
+ */
 public class DatabaseManager {
 
 	private DatabaseHelper mHelper;
@@ -21,7 +26,26 @@ public class DatabaseManager {
 		mDatabase = mHelper.getWritableDatabase();
 	}
 
-	public void addContact(List<ContactItem> contacts) {
+	public int addContact(ContactItem item) {
+		ContentValues cv = new ContentValues();
+		cv.put("name", item.getName());
+		cv.put("phone", item.getPhoneNumber());
+		cv.put("address", item.getAddress());
+		cv.put("note", item.getNote());
+		cv.put("pinyin", item.getFullPinyin());
+		cv.put("simplepinyin", item.getSimplePinyin());
+		cv.put("sortletter", item.getSortLetter());
+		mDatabase.insert(Constants.MAIN_TABLE_NAME, null, cv);
+
+		Cursor c = mDatabase.rawQuery("SELECT MAX(cid) AS maxid FROM "
+				+ Constants.MAIN_TABLE_NAME, null);
+		c.moveToNext();
+		int last = c.getInt(c.getColumnIndex("maxid"));
+		c.close();
+		return last;
+	}
+
+	public void addContacts(List<ContactItem> contacts) {
 		mDatabase.beginTransaction();
 		try {
 			for (ContactItem item : contacts) {
@@ -49,6 +73,7 @@ public class DatabaseManager {
 		cv.put("note", item.getNote());
 		cv.put("pinyin", item.getFullPinyin());
 		cv.put("simplepinyin", item.getSimplePinyin());
+		cv.put("sortletter", item.getSortLetter());
 
 		mDatabase.update(Constants.MAIN_TABLE_NAME, cv, "cid=?",
 				new String[] { String.valueOf(item.getId()) });
@@ -75,25 +100,27 @@ public class DatabaseManager {
 		return contacts;
 	}
 
-	public ContactItem queryContactById(int cid){
+	public ContactItem queryContactById(int cid) {
 		ContactItem item = new ContactItem();
-		
+
 		Cursor c = mDatabase.rawQuery("SELECT * FROM "
-				+Constants.MAIN_TABLE_NAME+" WHERE cid=?", 
-				new String[]{String.valueOf(cid)});
-		if(c.moveToFirst()){
+				+ Constants.MAIN_TABLE_NAME + " WHERE cid=?",
+				new String[] { String.valueOf(cid) });
+		if (c.moveToFirst()) {
 			item.setId(c.getInt(c.getColumnIndex("cid")));
 			item.setName(c.getString(c.getColumnIndex("name")));
 			item.setPhoneNumber(c.getString(c.getColumnIndex("phone")));
 			item.setAddress(c.getString(c.getColumnIndex("address")));
 			item.setNote(c.getString(c.getColumnIndex("note")));
 		}
-		c.close();;
+		c.close();
+		;
 		return item;
 	}
 
 	private Cursor queryCursor() {
-		Cursor c = mDatabase.rawQuery("SELECT * FROM contact", null);
+		Cursor c = mDatabase.rawQuery("SELECT * FROM "
+				+ Constants.MAIN_TABLE_NAME, null);
 		return c;
 	}
 }

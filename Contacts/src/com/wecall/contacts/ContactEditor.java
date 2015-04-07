@@ -1,21 +1,31 @@
 package com.wecall.contacts;
 
-import java.util.ArrayList;
+import java.io.File;
+import java.io.IOException;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.wecall.contacts.constants.Constants;
 import com.wecall.contacts.database.DatabaseManager;
 import com.wecall.contacts.entity.ContactItem;
+import com.wecall.contacts.util.ImageUtil;
 import com.wecall.contacts.view.DetailBar;
 import com.wecall.contacts.view.DetailBar.DetailBarClickListener;
 
@@ -26,7 +36,7 @@ import com.wecall.contacts.view.DetailBar.DetailBarClickListener;
  */
 public class ContactEditor extends Activity {
 
-	//private static final String TAG = "ContactEditor";
+	private static final String TAG = "ContactEditor";
 
 	// 二维码扫码按钮
 	private Button scanBtn;
@@ -34,6 +44,7 @@ public class ContactEditor extends Activity {
 	private DetailBar topbar;
 	// 各种编辑框
 	private EditText nameET, phoneET, addressET, noteET;
+	private ImageView photoImg;
 	// 数据库管理对象
 	private DatabaseManager mManager;
 
@@ -42,17 +53,22 @@ public class ContactEditor extends Activity {
 	// 联系人id
 	private int mCid = -1;
 
-	private static final int REQUEST_CODE = 2;
+	private static final int ALBUM_REQUEST_CODE = 1;
+	private static final int CAMERA_REQUEST_CODE = 2;
+	private static final int CROP_REQUEST_CODE = 3;
+	private static final int SCAN_REQUEST_CODE = 4;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_contact_editor);
-
+		// 判断是新建还是修改联系人
 		confireType();
+		// 初始化控件
 		initView();
 	}
 
+	// 初始化控件
 	private void initView() {
 		scanBtn = (Button) findViewById(R.id.btn_scan);
 		nameET = (EditText) findViewById(R.id.et_name_add);
@@ -60,9 +76,11 @@ public class ContactEditor extends Activity {
 		addressET = (EditText) findViewById(R.id.et_address_add);
 		noteET = (EditText) findViewById(R.id.et_note_add);
 		topbar = (DetailBar) findViewById(R.id.db_topbar);
+		photoImg = (ImageView) findViewById(R.id.img_photo_add);
 
 		mManager = new DatabaseManager(this);
 
+		// 分新建和修改进行不同的初始化
 		if (mType == 1) {
 			topbar.setInfo("新建联系人");
 		} else if (mType == 2) {
@@ -72,6 +90,13 @@ public class ContactEditor extends Activity {
 			phoneET.setText(item.getPhoneNumber());
 			addressET.setText(item.getAddress());
 			noteET.setText(item.getNote());
+			Bitmap bitmap = ImageUtil.getLocalBitmap(Constants.ALBUM_PATH,
+					"pic" + mCid + ".jpg");
+			if (bitmap == null) {
+				photoImg.setImageResource(R.drawable.ic_contact_picture);
+			} else {
+				photoImg.setImageBitmap(bitmap);
+			}
 		}
 
 		topbar.setOnDetailBarClickListener(new DetailBarClickListener() {
@@ -84,15 +109,20 @@ public class ContactEditor extends Activity {
 							Toast.LENGTH_SHORT).show();
 				} else {
 					if (mType == 1) {
-						ArrayList<ContactItem> contacts = new ArrayList<ContactItem>();
-						contacts.add(getContactFromView());
-						mManager.addContact(contacts);
+						int last = mManager.addContact(getContactFromView());
+						Log.v(TAG, "insetid:" + last);
+						ImageUtil.renameImage(Constants.ALBUM_PATH
+								+ "showpic.jpg", Constants.ALBUM_PATH + "pic"
+								+ last + ".jpg");
 						setResult(RESULT_OK);
 						finish();
-					} else if(mType==2){
+					} else if (mType == 2) {
 						ContactItem item = getContactFromView();
 						item.setId(mCid);
 						mManager.updateContact(item);
+						ImageUtil.renameImage(Constants.ALBUM_PATH
+								+ "showpic.jpg", Constants.ALBUM_PATH + "pic"
+								+ mCid + ".jpg");
 						setResult(RESULT_OK);
 						finish();
 					}
@@ -116,7 +146,15 @@ public class ContactEditor extends Activity {
 			public void onClick(View arg0) {
 				Intent intent = new Intent(ContactEditor.this,
 						MipcaActivityCapture.class);
-				startActivityForResult(intent, REQUEST_CODE);
+				startActivityForResult(intent, SCAN_REQUEST_CODE);
+			}
+		});
+
+		photoImg.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				showPicDialog();
 			}
 		});
 	}
@@ -124,8 +162,9 @@ public class ContactEditor extends Activity {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		if (requestCode == REQUEST_CODE) {
-			if (resultCode == RESULT_OK) {
+		if (resultCode == RESULT_OK) {
+			switch (requestCode) {
+			case SCAN_REQUEST_CODE:
 				Bundle bundle = data.getExtras();
 				try {
 					JSONObject jsonObject = new JSONObject(
@@ -139,9 +178,35 @@ public class ContactEditor extends Activity {
 					Toast.makeText(this, "无效联系人：" + bundle.getString("result"),
 							Toast.LENGTH_LONG).show();
 				}
+				break;
+			// 从相册返回
+			case ALBUM_REQUEST_CODE:
+				startPhotoZoom(data.getData());
+				break;
+			// 从相机返回
+			case CAMERA_REQUEST_CODE:
+				File tmp = new File(Constants.ALBUM_PATH + "tmppic.jpg");
+				startPhotoZoom(Uri.fromFile(tmp));
+				break;
+			// 从裁剪后返回
+			case CROP_REQUEST_CODE:
+				if (data != null) {
+					setPicToView(data);
+				}
+				break;
 
+			default:
+				break;
 			}
 		}
+
+	}
+	
+	@Override
+	protected void onDestroy() {
+		ImageUtil.deleteImage(Constants.ALBUM_PATH, "tmppic.jpg");
+		ImageUtil.deleteImage(Constants.ALBUM_PATH, "showpic.jpg");
+		super.onDestroy();
 	}
 
 	private void confireType() {
@@ -152,12 +217,105 @@ public class ContactEditor extends Activity {
 		}
 	}
 
-	private ContactItem getContactFromView(){
+	private ContactItem getContactFromView() {
 		ContactItem item = new ContactItem();
 		item.setName(nameET.getText().toString());
 		item.setPhoneNumber(phoneET.getText().toString());
 		item.setAddress(addressET.getText().toString());
 		item.setNote(noteET.getText().toString());
 		return item;
+	}
+
+	// 显示对话框
+	// TODO: 将该函数复用
+	private void showPicDialog() {
+		new AlertDialog.Builder(this)
+				.setTitle("设置头像")
+				.setNegativeButton("相册", new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						// 让对话框消失
+						dialog.dismiss();
+						// ACTION_PICK，从数据集合中选择一个返回，官方文档解释如下
+						// Activity Action:
+						// Pick an item from the data, returning what was
+						// selected.
+						Intent intent = new Intent(Intent.ACTION_PICK, null);
+						// 设置数据来源和类型
+						intent.setDataAndType(
+								MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+								"image/*");
+						startActivityForResult(intent, ALBUM_REQUEST_CODE);
+					}
+				})
+				.setPositiveButton("拍照", new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int arg1) {
+						dialog.dismiss();
+						/**
+						 * 下面这句还是老样子，调用快速拍照功能，至于为什么叫快速拍照，大家可以参考如下官方
+						 * 文档，you_sdk_path/docs/guide/topics/media/camera.html
+						 */
+						Intent intent = new Intent(
+								MediaStore.ACTION_IMAGE_CAPTURE);
+						// 打开图片所在目录，如果该目录不存在，则创建该目录
+						File dirFile = new File(Constants.ALBUM_PATH);
+						if (!dirFile.exists()) {
+							dirFile.mkdirs();
+						}
+						// 将图片保存到该目录下
+						intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri
+								.fromFile(new File(Constants.ALBUM_PATH,
+										"tmppic.jpg")));
+						startActivityForResult(intent, CAMERA_REQUEST_CODE);
+					}
+				}).show();
+	}
+
+	// 将取得的图片设置到控件上
+	// TODO：实现复用
+	private void setPicToView(Intent data) {
+		// 取得返回的数据
+		Bundle bundle = data.getExtras();
+		// 不为空则保存图片到本地并设置到控件上
+		if (bundle != null) {
+			Bitmap picture = bundle.getParcelable("data");
+			try {
+				ImageUtil.saveImage(picture, Constants.ALBUM_PATH,
+						"showpic.jpg");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			photoImg.setImageBitmap(picture);
+		}
+	}
+
+	/**
+	 * 将图片裁剪
+	 * 
+	 * @param uri
+	 *            图片的uri地址
+	 */
+	// TODO: 实现复用
+	private void startPhotoZoom(Uri uri) {
+		Log.v(TAG, "Zoom:" + uri.toString());
+		/*
+		 * 至于下面这个Intent的ACTION是怎么知道的，大家可以看下自己路径下的如下网页
+		 * yourself_sdk_path/docs/reference/android/content/Intent.html
+		 */
+		Intent intent = new Intent("com.android.camera.action.CROP");
+		intent.setDataAndType(uri, "image/*");
+		// 下面这个crop=true是设置在开启的Intent中设置显示的VIEW可裁剪
+		intent.putExtra("crop", "true");
+		// aspectX aspectY 是宽高的比例
+		intent.putExtra("aspectX", 1);
+		intent.putExtra("aspectY", 1);
+		// outputX outputY 是裁剪图片宽高
+		intent.putExtra("outputX", 150);
+		intent.putExtra("outputY", 150);
+		intent.putExtra("return-data", true);
+		startActivityForResult(intent, CROP_REQUEST_CODE);
 	}
 }

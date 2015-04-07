@@ -26,16 +26,19 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.zxing.WriterException;
 import com.wecall.contacts.adapter.SortAdapter;
+import com.wecall.contacts.constants.Constants;
 import com.wecall.contacts.database.DatabaseManager;
 import com.wecall.contacts.entity.ContactItem;
 import com.wecall.contacts.util.ImageUtil;
 import com.wecall.contacts.util.PinYin;
+import com.wecall.contacts.util.SPUtil;
 import com.wecall.contacts.view.ClearableEditText;
 import com.wecall.contacts.view.SideBar;
 import com.wecall.contacts.view.SideBar.onTouchLetterChangeListener;
@@ -43,7 +46,9 @@ import com.wecall.contacts.view.SideBar.onTouchLetterChangeListener;
 public class MainActivity extends Activity {
 
 	private static final String TAG = "MainActivity";
-	private static final int REQUEST_CODE = 1;
+	private static final int INFO_REQUEST_CODE = 1;
+	private static final int EDIT_REQUEST_CODE = 2;
+	private static final int SETTING_REQUEST_CODE = 3;
 
 	// 联系人列表控件
 	private ListView contactListView;
@@ -53,7 +58,16 @@ public class MainActivity extends Activity {
 	private ClearableEditText inputEditText;
 	// 显示当前选中的字母索引的文本控件
 	private TextView showAheadTV;
+	// 用户二维码
 	private ImageView qrcodeIMG;
+	// 用户头像
+	private ImageView ownerPhoto;
+	// 用户名，用户电话
+	private TextView ownerNameTV, ownerPhoneTV;
+	private String ownerName;
+	private String ownerPhone;
+	// 设置
+	private LinearLayout settingLL;
 	// 添加联系人按钮
 	private ImageButton addContactBtn;
 	// 排序的适配器
@@ -78,7 +92,11 @@ public class MainActivity extends Activity {
 		inputEditText = (ClearableEditText) findViewById(R.id.ed_input);
 		showAheadTV = (TextView) findViewById(R.id.tv_show_ahead);
 		addContactBtn = (ImageButton) findViewById(R.id.ibtn_addcontact);
-		qrcodeIMG = (ImageView)findViewById(R.id.iv_owner_qrcode);
+		qrcodeIMG = (ImageView) findViewById(R.id.iv_owner_qrcode);
+		ownerPhoto = (ImageView) findViewById(R.id.iv_owner_photo);
+		ownerNameTV = (TextView) findViewById(R.id.tv_owner_name);
+		ownerPhoneTV = (TextView) findViewById(R.id.tv_owner_phone);
+		settingLL = (LinearLayout) findViewById(R.id.ll_setting);
 		mManager = new DatabaseManager(this);
 		sideBar.setLetterShow(showAheadTV);
 
@@ -102,22 +120,19 @@ public class MainActivity extends Activity {
 				bundle.putInt("cid",
 						((ContactItem) adapter.getItem(arg2)).getId());
 				intent.putExtras(bundle);
-				startActivity(intent);
+				startActivityForResult(intent, INFO_REQUEST_CODE);
 			}
 		});
 
 		// 获取联系人信息
-		// TODO: use SQLite after
 		filledData(getResources().getStringArray(R.array.date));
-
+		inputEditText.setHint("可搜索" + contactList.size() + "位联系人");
 		// 将联系人按照字母的顺序排序
 		Collections.sort(contactList);
 		adapter = new SortAdapter(contactList, this);
 		contactListView.setAdapter(adapter);
 
 		inputEditText = (ClearableEditText) findViewById(R.id.ed_input);
-
-		inputEditText.setHint("可搜索" + contactList.size() + "位联系人");
 		// 根据输入框输入值的改变来过滤搜索
 		inputEditText.addTextChangedListener(new TextWatcher() {
 
@@ -143,27 +158,49 @@ public class MainActivity extends Activity {
 
 			@Override
 			public void onClick(View arg0) {
-				Intent intent = new Intent(MainActivity.this, ContactEditor.class);
+				Intent intent = new Intent(MainActivity.this,
+						ContactEditor.class);
 				Bundle bundle = new Bundle();
 				bundle.putInt("type", 1);
 				intent.putExtras(bundle);
-				startActivityForResult(intent, REQUEST_CODE);
+				startActivityForResult(intent, EDIT_REQUEST_CODE);
 			}
 		});
-		
-		setOwerQRCode();
+
+		settingLL.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				Intent intent = new Intent(MainActivity.this, Setting.class);
+				Bundle bundle = new Bundle();
+				bundle.putString("name", ownerName);
+				bundle.putString("phone", ownerPhone);
+				intent.putExtras(bundle);
+				startActivityForResult(intent, SETTING_REQUEST_CODE);
+			}
+		});
+		setOwnerInfo();
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		if (requestCode == REQUEST_CODE) {
+		Log.v(TAG, "requestcode:" + requestCode + " resultcode:" + resultCode);
+		if (requestCode == EDIT_REQUEST_CODE) {
 			if (resultCode == RESULT_OK) {
 				Toast.makeText(this, "添加成功", Toast.LENGTH_SHORT).show();
-				contactList = mManager.queryAllContact();
-				Collections.sort(contactList);
-				adapter.updateListView(contactList);
+				refreshContacts();
+			}
+		} else if (requestCode == INFO_REQUEST_CODE) {
+			// 删除联系人成功返回RESULT_OK
+			if (resultCode == RESULT_OK) {
+				Toast.makeText(this, "删除成功", Toast.LENGTH_SHORT).show();
+				refreshContacts();
+			}
+		} else if (requestCode == SETTING_REQUEST_CODE) {
+			if (resultCode == RESULT_OK) {
+				setOwnerInfo();
+				Toast.makeText(this, "用户信息修改成功", Toast.LENGTH_SHORT).show();
 			}
 		}
 	}
@@ -231,7 +268,7 @@ public class MainActivity extends Activity {
 
 				contactList.add(contactItem);
 			}
-			mManager.addContact(contactList);
+			mManager.addContacts(contactList);
 		}
 
 	}
@@ -263,14 +300,36 @@ public class MainActivity extends Activity {
 		adapter.updateListView(filterDateList);
 	}
 
-	private void setOwerQRCode(){
-		String name = "小新";
-		String phone = "13929514504";
+	@SuppressWarnings("unchecked")
+	private void refreshContacts() {
+		contactList = mManager.queryAllContact();
+		Collections.sort(contactList);
+		adapter.updateListView(contactList);
+		inputEditText.setHint("可搜索" + contactList.size() + "位联系人");
+	}
+
+	/**
+	 * 设置用户信息
+	 */
+	private void setOwnerInfo() {
+		ownerName = (String) SPUtil.get(MainActivity.this, "name", "小新");
+		ownerPhone = (String) SPUtil.get(MainActivity.this, "phone",
+				"13929514504");
+
+		ownerNameTV.setText(ownerName);
+		ownerPhoneTV.setText(ownerPhone);
+		Bitmap userPhoto = ImageUtil.getLocalBitmap(Constants.ALBUM_PATH,
+				"user.jpg");
+		if (userPhoto == null) {
+			ownerPhoto.setImageResource(R.drawable.ic_contact_picture);
+		} else {
+			ownerPhoto.setImageBitmap(userPhoto);
+		}
 		JSONObject jsonObject = new JSONObject();
-		Bitmap bitmap = null ;
+		Bitmap bitmap = null;
 		try {
-			jsonObject.put("name", name);
-			jsonObject.put("phone", phone);
+			jsonObject.put("name", ownerName);
+			jsonObject.put("phone", ownerPhone);
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -281,8 +340,10 @@ public class MainActivity extends Activity {
 		}
 		qrcodeIMG.setImageBitmap(bitmap);
 	}
-	
-	/** 产生随机号码，测试用
+
+	/**
+	 * 产生随机号码，测试用
+	 * 
 	 * @return 随机号码
 	 */
 	private String genRandomPhone() {

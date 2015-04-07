@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.zxing.WriterException;
+import com.wecall.contacts.constants.Constants;
 import com.wecall.contacts.database.DatabaseManager;
 import com.wecall.contacts.entity.ContactItem;
 import com.wecall.contacts.util.ImageUtil;
@@ -29,25 +30,27 @@ import com.wecall.contacts.view.IconTextView;
 
 /**
  * 联系人详情
- * @author xiaoxin
- * 2014-3-30
+ * 
+ * @author xiaoxin 2014-3-30
  */
 public class ContactInfo extends Activity {
 
 	private static final int REQUEST_CODE = 3;
-	
-	//各种信息的显示标签
-	private TextView nameTV,addressTV,noteTV;
-	//返回键
+
+	// 各种信息的显示标签
+	private TextView nameTV, addressTV, noteTV;
+	// 返回键
 	private ImageButton backIB;
-	//电话号码所在的条，集成打电话，发短信功能
+	// 电话号码所在的条，集成打电话，发短信功能
 	private DetailBar phoneNumBar;
-	//显示二维码
+	// 显示二维码
 	private ImageView testImg;
-	//数据库管理对象
+	// 联系人头像
+	private ImageView photoImg;
+	// 数据库管理对象
 	private DatabaseManager mManager;
-	private IconTextView editITV,deleteITV;
-	
+	private IconTextView editITV, deleteITV;
+
 	private int cid;
 	private ContactItem contact;
 
@@ -55,11 +58,11 @@ public class ContactInfo extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.contact_info);
-		//初始化控件
+		// 初始化控件
 		initView();
 	}
 
-	//初始化控件
+	// 初始化控件
 	private void initView() {
 		nameTV = (TextView) findViewById(R.id.tv_contact_name);
 		addressTV = (TextView) findViewById(R.id.tv_adress_show);
@@ -69,11 +72,13 @@ public class ContactInfo extends Activity {
 		testImg = (ImageView) findViewById(R.id.iv_test);
 		editITV = (IconTextView) findViewById(R.id.itv_edit);
 		deleteITV = (IconTextView) findViewById(R.id.itv_delete);
+		photoImg = (ImageView) findViewById(R.id.img_contact_photo);
+
 		mManager = new DatabaseManager(this);
-		
+
 		Bundle bundle = getIntent().getExtras();
 		cid = bundle.getInt("cid");
-		
+
 		updateView(cid);
 
 		backIB.setOnClickListener(new OnClickListener() {
@@ -104,15 +109,16 @@ public class ContactInfo extends Activity {
 
 			@Override
 			public void infoClick() {
-				
+
 			}
 		});
-		
+
 		editITV.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View arg0) {
-				Intent intent = new Intent(ContactInfo.this,ContactEditor.class);
+				Intent intent = new Intent(ContactInfo.this,
+						ContactEditor.class);
 				Bundle bund = new Bundle();
 				bund.putInt("type", 2);
 				bund.putInt("cid", cid);
@@ -120,12 +126,13 @@ public class ContactInfo extends Activity {
 				startActivityForResult(intent, REQUEST_CODE);
 			}
 		});
-		
+
 		deleteITV.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View arg0) {
 				mManager.deleteContact(cid);
+				setResult(RESULT_OK);
 				finish();
 			}
 		});
@@ -146,19 +153,19 @@ public class ContactInfo extends Activity {
 			e.printStackTrace();
 		}
 	}
-	
+
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		if(requestCode==REQUEST_CODE){
-			if(resultCode==RESULT_OK){
+		if (requestCode == REQUEST_CODE) {
+			if (resultCode == RESULT_OK) {
 				updateView(cid);
 				Toast.makeText(this, "编辑成功", Toast.LENGTH_SHORT).show();
 			}
 		}
 	}
-	
-	private void updateView(int cid){
+
+	private void updateView(int cid) {
 		contact = mManager.queryContactById(cid);
 
 		SpannableStringBuilder styled = StringUtil.colorString(
@@ -168,5 +175,17 @@ public class ContactInfo extends Activity {
 		addressTV.setText(StringUtil.formatString(contact.getAddress()));
 		noteTV.setText(StringUtil.formatString(contact.getNote()));
 		phoneNumBar.setInfo(contact.getPhoneNumber());
+		showContactPhoto();
+	}
+
+	private void showContactPhoto() {
+		// 如果能找到用户设定的头像，则将头像设置为用户自定义的头像，否则，设置为默认图片
+		Bitmap userPhoto = ImageUtil.getLocalBitmap(Constants.ALBUM_PATH,
+				"pic"+cid+".jpg");
+		if (userPhoto == null) {
+			photoImg.setImageResource(R.drawable.ic_contact_picture);
+		} else {
+			photoImg.setImageBitmap(userPhoto);
+		}
 	}
 }

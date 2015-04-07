@@ -26,8 +26,8 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:singleLine="true"
-            android:text="小新"
-            android:textSize="30sp" />
+            android:layout_marginLeft="10dp"
+            android:textSize="25sp" />
 		</LinearLayout>
         <TextView
             android:id="@+id/tv_owner_phone"
@@ -35,8 +35,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:singleLine="true"
-            android:text="13929514504"
-            android:textSize="30sp"
+            android:textSize="25sp"
             android:layout_margin="20dp" />
 
         <ImageView
@@ -48,6 +47,7 @@
             android:layout_marginBottom="20dp" />
 
         <LinearLayout
+            android:id="@+id/ll_setting"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
@@ -63,8 +63,8 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:singleLine="true"
-                android:text="设置"
-                android:textSize="30sp" />
+                android:text="@string/setting"
+                android:textSize="25sp" />
         </LinearLayout>
     </LinearLayout>
 

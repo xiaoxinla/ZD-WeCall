@@ -32,6 +32,7 @@
     <ScrollView
         android:layout_width="fill_parent"
         android:layout_height="0dp"
+        android:scrollbars="none"
         android:layout_weight="1" >
 
         <LinearLayout
@@ -39,6 +40,11 @@
             android:layout_height="fill_parent"
             android:orientation="vertical" >
 
+            <ImageView android:id="@+id/img_contact_photo"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_gravity="center_horizontal"/>
+            
             <com.wecall.contacts.view.DetailBar
                 android:id="@+id/phone_num"
                 android:layout_width="fill_parent"
