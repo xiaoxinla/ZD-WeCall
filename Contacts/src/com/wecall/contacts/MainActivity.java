@@ -36,6 +36,7 @@ import com.wecall.contacts.adapter.SortAdapter;
 import com.wecall.contacts.constants.Constants;
 import com.wecall.contacts.database.DatabaseManager;
 import com.wecall.contacts.entity.ContactItem;
+import com.wecall.contacts.util.EncodeUtil;
 import com.wecall.contacts.util.ImageUtil;
 import com.wecall.contacts.util.PinYin;
 import com.wecall.contacts.util.SPUtil;
@@ -333,8 +334,15 @@ public class MainActivity extends Activity {
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
+		String codedJson;
 		try {
-			bitmap = ImageUtil.CreateQRCode(jsonObject.toString());
+			try {
+				codedJson = EncodeUtil.encrypt(Constants.AESKEY, jsonObject.toString());
+			} catch (Exception e) {
+				codedJson = jsonObject.toString();
+				e.printStackTrace();
+			}
+			bitmap = ImageUtil.CreateQRCode(codedJson);
 		} catch (WriterException e) {
 			e.printStackTrace();
 		}

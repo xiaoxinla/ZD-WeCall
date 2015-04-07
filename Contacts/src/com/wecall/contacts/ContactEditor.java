@@ -25,6 +25,7 @@ import android.widget.Toast;
 import com.wecall.contacts.constants.Constants;
 import com.wecall.contacts.database.DatabaseManager;
 import com.wecall.contacts.entity.ContactItem;
+import com.wecall.contacts.util.EncodeUtil;
 import com.wecall.contacts.util.ImageUtil;
 import com.wecall.contacts.view.DetailBar;
 import com.wecall.contacts.view.DetailBar.DetailBarClickListener;
@@ -166,17 +167,33 @@ public class ContactEditor extends Activity {
 			switch (requestCode) {
 			case SCAN_REQUEST_CODE:
 				Bundle bundle = data.getExtras();
+				String obtained = bundle.getString("result");
 				try {
-					JSONObject jsonObject = new JSONObject(
-							bundle.getString("result"));
+					JSONObject jsonObject = new JSONObject(obtained);
 					String name = jsonObject.getString("name");
 					String phone = jsonObject.getString("phone");
 					nameET.setText(name);
 					phoneET.setText(phone);
 				} catch (JSONException e) {
 					e.printStackTrace();
-					Toast.makeText(this, "无效联系人：" + bundle.getString("result"),
-							Toast.LENGTH_LONG).show();
+					try {
+						JSONObject jsonObject = new JSONObject(
+								EncodeUtil.decrypt(Constants.AESKEY, obtained));
+						String name = jsonObject.getString("name");
+						String phone = jsonObject.getString("phone");
+						nameET.setText(name);
+						phoneET.setText(phone);
+					} catch (JSONException e1) {
+						e1.printStackTrace();
+						Toast.makeText(this,
+								"无效联系人：" + bundle.getString("result"),
+								Toast.LENGTH_LONG).show();
+					} catch (Exception e1) {
+						e1.printStackTrace();
+						Toast.makeText(this,
+								"无效联系人：" + bundle.getString("result"),
+								Toast.LENGTH_LONG).show();
+					}
 				}
 				break;
 			// 从相册返回
@@ -201,7 +218,7 @@ public class ContactEditor extends Activity {
 		}
 
 	}
-	
+
 	@Override
 	protected void onDestroy() {
 		ImageUtil.deleteImage(Constants.ALBUM_PATH, "tmppic.jpg");

@@ -136,6 +136,10 @@ public class ContactItem implements Comparable {
 	}
 	
 	@SuppressLint("DefaultLocale") private void setSortLetter(String inputString){
+		if(inputString.isEmpty()){
+			this.sortLetter = "#";
+			return;
+		}
 		String sortString = inputString.substring(0, 1).toUpperCase();
 		// 正则表达式，判断首字母是否是英文字母
 		if (sortString.matches("[A-Z]")) {

@@ -18,7 +18,8 @@ public class Constants {
 	//保存图片的目录
 	public static final String ALBUM_PATH = Environment.getExternalStorageDirectory()
 			+ "/wecall/picture/";
-	
+	//AES秘钥
+	public static final String AESKEY = "xiaoxin";
 	
 	//首页侧滑菜单栏与屏幕差
 	public static final int INIT_MENU_PADDING = 100;

@@ -22,6 +22,7 @@ import com.google.zxing.WriterException;
 import com.wecall.contacts.constants.Constants;
 import com.wecall.contacts.database.DatabaseManager;
 import com.wecall.contacts.entity.ContactItem;
+import com.wecall.contacts.util.EncodeUtil;
 import com.wecall.contacts.util.ImageUtil;
 import com.wecall.contacts.util.StringUtil;
 import com.wecall.contacts.view.DetailBar;
@@ -140,6 +141,7 @@ public class ContactInfo extends Activity {
 		try {
 			JSONObject jsonObject = new JSONObject();
 			String name = contact.getName();
+			String codedJson;
 			try {
 				jsonObject.put("name", name);
 				jsonObject.put("phone", phoneNumber);
@@ -147,7 +149,13 @@ public class ContactInfo extends Activity {
 				e.printStackTrace();
 			}
 			Log.v("TAG", jsonObject.toString());
-			Bitmap bitmap = ImageUtil.CreateQRCode(jsonObject.toString());
+			try {
+				codedJson = EncodeUtil.encrypt(Constants.AESKEY, jsonObject.toString());
+			} catch (Exception e) {
+				codedJson = jsonObject.toString();
+				e.printStackTrace();
+			}
+			Bitmap bitmap = ImageUtil.CreateQRCode(codedJson);
 			testImg.setImageBitmap(bitmap);
 		} catch (WriterException e) {
 			e.printStackTrace();
