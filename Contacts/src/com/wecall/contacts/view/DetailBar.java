@@ -1,7 +1,5 @@
 package com.wecall.contacts.view;
 
-import com.wecall.contacts.R;
-
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
@@ -9,8 +7,10 @@ import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
-import android.widget.RelativeLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.wecall.contacts.R;
 
 /**
  * 自定义个人详细信息tab
@@ -18,7 +18,7 @@ import android.widget.TextView;
  * @author xiaoxin
  *
  */
-public class DetailBar extends RelativeLayout {
+public class DetailBar extends LinearLayout {
 
 	//内部的控件
 	private Button leftBtn,rightBtn;
@@ -116,23 +116,18 @@ public class DetailBar extends RelativeLayout {
 		tvInfo.setTextColor(infoTextColor);
 		tvInfo.setTextSize(infoTextSize);
 		tvInfo.setBackgroundDrawable(infoBackground);
-		tvInfo.setGravity(Gravity.CENTER);
-		
-		//setBackgroundColor(0xfff59563);
+		tvInfo.setGravity(Gravity.CENTER_VERTICAL);
 		
 		leftParams = new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT);
-		leftParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT,TRUE);
-		leftParams.addRule(RelativeLayout.CENTER_VERTICAL,TRUE);
 		addView(leftBtn,leftParams);
+
+		infoParams = new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT);
+		infoParams.weight = 1;
+		addView(tvInfo,infoParams);
 		
 		rightParams = new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT);
-		rightParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT,TRUE);
-		rightParams.addRule(RelativeLayout.CENTER_VERTICAL,TRUE);
 		addView(rightBtn,rightParams);
 		
-		infoParams = new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.MATCH_PARENT);
-		infoParams.addRule(RelativeLayout.CENTER_IN_PARENT,TRUE);
-		addView(tvInfo,infoParams);
 		
 		leftBtn.setOnClickListener(new OnClickListener() {
 			

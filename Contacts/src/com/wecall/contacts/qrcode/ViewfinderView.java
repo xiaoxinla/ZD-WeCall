@@ -19,6 +19,7 @@ package com.wecall.contacts.qrcode;
 import java.util.Collection;
 import java.util.HashSet;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -40,7 +41,7 @@ import com.wecall.contacts.R;
  * 
  */
 public final class ViewfinderView extends View {
-	private static final String TAG = "log";
+	//private static final String TAG = "log";
 	/**
 	 * 刷新界面的时间
 	 */
@@ -97,6 +98,7 @@ public final class ViewfinderView extends View {
 	/**
 	 * 中间滑动线的最底端位置
 	 */
+	@SuppressWarnings("unused")
 	private int slideBottom;
 	
 	/**
@@ -128,7 +130,7 @@ public final class ViewfinderView extends View {
 		possibleResultPoints = new HashSet<ResultPoint>(5);
 	}
 
-	@Override
+	@SuppressLint("DrawAllocation") @Override
 	public void onDraw(Canvas canvas) {
 		//中间的扫描框，你要修改扫描框的大小，去CameraManager里面修改
 		Rect frame = CameraManager.get().getFramingRect();

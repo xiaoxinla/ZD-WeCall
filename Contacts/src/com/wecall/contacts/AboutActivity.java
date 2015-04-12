@@ -2,9 +2,7 @@ package com.wecall.contacts;
 
 import android.app.Activity;
 import android.os.Bundle;
-
-import com.wecall.contacts.view.DetailBar;
-import com.wecall.contacts.view.DetailBar.DetailBarClickListener;
+import android.view.MenuItem;
 
 /**
  * 关于信息Activity
@@ -13,30 +11,21 @@ import com.wecall.contacts.view.DetailBar.DetailBarClickListener;
  */
 public class AboutActivity extends Activity {
 
-	private DetailBar topBar;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_about);
 		
-		topBar=(DetailBar) findViewById(R.id.db_about_topbar);
-		topBar.setOnDetailBarClickListener(new DetailBarClickListener() {
-			
-			@Override
-			public void rightClick() {
-				
-			}
-			
-			@Override
-			public void leftClick() {
-				finish();
-			}
-			
-			@Override
-			public void infoClick() {
-				
-			}
-		});
+		getActionBar().setDisplayHomeAsUpEnabled(true);
+		getActionBar().setDisplayShowHomeEnabled(false);
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		if (item.getItemId()==android.R.id.home) {
+			finish();
+		}
+		return super.onOptionsItemSelected(item);
 	}
 }

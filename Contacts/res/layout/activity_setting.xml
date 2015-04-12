@@ -4,28 +4,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
-
-	<com.wecall.contacts.view.DetailBar 
-	    android:id="@+id/db_setting_topbar"
-	    android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:background="@drawable/mmtitle_bg_alpha"
-        custom:infoText="@string/setting"
-        custom:infoTextColor="#ffffff"
-        custom:infoTextSize="10sp"
-        custom:leftText="@string/returnlast"
-        custom:leftTextColor="#ffffff"
-        custom:leftTextSize="10sp"
-        custom:leftBackground="@drawable/mm_title_back_btn"
-	    >
-	    
-	</com.wecall.contacts.view.DetailBar>
     
     <TextView android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="20sp"
         android:layout_margin="15dp"
-        android:text="个人信息"/>
+        android:text="@string/personinfo"/>
     
     <ImageButton android:id="@+id/ibtn_setting_photo"
         android:layout_width="100dp"
@@ -49,7 +33,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
-            android:hint="请输入姓名"/>
+            android:hint="@string/inputname"/>
     </LinearLayout>
     
     <LinearLayout android:layout_width="fill_parent"
@@ -67,7 +51,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
             android:inputType="phone"
-            android:hint="请输入电话"/>
+            android:hint="@string/inputphone"/>
     </LinearLayout>
     
     <Button android:id="@+id/btn_setting_confire"

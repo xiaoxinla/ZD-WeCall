@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -22,8 +23,6 @@ import android.widget.LinearLayout;
 import com.wecall.contacts.constants.Constants;
 import com.wecall.contacts.util.ImageUtil;
 import com.wecall.contacts.util.SPUtil;
-import com.wecall.contacts.view.DetailBar;
-import com.wecall.contacts.view.DetailBar.DetailBarClickListener;
 
 /**
  * 设置页Activity
@@ -41,7 +40,6 @@ public class Setting extends Activity {
 	// Activity上的控件们
 	private EditText nameET, phoneET;
 	private Button confireBTN;
-	private DetailBar topBar;
 	private LinearLayout aboutLayout;
 	private ImageButton pictureIBTN;
 
@@ -53,10 +51,29 @@ public class Setting extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_setting);
+		
+		getActionBar().setIcon(R.drawable.ic_menu_back);
+		getActionBar().setDisplayShowHomeEnabled(false);
+		getActionBar().setDisplayHomeAsUpEnabled(true);
+		
 		// 初始化控件
 		initView();
 		// 初始化数据
 		initData();
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			Log.v(TAG, "home click");
+			finish();
+			break;
+
+		default:
+			break;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 
 	// 初始化控件
@@ -64,7 +81,6 @@ public class Setting extends Activity {
 		nameET = (EditText) findViewById(R.id.et_setting_name);
 		phoneET = (EditText) findViewById(R.id.et_setting_phone);
 		confireBTN = (Button) findViewById(R.id.btn_setting_confire);
-		topBar = (DetailBar) findViewById(R.id.db_setting_topbar);
 		aboutLayout = (LinearLayout) findViewById(R.id.ll_setting_about);
 		pictureIBTN = (ImageButton) findViewById(R.id.ibtn_setting_photo);
 		confireBTN.setOnClickListener(new OnClickListener() {
@@ -79,25 +95,6 @@ public class Setting extends Activity {
 				// 设置成功，并结束
 				setResult(RESULT_OK);
 				finish();
-			}
-		});
-
-		// 实现topBar的自定义点击事件
-		topBar.setOnDetailBarClickListener(new DetailBarClickListener() {
-
-			@Override
-			public void rightClick() {
-
-			}
-
-			@Override
-			public void leftClick() {
-				finish();
-			}
-
-			@Override
-			public void infoClick() {
-
 			}
 		});
 

@@ -1,9 +1,14 @@
 package com.wecall.contacts;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -11,8 +16,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.SpannableStringBuilder;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup.LayoutParams;
+import android.view.ViewGroup.MarginLayoutParams;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -25,9 +34,7 @@ import com.wecall.contacts.entity.ContactItem;
 import com.wecall.contacts.util.EncodeUtil;
 import com.wecall.contacts.util.ImageUtil;
 import com.wecall.contacts.util.StringUtil;
-import com.wecall.contacts.view.DetailBar;
-import com.wecall.contacts.view.DetailBar.DetailBarClickListener;
-import com.wecall.contacts.view.IconTextView;
+import com.wecall.contacts.view.FlowLayout;
 
 /**
  * 联系人详情
@@ -40,17 +47,16 @@ public class ContactInfo extends Activity {
 
 	// 各种信息的显示标签
 	private TextView nameTV, addressTV, noteTV;
-	// 返回键
-	private ImageButton backIB;
-	// 电话号码所在的条，集成打电话，发短信功能
-	private DetailBar phoneNumBar;
+	private ImageButton callImageButton,msgImageButton;
+	private TextView phoneTV;
 	// 显示二维码
 	private ImageView testImg;
 	// 联系人头像
 	private ImageView photoImg;
+	// 标签栏
+	private FlowLayout labelLayout;
 	// 数据库管理对象
 	private DatabaseManager mManager;
-	private IconTextView editITV, deleteITV;
 
 	private int cid;
 	private ContactItem contact;
@@ -59,8 +65,41 @@ public class ContactInfo extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.contact_info);
+
+		getActionBar().setDisplayHomeAsUpEnabled(true);
+		getActionBar().setDisplayShowHomeEnabled(false);
+
 		// 初始化控件
 		initView();
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.contact_info_menu, menu);
+		return super.onCreateOptionsMenu(menu);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			finish();
+			break;
+		case R.id.action_contact_edit:
+			Intent intent = new Intent(ContactInfo.this, ContactEditor.class);
+			Bundle bund = new Bundle();
+			bund.putInt("type", 2);
+			bund.putInt("cid", cid);
+			intent.putExtras(bund);
+			startActivityForResult(intent, REQUEST_CODE);
+			break;
+		case R.id.action_contact_delete:
+			showDeleteDialog();
+			break;
+		default:
+			break;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 
 	// 初始化控件
@@ -68,12 +107,12 @@ public class ContactInfo extends Activity {
 		nameTV = (TextView) findViewById(R.id.tv_contact_name);
 		addressTV = (TextView) findViewById(R.id.tv_adress_show);
 		noteTV = (TextView) findViewById(R.id.tv_note_show);
-		backIB = (ImageButton) findViewById(R.id.back_to_homepage);
-		phoneNumBar = (DetailBar) findViewById(R.id.phone_num);
+		phoneTV = (TextView) findViewById(R.id.tv_phone_info);
+		callImageButton = (ImageButton) findViewById(R.id.ibtn_phone_call);
+		msgImageButton = (ImageButton) findViewById(R.id.ibtn_phone_msg);
 		testImg = (ImageView) findViewById(R.id.iv_test);
-		editITV = (IconTextView) findViewById(R.id.itv_edit);
-		deleteITV = (IconTextView) findViewById(R.id.itv_delete);
 		photoImg = (ImageView) findViewById(R.id.img_contact_photo);
+		labelLayout = (FlowLayout) findViewById(R.id.fl_label_show);
 
 		mManager = new DatabaseManager(this);
 
@@ -82,59 +121,33 @@ public class ContactInfo extends Activity {
 
 		updateView(cid);
 
-		backIB.setOnClickListener(new OnClickListener() {
+		final String phoneNumber = phoneTV.getText().toString();
 
+		callImageButton.setOnClickListener(new OnClickListener() {
+			
 			@Override
 			public void onClick(View arg0) {
-				finish();
+				if(phoneNumber.equals("无")){
+					Toast.makeText(ContactInfo.this, "号码为空，无法拨打电话", Toast.LENGTH_SHORT).show();
+				}else {
+					Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:"
+							+ phoneNumber));
+					ContactInfo.this.startActivity(intent);					
+				}
 			}
 		});
-
-		final String phoneNumber = phoneNumBar.getInfo().toString();
-
-		phoneNumBar.setOnDetailBarClickListener(new DetailBarClickListener() {
-
+		
+		msgImageButton.setOnClickListener(new OnClickListener() {
+			
 			@Override
-			public void leftClick() {
-				Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:"
-						+ phoneNumber));
-				ContactInfo.this.startActivity(intent);
-			}
-
-			@Override
-			public void rightClick() {
-				Intent intent = new Intent(Intent.ACTION_SENDTO, Uri
-						.parse("smsto:" + phoneNumber));
-				ContactInfo.this.startActivity(intent);
-			}
-
-			@Override
-			public void infoClick() {
-
-			}
-		});
-
-		editITV.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View arg0) {
-				Intent intent = new Intent(ContactInfo.this,
-						ContactEditor.class);
-				Bundle bund = new Bundle();
-				bund.putInt("type", 2);
-				bund.putInt("cid", cid);
-				intent.putExtras(bund);
-				startActivityForResult(intent, REQUEST_CODE);
-			}
-		});
-
-		deleteITV.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View arg0) {
-				mManager.deleteContact(cid);
-				setResult(RESULT_OK);
-				finish();
+			public void onClick(View v) {
+				if(phoneNumber.equals("无")){
+					Toast.makeText(ContactInfo.this, "电话为空，无法发送短信", Toast.LENGTH_SHORT).show();
+				}else {
+					Intent intent = new Intent(Intent.ACTION_SENDTO, Uri
+							.parse("smsto:" + phoneNumber));
+					ContactInfo.this.startActivity(intent);					
+				}
 			}
 		});
 
@@ -150,12 +163,13 @@ public class ContactInfo extends Activity {
 			}
 			Log.v("TAG", jsonObject.toString());
 			try {
-				codedJson = EncodeUtil.encrypt(Constants.AESKEY, jsonObject.toString());
+				codedJson = EncodeUtil.encrypt(Constants.AESKEY,
+						jsonObject.toString());
 			} catch (Exception e) {
 				codedJson = jsonObject.toString();
 				e.printStackTrace();
 			}
-			Bitmap bitmap = ImageUtil.CreateQRCode(codedJson);
+			Bitmap bitmap = ImageUtil.CreateQRCode(codedJson, 300);
 			testImg.setImageBitmap(bitmap);
 		} catch (WriterException e) {
 			e.printStackTrace();
@@ -177,23 +191,70 @@ public class ContactInfo extends Activity {
 		contact = mManager.queryContactById(cid);
 
 		SpannableStringBuilder styled = StringUtil.colorString(
-				contact.getName(), 1, 2, Color.RED);
+				contact.getName(), 0, 1, Color.RED);
 		nameTV.setText(styled);
 		// nameTV.setText(bundle.getString("cname"));
 		addressTV.setText(StringUtil.formatString(contact.getAddress()));
 		noteTV.setText(StringUtil.formatString(contact.getNote()));
-		phoneNumBar.setInfo(contact.getPhoneNumber());
+		phoneTV.setText(StringUtil.formatString(contact.getPhoneNumber()));
 		showContactPhoto();
+		setLabels();
 	}
 
 	private void showContactPhoto() {
 		// 如果能找到用户设定的头像，则将头像设置为用户自定义的头像，否则，设置为默认图片
-		Bitmap userPhoto = ImageUtil.getLocalBitmap(Constants.ALBUM_PATH,
-				"pic"+cid+".jpg");
+		Bitmap userPhoto = ImageUtil.getLocalBitmap(Constants.ALBUM_PATH, "pic"
+				+ cid + ".jpg");
 		if (userPhoto == null) {
 			photoImg.setImageResource(R.drawable.ic_contact_picture);
 		} else {
 			photoImg.setImageBitmap(userPhoto);
 		}
+	}
+
+	/**
+	 * 设置联系人的表签
+	 */
+	private void setLabels() {
+		List<String> labelNames = new ArrayList<String>();
+		labelNames.add("逗比");
+		labelNames.add("什么鬼");
+		labelNames.add("幼儿园同床");
+		labelNames.add("作死星人");
+		labelNames.add("你来咬我呀！");
+		labelNames.add("柔情信仰战");
+		labelNames.add("小猫咪");
+		labelNames.add("一直跟我抢麦");
+		labelNames.add("微讯团队");
+
+		for (int i = 0; i < labelNames.size(); i++) {
+			TextView tv = new TextView(this);
+			MarginLayoutParams lp = new MarginLayoutParams(
+					LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+			lp.setMargins(5, 8, 0, 0);
+			tv.setText(labelNames.get(i));
+			tv.setBackgroundResource(R.drawable.label_bg);
+			labelLayout.addView(tv, lp);
+		}
+	}
+	
+	private void showDeleteDialog(){
+		new AlertDialog.Builder(this).setTitle("是否确认删除？").setPositiveButton("是", new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface arg0, int arg1) {
+				arg0.dismiss();
+				mManager.deleteContact(cid);
+				ImageUtil.deleteImage(Constants.ALBUM_PATH, "pic"+cid+".jpg");
+				setResult(RESULT_OK);
+				finish();
+			}
+		}).setNegativeButton("否", new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.dismiss();
+			}
+		}).show();
 	}
 }

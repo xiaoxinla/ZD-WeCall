@@ -38,12 +38,18 @@
 	        android:background="@null"/>
 	    
 	    <EditText android:id="@+id/et_name_add"
-	        android:layout_width="fill_parent"
+	        android:layout_width="0dp"
 	        android:layout_height="wrap_content"
 	        android:singleLine="true"
 	        android:textSize="15sp"
+	        android:layout_weight="1"
 	        android:hint="@string/name"
 	        />
+	    <ImageButton android:id="@+id/btn_scan"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:src="@drawable/men_scan_icon"
+	    />
 	</LinearLayout>
 	
 	<EditText android:id="@+id/et_phone_add"
@@ -68,9 +74,26 @@
 	        android:textSize="15sp"
 	        android:hint="@string/note"
 	        />
-	<Button android:id="@+id/btn_scan"
-	    android:layout_width="fill_parent"
+	<RelativeLayout android:layout_width="fill_parent"
 	    android:layout_height="wrap_content"
-	    android:text="@string/scanQR"/>"
+	    android:gravity="center_vertical">
+	    <TextView android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="标签"
+	        android:textSize="20sp"
+	        android:layout_marginLeft="15dp"
+	        android:layout_marginTop="10dp"/>
+	    <Button android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="编辑"
+	        android:layout_alignParentRight="true"
+	        android:textSize="15sp"/>
+	</RelativeLayout>
 
+	<com.wecall.contacts.view.FlowLayout 
+	    android:id="@+id/fl_editor_label"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content">
+	    
+	</com.wecall.contacts.view.FlowLayout>
 </LinearLayout>
