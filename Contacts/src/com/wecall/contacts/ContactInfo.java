@@ -35,6 +35,7 @@ import com.wecall.contacts.util.EncodeUtil;
 import com.wecall.contacts.util.ImageUtil;
 import com.wecall.contacts.util.StringUtil;
 import com.wecall.contacts.view.FlowLayout;
+import com.wecall.contacts.view.TextViewWithTitle;
 
 /**
  * 联系人详情
@@ -46,8 +47,9 @@ public class ContactInfo extends Activity {
 	private static final int REQUEST_CODE = 3;
 
 	// 各种信息的显示标签
-	private TextView nameTV, addressTV, noteTV;
+	private TextView nameTV;
 	private ImageButton callImageButton,msgImageButton;
+	private TextViewWithTitle addressTVT,noteTVT;
 	private TextView phoneTV;
 	// 显示二维码
 	private ImageView testImg;
@@ -105,8 +107,8 @@ public class ContactInfo extends Activity {
 	// 初始化控件
 	private void initView() {
 		nameTV = (TextView) findViewById(R.id.tv_contact_name);
-		addressTV = (TextView) findViewById(R.id.tv_adress_show);
-		noteTV = (TextView) findViewById(R.id.tv_note_show);
+		addressTVT = (TextViewWithTitle) findViewById(R.id.tvt_address);
+		noteTVT = (TextViewWithTitle) findViewById(R.id.tvt_note);
 		phoneTV = (TextView) findViewById(R.id.tv_phone_info);
 		callImageButton = (ImageButton) findViewById(R.id.ibtn_phone_call);
 		msgImageButton = (ImageButton) findViewById(R.id.ibtn_phone_msg);
@@ -194,8 +196,8 @@ public class ContactInfo extends Activity {
 				contact.getName(), 0, 1, Color.RED);
 		nameTV.setText(styled);
 		// nameTV.setText(bundle.getString("cname"));
-		addressTV.setText(StringUtil.formatString(contact.getAddress()));
-		noteTV.setText(StringUtil.formatString(contact.getNote()));
+		addressTVT.setText(StringUtil.formatString(contact.getAddress()));
+		noteTVT.setText(StringUtil.formatString(contact.getNote()));
 		phoneTV.setText(StringUtil.formatString(contact.getPhoneNumber()));
 		showContactPhoto();
 		setLabels();
@@ -231,9 +233,10 @@ public class ContactInfo extends Activity {
 			TextView tv = new TextView(this);
 			MarginLayoutParams lp = new MarginLayoutParams(
 					LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-			lp.setMargins(5, 8, 0, 0);
+			lp.setMargins(7, 10, 0, 0);
 			tv.setText(labelNames.get(i));
 			tv.setBackgroundResource(R.drawable.label_bg);
+			tv.setTextSize(15);
 			labelLayout.addView(tv, lp);
 		}
 	}
@@ -256,5 +259,10 @@ public class ContactInfo extends Activity {
 				dialog.dismiss();
 			}
 		}).show();
+	}
+	
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
 	}
 }

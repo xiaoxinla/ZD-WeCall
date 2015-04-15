@@ -60,6 +60,14 @@ public class CommonUtil {
 		return list;
 	}
 
+	/**
+	 * 通知栏消息提醒
+	 * @param context
+	 * @param iconid
+	 * @param tickerText
+	 * @param contentTitle
+	 * @param contentText
+	 */
 	@SuppressWarnings("deprecation")
 	public static void notifyMessage(Context context, int iconid,
 			String tickerText, String contentTitle, String contentText) {

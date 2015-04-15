@@ -1,16 +1,12 @@
 package com.wecall.contacts.fragment;
 
-import java.util.List;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -18,19 +14,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.zxing.WriterException;
 import com.wecall.contacts.R;
 import com.wecall.contacts.Setting;
 import com.wecall.contacts.constants.Constants;
-import com.wecall.contacts.database.DatabaseManager;
-import com.wecall.contacts.entity.ContactItem;
-import com.wecall.contacts.util.CommonUtil;
 import com.wecall.contacts.util.EncodeUtil;
 import com.wecall.contacts.util.ImageUtil;
 import com.wecall.contacts.util.SPUtil;
@@ -44,37 +35,11 @@ public class MineFragment extends Fragment {
 
 	private static final String TAG = "MineFragment";
 	private static final int SETTING_REQUEST_CODE = 3;
-	private static final int LOCAL_CONTACTS_OBTAINED = 3;
 	private ImageView userPhoto, qrcodeImage;
 	private TextView nameTextView, phoneTextView;
 	private LinearLayout settingLayout;
-	private Button loadButton;
 
 	private String userName, userPhone;
-	private List<ContactItem> contactList;
-	private DatabaseManager mManager;
-
-	@SuppressLint("HandlerLeak")
-	private Handler handler = new Handler() {
-
-		@Override
-		public void handleMessage(Message msg) {
-			switch (msg.what) {
-			case LOCAL_CONTACTS_OBTAINED:
-//				Log.v(TAG, "LocalContacts:" + contactList.toString());
-				Log.v(TAG, "LOCAL_CONTACTS_OBTAINED");
-				CommonUtil.notifyMessage(getActivity(), R.drawable.icon_1,
-						"加载完毕", "加载完毕", "本地联系人加载完毕");
-				updateContacts();
-				break;
-
-			default:
-				break;
-			}
-			super.handleMessage(msg);
-		}
-
-	};
 
 	@Override
 	public View onCreateView(LayoutInflater inflater,
@@ -91,7 +56,6 @@ public class MineFragment extends Fragment {
 	}
 
 	private void findView(View view) {
-		loadButton = (Button) view.findViewById(R.id.btn_load_contact);
 		userPhoto = (ImageView) view.findViewById(R.id.iv_user_photo);
 		qrcodeImage = (ImageView) view.findViewById(R.id.iv_user_qrcode);
 		nameTextView = (TextView) view.findViewById(R.id.tv_user_name);
@@ -111,25 +75,9 @@ public class MineFragment extends Fragment {
 			}
 		});
 
-		loadButton.setOnClickListener(new OnClickListener() {
-
-			@SuppressLint("ShowToast") @Override
-			public void onClick(View arg0) {
-				Toast.makeText(getActivity(), "联系人正在加载中，请稍后...", Toast.LENGTH_LONG).show();
-				new Thread(new Runnable() {
-
-					@Override
-					public void run() {
-						contactList = CommonUtil
-								.getLocalContacts(getActivity());
-						handler.sendEmptyMessage(LOCAL_CONTACTS_OBTAINED);
-					}
-				}).start();
-			}
-		});
 	}
 
-	public void setUserInfo() {
+	private void setUserInfo() {
 		userName = (String) SPUtil.get(getActivity(), "name", "小新");
 		userPhone = (String) SPUtil.get(getActivity(), "phone", "13929514504");
 
@@ -165,9 +113,21 @@ public class MineFragment extends Fragment {
 		}
 		qrcodeImage.setImageBitmap(bitmap);
 	}
+	
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		Log.v(TAG, "requestCode:"+requestCode+",resultCode:"+resultCode);
+		if(resultCode==Activity.RESULT_OK){
+			switch (requestCode) {
+			case SETTING_REQUEST_CODE:
+				setUserInfo();				
+				break;
 
-	private void updateContacts(){
-		mManager = new DatabaseManager(getActivity());
-		mManager.addContacts(contactList);
+			default:
+				break;
+			}
+		}
+		super.onActivityResult(requestCode, resultCode, data);
 	}
+
 }

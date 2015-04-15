@@ -47,8 +47,11 @@
     <string name="inputname">请输入姓名</string>
     <string name="inputphone">请输入电话</string>
     <string name="contactinfo">联系人详情</string>
-    <string name="delete">\t删除</string>
-    <string name="edit">\t编辑</string>
-    <string name="add">\t添加</string>
+    <string name="delete">删除</string>
+    <string name="edit">编辑</string>
+    <string name="add">添加</string>
+    <string name="save">保存</string>
+    <string name="editlabelinfo">编辑标签信息</string>
+    <string name="labelhint">请输入标签名</string>
 
 </resources>

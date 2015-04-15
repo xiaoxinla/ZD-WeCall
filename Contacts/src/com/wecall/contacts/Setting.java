@@ -2,7 +2,9 @@ package com.wecall.contacts;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -10,6 +12,8 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.MenuItem;
@@ -19,8 +23,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.wecall.contacts.constants.Constants;
+import com.wecall.contacts.database.DatabaseManager;
+import com.wecall.contacts.entity.ContactItem;
+import com.wecall.contacts.util.CommonUtil;
 import com.wecall.contacts.util.ImageUtil;
 import com.wecall.contacts.util.SPUtil;
 
@@ -36,16 +44,42 @@ public class Setting extends Activity {
 	private static final int ALBUM_REQUEST_CODE = 1;
 	private static final int CAMERA_REQUEST_CODE = 2;
 	private static final int CROP_REQUEST_CODE = 3;
+	private static final int LOCAL_CONTACTS_OBTAINED = 4;
 
 	// Activity上的控件们
 	private EditText nameET, phoneET;
 	private Button confireBTN;
 	private LinearLayout aboutLayout;
 	private ImageButton pictureIBTN;
+	private Button loadButton;
 
 	// 用户名和电话
 	private String mName;
 	private String mPhone;
+	private List<ContactItem> contactList;
+	private DatabaseManager mManager;
+	
+	@SuppressLint("HandlerLeak")
+	private Handler handler = new Handler() {
+
+		@Override
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+			case LOCAL_CONTACTS_OBTAINED:
+//				Log.v(TAG, "LocalContacts:" + contactList.toString());
+				Log.v(TAG, "LOCAL_CONTACTS_OBTAINED");
+				CommonUtil.notifyMessage(Setting.this, R.drawable.icon,
+						"加载完毕", "联系人加载完毕", "共加载"+contactList.size()+"位联系人");
+				updateContacts();
+				break;
+
+			default:
+				break;
+			}
+			super.handleMessage(msg);
+		}
+
+	};
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +117,7 @@ public class Setting extends Activity {
 		confireBTN = (Button) findViewById(R.id.btn_setting_confire);
 		aboutLayout = (LinearLayout) findViewById(R.id.ll_setting_about);
 		pictureIBTN = (ImageButton) findViewById(R.id.ibtn_setting_photo);
+		loadButton = (Button) findViewById(R.id.btn_load_contact);
 		confireBTN.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -125,8 +160,30 @@ public class Setting extends Activity {
 				showPicDialog();
 			}
 		});
+		
+		loadButton.setOnClickListener(new OnClickListener() {
+
+			@SuppressLint("ShowToast") @Override
+			public void onClick(View arg0) {
+				Toast.makeText(Setting.this, "联系人正在加载中，请稍后...", Toast.LENGTH_LONG).show();
+				new Thread(new Runnable() {
+
+					@Override
+					public void run() {
+						contactList = CommonUtil
+								.getLocalContacts(Setting.this);
+						handler.sendEmptyMessage(LOCAL_CONTACTS_OBTAINED);
+					}
+				}).start();
+			}
+		});
 	}
 
+	private void updateContacts(){
+		mManager = new DatabaseManager(Setting.this);
+		mManager.addContacts(contactList);
+	}
+	
 	// 处理从其他Activity返回的数据
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {

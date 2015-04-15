@@ -103,7 +103,6 @@ public class SideBar extends View {
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public boolean dispatchTouchEvent(MotionEvent event) {
 		
@@ -118,13 +117,7 @@ public class SideBar extends View {
 
 		switch (action) {
 		case MotionEvent.ACTION_UP:
-			setBackgroundDrawable(new ColorDrawable(0x00000000));
-			mChoosen = -1;
-			invalidate();
-			if (mLetterShow != null) {
-				mLetterShow.setVisibility(View.INVISIBLE);
-			}
-
+			init();
 			break;
 
 		default:
@@ -148,4 +141,17 @@ public class SideBar extends View {
 		return true;
 	}
 
+	/**
+	 * ≥ı ºªØsidebar
+	 */
+	@SuppressWarnings("deprecation")
+	public void init(){
+		setBackgroundDrawable(new ColorDrawable(0x00000000));
+		mChoosen = -1;
+		invalidate();
+		if (mLetterShow != null) {
+			mLetterShow.setVisibility(View.INVISIBLE);
+		}
+
+	}
 }

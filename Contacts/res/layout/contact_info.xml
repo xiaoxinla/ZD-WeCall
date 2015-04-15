@@ -3,22 +3,17 @@
     xmlns:custom="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:orientation="horizontal" >
+    android:orientation="vertical" xmlns:app="http://schemas.android.com/apk/res/com.wecall.contacts">
 
         <TextView
             android:id="@+id/tv_contact_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
             android:singleLine="true"
             android:textSize="30sp" />
-    </LinearLayout>
 
     <ScrollView
         android:layout_width="fill_parent"
@@ -49,7 +44,7 @@
                 <TextView android:id="@+id/tv_phone_info"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:textSize="22sp"
+                    android:textSize="24sp"
                     android:padding="5dp"
                     android:gravity="center"
                     android:layout_weight="1"/>
@@ -60,38 +55,33 @@
                     android:background="@null"/>
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/tv_contact_adress"
-                android:layout_width="wrap_content"
+            <com.wecall.contacts.view.TextViewWithTitle 
+                android:id="@+id/tvt_address"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/address"
-                android:textSize="20sp" />
+                custom:title="@string/address"
+                custom:title_size="11sp"
+                custom:text_size="11sp"
+                >
+                
+            </com.wecall.contacts.view.TextViewWithTitle>
 
-            <TextView
-                android:id="@+id/tv_adress_show"
-                android:layout_width="wrap_content"
+            <com.wecall.contacts.view.TextViewWithTitle 
+                android:id="@+id/tvt_note"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:textSize="20sp" />
-
-            <TextView
-                android:id="@+id/tv_contact_note"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/note"
-                android:textSize="20sp" />
-
-            <TextView
-                android:id="@+id/tv_note_show"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="20sp" />
+                custom:title="@string/note"
+                custom:title_size="11sp"
+                custom:text_size="11sp">
+                
+            </com.wecall.contacts.view.TextViewWithTitle>
 
             <TextView
                 android:id="@+id/tv_contact_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/label"
-                android:textSize="20sp" />
+                android:textSize="24sp" />
 
             <com.wecall.contacts.view.FlowLayout
                 android:id="@+id/fl_label_show"

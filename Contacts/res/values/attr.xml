@@ -7,26 +7,17 @@
         <attr name="text" format="string"></attr>
         <attr name="text_size" format="dimension"></attr>
     </declare-styleable>
-    
-    <declare-styleable name="Detailbar">
-        <attr name="infoText" format="string"></attr>
-        <attr name="infoTextSize" format="dimension"></attr>
-        <attr name="infoTextColor" format="color"></attr>
-        <attr name="infoBackground" format="reference|color"></attr>
-        
-        <attr name="leftText" format="string"></attr>
-        <attr name="leftTextSize" format="dimension"></attr>
-        <attr name="leftTextColor" format="color"></attr>
-        <attr name="leftBackground" format="reference|color"></attr>
-        
-        <attr name="rightText" format="string"></attr>
-        <attr name="rightTextSize" format="dimension"></attr>
-        <attr name="rightTextColor" format="color"></attr>
-        <attr name="rightBackground" format="reference|color"></attr>
+    <declare-styleable name="TextViewWithTitle">
+        <attr name="title" format="string"></attr>
+        <attr name="title_size" format="dimension"></attr>
+        <attr name="text"></attr>
+        <attr name="text_size"></attr>
+    </declare-styleable>
+    <declare-styleable name="EditTextWithTitle">
+        <attr name="title"></attr>
+        <attr name="title_size"></attr>
+        <attr name="text"></attr>
+        <attr name="text_size"></attr>
     </declare-styleable>
 
-    <declare-styleable name="IconTextView">
-        <attr name="text"></attr>
-        <attr name="icon"></attr>
-    </declare-styleable>
 </resources>

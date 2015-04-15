@@ -20,6 +20,7 @@ import android.widget.ListView;
 
 import com.wecall.contacts.LabelInfo;
 import com.wecall.contacts.R;
+import com.wecall.contacts.SelectLabelMember;
 
 /**
  * ±Í«©“≥fragment
@@ -92,6 +93,8 @@ public class LabelFragment extends Fragment {
 			@Override
 			public void onClick(View arg0) {
 				Log.v(TAG, "AddBtnClick");
+				Intent intent = new Intent(getActivity(),SelectLabelMember.class);
+				startActivity(intent);
 			}
 		});
 	}

@@ -85,7 +85,7 @@ public class ImageUtil {
 			throws IOException {
 		File dirFile = new File(path);
 		if (!dirFile.exists()) {
-			dirFile.mkdir();
+			dirFile.mkdirs();
 		}
 		File myCaptureFile = new File(path + fileName);
 		BufferedOutputStream bos = new BufferedOutputStream(
@@ -143,4 +143,5 @@ public class ImageUtil {
             file.renameTo(newFile);  
         } 
 	}
+	
 }

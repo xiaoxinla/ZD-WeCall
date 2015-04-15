@@ -19,6 +19,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -45,8 +46,6 @@ public class MainActivity extends FragmentActivity implements OnClickListener,
 	private static final String TAG = "MainActivity";
 	private static final int EDIT_REQUEST_CODE = 1;
 	private static final int SCAN_REQUEST_CODE = 2;
-	private static final int SETTING_REQUEST_CODE = 3;
-	private static final int INFO_REQUEST_CODE = 4;
 
 	private ViewPager mViewPager;
 	private List<Fragment> mTabs = new ArrayList<Fragment>();
@@ -155,7 +154,7 @@ public class MainActivity extends FragmentActivity implements OnClickListener,
 		return true;
 	}
 
-	//设置菜单栏的按钮点击事件
+	// 设置菜单栏的按钮点击事件
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		Intent intent;
@@ -260,8 +259,9 @@ public class MainActivity extends FragmentActivity implements OnClickListener,
 	@Override
 	public void onPageScrolled(int position, float positionOffset,
 			int positionOffsetPixels) {
-		// Log.e("TAG", "position = " + position + " ,positionOffset =  "
-		// + positionOffset);
+//		Log.v(TAG, "onPageScrolled:position = " + position
+//				+ " ,positionOffset =  " + positionOffset);
+		mainFragment.initSideBar();
 		if (positionOffset > 0) {
 			ChangeColorIconWithText left = mTabIndicators.get(position);
 			ChangeColorIconWithText right = mTabIndicators.get(position + 1);
@@ -273,29 +273,26 @@ public class MainActivity extends FragmentActivity implements OnClickListener,
 
 	@Override
 	public void onPageSelected(int position) {
-
+		Log.v(TAG, "onPageSelected:" + position);
 	}
 
 	@Override
 	public void onPageScrollStateChanged(int state) {
-
+		Log.v(TAG, "onPageScrollStateChanged:" + state);
 	}
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		Log.v(TAG, "requestCode:" + requestCode + ",resultCode:" + resultCode);
+		mainFragment.updateContacts();
 		if (resultCode == RESULT_OK) {
 			switch (requestCode) {
 			case EDIT_REQUEST_CODE:
-				mainFragment.updateContacts();
-				break;
-			case INFO_REQUEST_CODE:
-				mainFragment.updateContacts();
+				Toast.makeText(MainActivity.this, "添加成功", Toast.LENGTH_SHORT)
+						.show();
 				break;
 			case SCAN_REQUEST_CODE:
 				dealScanData(data);
-				break;
-			case SETTING_REQUEST_CODE:
-				mineFragment.setUserInfo();
 				break;
 			default:
 				break;
@@ -347,7 +344,7 @@ public class MainActivity extends FragmentActivity implements OnClickListener,
 									Log.v(TAG, "PositiveClick");
 									arg0.dismiss();
 									Intent intent = new Intent(
-					MainActivity.this,
+											MainActivity.this,
 											ContactEditor.class);
 									Bundle bundle = new Bundle();
 									bundle.putInt("type", 1);
@@ -370,5 +367,26 @@ public class MainActivity extends FragmentActivity implements OnClickListener,
 							}).show();
 
 		}
+	}
+
+	private long exitTime = 0;
+
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		// 实现按两下返回键退出功能
+		if (keyCode == KeyEvent.KEYCODE_BACK
+				&& event.getAction() == KeyEvent.ACTION_DOWN) {
+			if ((System.currentTimeMillis() - exitTime) > 2000) {
+				Toast.makeText(getApplicationContext(), "再按一次退出程序",
+						Toast.LENGTH_SHORT).show();
+				exitTime = System.currentTimeMillis();
+			} else {
+				moveTaskToBack(false);
+				finish();
+
+			}
+			return true;
+		}
+		return super.onKeyDown(keyCode, event);
 	}
 }

@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -15,9 +18,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.wecall.contacts.ContactEditor;
 import com.wecall.contacts.ContactInfo;
 import com.wecall.contacts.R;
 import com.wecall.contacts.adapter.SortAdapter;
@@ -36,6 +42,7 @@ public class MainFragment extends Fragment {
 
 	private static String TAG = "MainFragment";
 	private static final int INFO_REQUEST_CODE = 4;
+	private static final int EDIT_REQUEST_CODE = 2;
 	private ListView contactListView;
 	private TextView letterTextView;
 	// 侧边栏索引控件
@@ -74,14 +81,14 @@ public class MainFragment extends Fragment {
 
 		setListener();
 		sideBar.setLetterShow(letterTextView);
-		adapter = new SortAdapter(contactList, getActivity());
+		adapter = new SortAdapter(contactList, getActivity(), false);
 		mManager = new DatabaseManager(getActivity());
-		
+
 		contactListView.setAdapter(adapter);
 
 		// 获取联系人信息
 		updateContacts();
-		
+
 	}
 
 	@SuppressWarnings("unchecked")
@@ -112,7 +119,7 @@ public class MainFragment extends Fragment {
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
 				Log.v(TAG, "position:" + arg2);
-				Intent intent = new Intent(getActivity(),ContactInfo.class);
+				Intent intent = new Intent(getActivity(), ContactInfo.class);
 				Bundle bundle = new Bundle();
 				bundle.putInt("cid",
 						((ContactItem) adapter.getItem(arg2)).getId());
@@ -120,16 +127,91 @@ public class MainFragment extends Fragment {
 				startActivityForResult(intent, INFO_REQUEST_CODE);
 			}
 		});
+		contactListView
+				.setOnItemLongClickListener(new OnItemLongClickListener() {
+
+					@Override
+					public boolean onItemLongClick(AdapterView<?> arg0,
+							View arg1, int arg2, long arg3) {
+						Log.v(TAG, "position:" + arg2);
+						showOperationDialog(arg2);
+						return false;
+					}
+				});
 	}
-	
+
+	protected void showOperationDialog(final int position) {
+		new AlertDialog.Builder(getActivity())
+				.setTitle("您要进行的操作是")
+				.setNegativeButton("编辑", new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						Log.v(TAG, "edit");
+						dialog.dismiss();
+						Intent intent = new Intent(getActivity(),
+								ContactEditor.class);
+						Bundle bundle = new Bundle();
+						bundle.putInt("cid", ((ContactItem) adapter
+								.getItem(position)).getId());
+						bundle.putInt("type", 2);
+						intent.putExtras(bundle);
+						startActivityForResult(intent, EDIT_REQUEST_CODE);
+					}
+
+				})
+				.setNeutralButton("删除", new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						Log.v(TAG, "delete");
+						dialog.dismiss();
+						showDeleteDialog(position);
+					}
+				})
+				.setPositiveButton("取消", new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						Log.v(TAG, "cancle");
+						dialog.dismiss();
+					}
+				}).show();
+	}
+
+	private void showDeleteDialog(final int position) {
+		new AlertDialog.Builder(getActivity())
+				.setTitle("是否确认删除？")
+				.setPositiveButton("是", new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.dismiss();
+						mManager.deleteContact(contactList.get(position)
+								.getId());
+						updateContacts();
+						Toast.makeText(getActivity(), "联系人删除成功",
+								Toast.LENGTH_SHORT).show();
+					}
+				})
+				.setNegativeButton("否", new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.dismiss();
+					}
+				}).show();
+	}
+
 	/**
 	 * 取得联系人的数目
+	 * 
 	 * @return
 	 */
-	public int getContactAmount(){
+	public int getContactAmount() {
 		return contactList.size();
 	}
-	
+
 	/**
 	 * 根据输入框中的值来过滤数据并更新ListView 可根据拼音，汉字，缩写来过滤
 	 * 
@@ -155,5 +237,27 @@ public class MainFragment extends Fragment {
 			}
 		}
 		adapter.updateListView(filterDateList);
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		Log.v(TAG, "requestCode:" + requestCode + ",resultCode:" + resultCode);
+		if (resultCode == Activity.RESULT_OK) {
+			switch (requestCode) {
+			case INFO_REQUEST_CODE:
+				updateContacts();
+				break;
+			case EDIT_REQUEST_CODE:
+				updateContacts();
+				break;
+			default:
+				break;
+			}
+		}
+		super.onActivityResult(requestCode, resultCode, data);
+	}
+	
+	public void initSideBar(){
+		sideBar.init();
 	}
 }

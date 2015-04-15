@@ -3,27 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">"
-    
-    <com.wecall.contacts.view.DetailBar 
-        android:id="@+id/db_topbar"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:background="@drawable/mmtitle_bg_alpha"
-        custom:infoText="@string/addcontact"
-        custom:infoTextColor="#ffffff"
-        custom:infoTextSize="10sp"
-        custom:leftText="@string/cancel"
-        custom:leftTextColor="#ffffff"
-        custom:leftTextSize="10sp"
-        custom:leftBackground="@drawable/mm_title_back_btn"
-        custom:rightText="@string/sure"
-        custom:rightTextColor="#ffffff"
-        custom:rightTextSize="10sp"
-        custom:rightBackground="@drawable/btn_erase_selected"
-        >
-        
-    </com.wecall.contacts.view.DetailBar>
+    android:orientation="vertical" xmlns:app="http://schemas.android.com/apk/res/com.wecall.contacts">"
 
 	<LinearLayout android:layout_width="fill_parent"
 	    android:layout_height="wrap_content"
@@ -45,11 +25,6 @@
 	        android:layout_weight="1"
 	        android:hint="@string/name"
 	        />
-	    <ImageButton android:id="@+id/btn_scan"
-	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"
-	    android:src="@drawable/men_scan_icon"
-	    />
 	</LinearLayout>
 	
 	<EditText android:id="@+id/et_phone_add"
@@ -57,6 +32,7 @@
 	        android:layout_height="wrap_content"
 	        android:singleLine="true"
 	        android:textSize="15sp"
+	        android:maxLength="17"
 	        android:inputType="phone"
 	        android:hint="@string/phone"
 	        />

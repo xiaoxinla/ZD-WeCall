@@ -8,6 +8,7 @@ import java.util.List;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -17,12 +18,13 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
 import android.view.ViewGroup.MarginLayoutParams;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,8 +34,6 @@ import com.wecall.contacts.database.DatabaseManager;
 import com.wecall.contacts.entity.ContactItem;
 import com.wecall.contacts.util.EncodeUtil;
 import com.wecall.contacts.util.ImageUtil;
-import com.wecall.contacts.view.DetailBar;
-import com.wecall.contacts.view.DetailBar.DetailBarClickListener;
 import com.wecall.contacts.view.FlowLayout;
 
 /**
@@ -45,14 +45,11 @@ public class ContactEditor extends Activity {
 
 	private static final String TAG = "ContactEditor";
 
-	// 二维码扫码按钮
-	private ImageButton scanBtn;
-	// 顶部导航栏
-	private DetailBar topbar;
 	// 各种编辑框
 	private EditText nameET, phoneET, addressET, noteET;
 	private ImageView photoImg;
 	private FlowLayout labelLayout;
+	private ActionBar actionBar;
 	// 数据库管理对象
 	private DatabaseManager mManager;
 
@@ -72,6 +69,9 @@ public class ContactEditor extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_contact_editor);
+		actionBar = getActionBar();
+		actionBar.setDisplayHomeAsUpEnabled(true);
+		actionBar.setDisplayShowHomeEnabled(false);
 		// 判断是新建还是修改联系人
 		confireType();
 		// 初始化控件
@@ -80,19 +80,17 @@ public class ContactEditor extends Activity {
 
 	// 初始化控件
 	private void initView() {
-		scanBtn = (ImageButton) findViewById(R.id.btn_scan);
 		nameET = (EditText) findViewById(R.id.et_name_add);
 		phoneET = (EditText) findViewById(R.id.et_phone_add);
 		addressET = (EditText) findViewById(R.id.et_address_add);
 		noteET = (EditText) findViewById(R.id.et_note_add);
-		topbar = (DetailBar) findViewById(R.id.db_topbar);
 		photoImg = (ImageView) findViewById(R.id.img_photo_add);
 		labelLayout = (FlowLayout) findViewById(R.id.fl_editor_label);
 		mManager = new DatabaseManager(this);
 
 		// 分新建和修改进行不同的初始化
 		if (mType == 1) {
-			topbar.setInfo("新建联系人");
+			actionBar.setTitle("新建联系人");
 			if(mName!=null&&!mName.isEmpty()){
 				nameET.setText(mName);
 			}
@@ -100,7 +98,7 @@ public class ContactEditor extends Activity {
 				phoneET.setText(mPhone);
 			}
 		} else if (mType == 2) {
-			topbar.setInfo("编辑联系人");
+			actionBar.setTitle("编辑联系人");
 			ContactItem item = mManager.queryContactById(mCid);
 			nameET.setText(item.getName());
 			phoneET.setText(item.getPhoneNumber());
@@ -116,57 +114,6 @@ public class ContactEditor extends Activity {
 			setLabels();
 		}
 
-		topbar.setOnDetailBarClickListener(new DetailBarClickListener() {
-
-			@Override
-			public void rightClick() {
-				String name = nameET.getText().toString();
-				if (name.isEmpty()) {
-					Toast.makeText(ContactEditor.this, "请填写姓名",
-							Toast.LENGTH_SHORT).show();
-				} else {
-					if (mType == 1) {
-						int last = mManager.addContact(getContactFromView());
-						Log.v(TAG, "insetid:" + last);
-						ImageUtil.renameImage(Constants.ALBUM_PATH
-								+ "showpic.jpg", Constants.ALBUM_PATH + "pic"
-								+ last + ".jpg");
-						setResult(RESULT_OK);
-						finish();
-					} else if (mType == 2) {
-						ContactItem item = getContactFromView();
-						item.setId(mCid);
-						mManager.updateContact(item);
-						ImageUtil.renameImage(Constants.ALBUM_PATH
-								+ "showpic.jpg", Constants.ALBUM_PATH + "pic"
-								+ mCid + ".jpg");
-						setResult(RESULT_OK);
-						finish();
-					}
-				}
-			}
-
-			@Override
-			public void leftClick() {
-				finish();
-			}
-
-			@Override
-			public void infoClick() {
-
-			}
-		});
-
-		scanBtn.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View arg0) {
-				Intent intent = new Intent(ContactEditor.this,
-						MipcaActivityCapture.class);
-				startActivityForResult(intent, SCAN_REQUEST_CODE);
-			}
-		});
-
 		photoImg.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -174,6 +121,58 @@ public class ContactEditor extends Activity {
 				showPicDialog();
 			}
 		});
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.contact_editor_menu, menu);
+		return super.onCreateOptionsMenu(menu);
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			finish();
+			break;
+		case R.id.action_editor_scan:
+			Intent intent = new Intent(ContactEditor.this,
+					MipcaActivityCapture.class);
+			startActivityForResult(intent, SCAN_REQUEST_CODE);
+			break;
+			case R.id.action_editor_save:
+				saveContact();
+		default:
+			break;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+
+	private void saveContact() {
+		String name = nameET.getText().toString();
+		if (name.isEmpty()) {
+			Toast.makeText(ContactEditor.this, "请填写姓名",
+					Toast.LENGTH_SHORT).show();
+		} else {
+			if (mType == 1) {
+				int last = mManager.addContact(getContactFromView());
+				Log.v(TAG, "insetid:" + last);
+				ImageUtil.renameImage(Constants.ALBUM_PATH
+						+ "showpic.jpg", Constants.ALBUM_PATH + "pic"
+						+ last + ".jpg");
+				setResult(RESULT_OK);
+				finish();
+			} else if (mType == 2) {
+				ContactItem item = getContactFromView();
+				item.setId(mCid);
+				mManager.updateContact(item);
+				ImageUtil.renameImage(Constants.ALBUM_PATH
+						+ "showpic.jpg", Constants.ALBUM_PATH + "pic"
+						+ mCid + ".jpg");
+				setResult(RESULT_OK);
+				finish();
+			}
+		}
 	}
 
 	@Override
