@@ -1,6 +1,7 @@
 package com.wecall.contacts.database;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import android.content.ContentValues;
@@ -43,7 +44,7 @@ public class DatabaseManager {
 	 * 向数据库插入新的一个联系人
 	 * 如果插入成功会同时设置item对象的id.
 	 */
-	public void insertContact(ContactItem item)
+	public int addContact(ContactItem item)
 	{		
 		db.beginTransaction();
 		try {
@@ -71,24 +72,36 @@ public class DatabaseManager {
 			// TODO:插入multi表
 			
 			db.setTransactionSuccessful();
+			
+			id++;
+			Editor editor = preferences.edit();
+			editor.putInt("id_count", id);
+			editor.commit();
+			return id;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			Log.i("err", "data insert failed.");
 		} finally {
-			item.setId(id);
-			id++;
 			db.endTransaction();
 		}
-		Editor editor = preferences.edit();
-		editor.putInt("id_count", id);
-		editor.commit();
+		return -1;
+	}
+	
+	public void addContacts(List<ContactItem> list)
+	{
+		for(ContactItem item: list)
+		{
+			addContact(item);
+		}
 	}
 	
 	/*
 	 * 插入单个新tag，必须保证与原有不重复
 	 */
-	public void insertTagById(int id, String tag)
+	public void addTagById(int id, String tag)
 	{
+		if( !isId(id) )
+			return;
 		try
 		{
 			ContentValues values = new ContentValues();
@@ -104,14 +117,13 @@ public class DatabaseManager {
 	/*
 	 * 取数据库全部内容
 	 */
-	public ArrayList<ContactItem> selectAll()
+	public ArrayList<ContactItem> queryAllContact()
 	{
 		ArrayList<ContactItem> list = new ArrayList<ContactItem>();
 		Cursor main_cursor = null;
-		Cursor tag_cursor = null;
-		Cursor multi_cursor = null;
 
 		try{
+			// 先在main表搜不同id的所有
 			main_cursor = db.query(Constants.MAIN_TABLE_NAME, new String[] {"*"}, 
 					null, null, null, null, null);
 			while(main_cursor.moveToNext())
@@ -121,25 +133,9 @@ public class DatabaseManager {
 				it.setName(main_cursor.getString(Constants.MAIN_COL_NAME));
 				it.setNote(main_cursor.getString(Constants.MAIN_COL_NOTE));				
 				
-				// 搜tag表
-				tag_cursor = db.query(Constants.TAG_TABLE_NAME, new String[] {"*"}, 
-						"c_id=?", new String[] {it.getId() + ""}, null, null, null);
+				it.setLabels(queryTagById(it.getId()));
 				
-				ArrayList<String> labels = new ArrayList<String>();
-				while(tag_cursor.moveToNext())
-				{
-					labels.add(tag_cursor.getString(Constants.TAG_COL_TAG));
-				}
-				it.setLabels(labels);
-				tag_cursor.close();
-				
-				// TODO 增加多值表其他属性的搜索
-//				multi_cursor = db.query(Constants.MULTI_TABLE_NAME, new String[] {"*"}, 
-//						"c_id=?", new String[] {it.getId() + ""}, null, null, null);
-//				while(tag_cursor.moveToNext())
-//				{
-//					
-//				}
+				// TODO 对应每个id搜multi表
 				
 				list.add(it);
 			}		
@@ -152,12 +148,37 @@ public class DatabaseManager {
 		return list;
 	}
 	
+	public ContactItem queryContactById(int id)
+	{
+		ContactItem item = new ContactItem();
+		try
+		{
+			Cursor cursor = db.query(Constants.MAIN_TABLE_NAME, new String[] {"*"}, 
+					"c_id = ?", new String[] {id+""}, null, null, null);
+			item.setId(id);
+			item.setName(cursor.getString(Constants.MAIN_COL_CID));
+			item.setName(cursor.getString(Constants.MAIN_COL_NOTE));
+			cursor.close();
+			
+			item.setLabels(queryTagById(id));
+			
+			// TODO 对应每个id搜multi表
+		} catch(Exception e)
+		{
+			e.printStackTrace();
+			Log.i("err", "queryContactById error.");
+		}
+
+		return item;
+	}
+	
 	/*
 	 * 通过联系人标识号删除一条联系人记录
-	 * @parameter id， 联系人标识号
 	 */
-	public void deleteById(int id)
+	public void deleteContact(int id)
 	{			
+		if( !isId(id) )
+			return;
 		try {
 			// 打开外键约束，确保级联删除，据说Android2.2后才支持
 			db.execSQL("PRAGMA foreign_keys=ON");
@@ -168,38 +189,14 @@ public class DatabaseManager {
 		}
 	}
 	
-	private void updateBasicById(ContactItem item)
-	{
-		// 检查是否传入合法id
-		if(item.getId() <= 0)
-		{
-			Log.i("err", "updateBasicById: id illegal.");
-			return;
-		}
-		try {
-			ContentValues values = new ContentValues();
-			values.put("name", item.getName());
-			values.put("fullPinyin", item.getFullPinyin());
-			values.put("simplePinyin", item.getSimplePinyin());
-			values.put("sortLetter", item.getSortLetter());
-			values.put("note", item.getNote());	
-			db.update(Constants.MAIN_TABLE_NAME, values, "c_id=?", 
-					new String[]{ item.getId() + "" });
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			Log.i("err", "updateBasicById failed.");
-		}
-	}
-	
+	/*
+	 * 根据id更新tag表
+	 */
 	public void updateTagById(int id, ArrayList<String> tags)
 	{		
 		// 检查是否传入合法id
-		if(id <= 0)
-		{
-			Log.i("err", "updateTagById: id illegal.");
+		if( !isId(id) )
 			return;
-		}
 		// 先删掉与当前id关联的所有tag
 		db.delete(Constants.TAG_TABLE_NAME, "c_id = ?", new String[] {id + ""});
 		// 再插入全部新的tag
@@ -213,7 +210,7 @@ public class DatabaseManager {
 	}
 	
 	/*
-	 * 通过联系人标识号更新记录
+	 * 根据id更新一个联系人的全部记录
 	 */
 	public void updateContact(ContactItem item)
 	{		
@@ -226,6 +223,7 @@ public class DatabaseManager {
 			updateTagById(item.getId(), item.getLabels());
 			
 			// TODO 更新multi表
+			
 			db.setTransactionSuccessful();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -235,7 +233,7 @@ public class DatabaseManager {
 			db.endTransaction();
 		}
 	}
-	
+
 	/*
 	 * 提供直接执行sql语句的接口，仅供调试用
 	 * @Deprecated
@@ -253,5 +251,60 @@ public class DatabaseManager {
 	{
 		db.close();
 		helper.close();
+	}
+	
+	public void printToLog()
+	{
+		ArrayList<ContactItem> list = queryAllContact();
+		
+	}
+	
+	/*
+	 * 判断是否合法的id
+	 */
+	private boolean isId(int id)
+	{
+		if(id <= 0)
+		{
+			Log.i("err", "ilegal id.");
+			return false;
+		}
+		return true;
+	}
+	
+	/*
+	 * 根据id查询对应的所有tag
+	 */
+	private ArrayList<String> queryTagById(int id) throws SQLException
+	{		
+		// 对应每个id搜tag表
+		Cursor tag_cursor = db.query(Constants.TAG_TABLE_NAME, new String[] {"*"}, 
+				"c_id=?", new String[] {id + ""}, null, null, null);
+		
+		ArrayList<String> labels = new ArrayList<String>();
+		while(tag_cursor.moveToNext())
+		{
+			labels.add(tag_cursor.getString(Constants.TAG_COL_TAG));
+		}
+		tag_cursor.close();
+		return labels;
+	}
+	
+	/*
+	 * 根据id更新Main表
+	 */
+	private void updateBasicById(ContactItem item) throws SQLException
+	{
+		// 检查是否传入合法id
+		if( !isId(item.getId()) )
+			return;
+		ContentValues values = new ContentValues();
+		values.put("name", item.getName());
+		values.put("fullPinyin", item.getFullPinyin());
+		values.put("simplePinyin", item.getSimplePinyin());
+		values.put("sortLetter", item.getSortLetter());
+		values.put("note", item.getNote());	
+		db.update(Constants.MAIN_TABLE_NAME, values, "c_id=?", 
+				new String[]{ item.getId() + "" });
 	}
 }
