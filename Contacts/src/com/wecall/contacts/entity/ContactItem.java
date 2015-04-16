@@ -40,11 +40,11 @@ public class ContactItem implements Comparable {
 	public ContactItem(String name, String phoneNumber, String address,
 			String note, ArrayList<String> labels) {
 		super();
-		this.name = name;
-		this.phoneNumber = phoneNumber;
-		this.note = note;
-		this.address = address;
-		this.labels = labels;
+		setName(name);
+		setPhoneNumber(phoneNumber);
+		setAddress(address);
+		setNote(note);
+		setLabels(labels);
 
 		fullPinyin = PinYin.getPinYin(this.name);
 		simplePinyin = PinYin.getSimplePinYin(this.name);
@@ -56,10 +56,15 @@ public class ContactItem implements Comparable {
 	}
 
 	public void setName(String name) {
-		this.name = name;
-		fullPinyin = PinYin.getPinYin(this.name);
-		simplePinyin = PinYin.getSimplePinYin(this.name);
-		setSortLetter(fullPinyin);
+		if (name == null)
+			this.name = null;
+		else
+		{
+			this.name = new String(name);
+			fullPinyin = PinYin.getPinYin(this.name);
+			simplePinyin = PinYin.getSimplePinYin(this.name);
+			setSortLetter(fullPinyin);		
+		}
 	}
 
 	public String getSortLetter() {
@@ -79,7 +84,10 @@ public class ContactItem implements Comparable {
 	}
 
 	public void setPhoneNumber(String phoneNumber) {
-		this.phoneNumber = phoneNumber;
+		if(phoneNumber == null)
+			this.phoneNumber = null;
+		else
+			this.phoneNumber = new String(phoneNumber);
 	}
 
 	public String getNote() {
@@ -87,7 +95,10 @@ public class ContactItem implements Comparable {
 	}
 
 	public void setNote(String note) {
-		this.note = note;
+		if (note == null)
+			this.note = null;
+		else
+			this.note = new String(note);
 	}
 
 	public String getAddress() {
@@ -95,7 +106,10 @@ public class ContactItem implements Comparable {
 	}
 
 	public void setAddress(String address) {
-		this.address = address;
+		if (address == null)
+			this.address = null;
+		else
+			this.address = new String(address);
 	}
 
 	public ArrayList<String> getLabels() {
@@ -103,7 +117,10 @@ public class ContactItem implements Comparable {
 	}
 
 	public void setLabels(ArrayList<String> labels) {
-		this.labels = labels;
+		if (labels == null)
+			this.labels = null;
+		else
+			this.labels = new ArrayList<String>(labels);
 	}
 
 	public int getId() {
@@ -135,7 +152,8 @@ public class ContactItem implements Comparable {
 		return getFullPinyin().compareTo(tmpItem.getFullPinyin());
 	}
 	
-	@SuppressLint("DefaultLocale") private void setSortLetter(String inputString){
+	@SuppressLint("DefaultLocale") 
+	private void setSortLetter(String inputString){
 		if(inputString.isEmpty()){
 			this.sortLetter = "#";
 			return;

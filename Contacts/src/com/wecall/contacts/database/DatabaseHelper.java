@@ -54,7 +54,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
     String MULTI_VALUE_TABLE = "CREATE TABLE IF NOT EXISTS multiValue(" 
     					+ "c_id INTEGER NOT NULL, "
     					+ "kkey VARCHAR(50), "
-    					+ "vvalue VARCHAR(100)"
+    					+ "vvalue VARCHAR(100), "
     					+ "PRIMARY KEY(c_id, kkey, vvalue), "
     					+ "FOREIGN KEY(c_id) REFERENCES Main(c_id) ON DELETE CASCADE "
     					+ ");";

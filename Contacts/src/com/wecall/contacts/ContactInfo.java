@@ -175,6 +175,8 @@ public class ContactInfo extends Activity {
 
 	private void updateView(int cid) {
 		contact = mManager.queryContactById(cid);
+		
+		Log.i("Update View contact", contact.getName()+"");
 
 		SpannableStringBuilder styled = StringUtil.colorString(
 				contact.getName(), 1, 2, Color.RED);
