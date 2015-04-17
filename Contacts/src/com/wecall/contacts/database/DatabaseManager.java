@@ -49,15 +49,13 @@ public class DatabaseManager {
 		mDatabase.beginTransaction();
 		try {
 			for (ContactItem item : contacts) {
-				mDatabase
-						.execSQL(
-								"INSERT INTO contact VALUES(null, ?, ?, ?, ?, ?, ?, ?)",
-								new Object[] { item.getName(),
-										item.getPhoneNumber(),
-										item.getAddress(), item.getNote(),
-										item.getFullPinyin(),
-										item.getSimplePinyin(),
-										item.getSortLetter() });
+				mDatabase.execSQL(
+						"INSERT INTO " + Constants.MAIN_TABLE_NAME
+								+ " VALUES(null, ?, ?, ?, ?, ?, ?, ?)",
+						new Object[] { item.getName(), item.getPhoneNumber(),
+								item.getAddress(), item.getNote(),
+								item.getFullPinyin(), item.getSimplePinyin(),
+								item.getSortLetter() });
 			}
 			mDatabase.setTransactionSuccessful();
 		} finally {

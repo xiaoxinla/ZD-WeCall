@@ -53,5 +53,6 @@
     <string name="save">保存</string>
     <string name="editlabelinfo">编辑标签信息</string>
     <string name="labelhint">请输入标签名</string>
+    <string name="title_activity_search">搜索</string>
 
 </resources>

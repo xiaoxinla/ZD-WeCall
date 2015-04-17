@@ -1,6 +1,8 @@
 package com.wecall.contacts.entity;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import android.annotation.SuppressLint;
 import com.wecall.contacts.util.PinYin;
@@ -134,9 +136,10 @@ public class ContactItem implements Comparable {
 		}
 		return getFullPinyin().compareTo(tmpItem.getFullPinyin());
 	}
-	
-	@SuppressLint("DefaultLocale") private void setSortLetter(String inputString){
-		if(inputString.isEmpty()){
+
+	@SuppressLint("DefaultLocale")
+	private void setSortLetter(String inputString) {
+		if (inputString.isEmpty()) {
 			this.sortLetter = "#";
 			return;
 		}
@@ -149,4 +152,26 @@ public class ContactItem implements Comparable {
 		}
 	}
 
+	public Map<String, Integer> contains(String str){
+		Map<String, Integer> map = new HashMap<String, Integer>();
+		if(name!=null&&name.indexOf(str)!=-1){
+			map.put("name",name.indexOf(str));
+		}
+		if(phoneNumber!=null&&phoneNumber.indexOf(str)!=-1){
+			map.put("phone",phoneNumber.indexOf(str));
+		}
+		if(address!=null&&address.indexOf(str)!=-1){
+			map.put("address",address.indexOf(str));
+		}
+		if(note!=null&&note.indexOf(str)!=-1){
+			map.put("note",note.indexOf(str));
+		}
+		if(fullPinyin!=null&&fullPinyin.indexOf(str)!=-1){
+			map.put("fullpinyin",fullPinyin.indexOf(str));
+		}
+		if(simplePinyin!=null&&simplePinyin.indexOf(str)!=-1){
+			map.put("simplepinyin",simplePinyin.indexOf(str));
+		}
+		return map;
+	}
 }

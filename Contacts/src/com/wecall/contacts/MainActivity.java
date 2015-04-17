@@ -26,8 +26,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewConfiguration;
 import android.view.Window;
-import android.widget.SearchView;
-import android.widget.SearchView.OnQueryTextListener;
 import android.widget.Toast;
 
 import com.wecall.contacts.constants.Constants;
@@ -51,7 +49,7 @@ public class MainActivity extends FragmentActivity implements OnClickListener,
 	private List<Fragment> mTabs = new ArrayList<Fragment>();
 	private FragmentPagerAdapter mAdapter;
 	private ActionBar mActionBar;
-	private SearchView mSearchView;
+//	private SearchView mSearchView;
 	private List<ChangeColorIconWithText> mTabIndicators = new ArrayList<ChangeColorIconWithText>();
 	private MineFragment mineFragment;
 	private MainFragment mainFragment;
@@ -131,26 +129,26 @@ public class MainActivity extends FragmentActivity implements OnClickListener,
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.main, menu);
-		mSearchView = (SearchView) menu.findItem(R.id.action_search)
-				.getActionView();
-		mSearchView.setQueryHint("可搜索" + mainFragment.getContactAmount()
-				+ "位联系人");
-		mSearchView.setOnQueryTextListener(new OnQueryTextListener() {
-
-			@Override
-			public boolean onQueryTextSubmit(String arg0) {
-				Log.v(TAG, "onQueryTextSubmit:" + arg0);
-				mainFragment.filterData(arg0);
-				return false;
-			}
-
-			@Override
-			public boolean onQueryTextChange(String arg0) {
-				Log.v(TAG, "onQueryTextChange:" + arg0);
-				mainFragment.filterData(arg0);
-				return false;
-			}
-		});
+//		mSearchView = (SearchView) menu.findItem(R.id.action_search)
+//				.getActionView();
+//		mSearchView.setQueryHint("可搜索" + mainFragment.getContactAmount()
+//				+ "位联系人");
+//		mSearchView.setOnQueryTextListener(new OnQueryTextListener() {
+//
+//			@Override
+//			public boolean onQueryTextSubmit(String arg0) {
+//				Log.v(TAG, "onQueryTextSubmit:" + arg0);
+//				mainFragment.filterData(arg0);
+//				return false;
+//			}
+//
+//			@Override
+//			public boolean onQueryTextChange(String arg0) {
+//				Log.v(TAG, "onQueryTextChange:" + arg0);
+//				mainFragment.filterData(arg0);
+//				return false;
+//			}
+//		});
 		return true;
 	}
 
@@ -162,6 +160,9 @@ public class MainActivity extends FragmentActivity implements OnClickListener,
 		switch (item.getItemId()) {
 		case R.id.action_search:
 			Log.v(TAG, "searchview click");
+			intent = new Intent(MainActivity.this,SearchActivity.class);
+//			intent.putExtra("count", mainFragment.getContactAmount());
+			startActivity(intent);
 			break;
 		case R.id.action_add_friend:
 			intent = new Intent(MainActivity.this, ContactEditor.class);

@@ -53,6 +53,7 @@ public class SortAdapter extends BaseAdapter implements SectionIndexer {
 
 	@Override
 	public int getCount() {
+		if(mContacts==null) return 0;
 		return mContacts.size();
 	}
 
@@ -158,7 +159,7 @@ public class SortAdapter extends BaseAdapter implements SectionIndexer {
 		notifyDataSetChanged();
 	}
 
-	final static class ViewHolder {
+	private final static class ViewHolder {
 		TextView tvLetter;
 		TextView tvTitle;
 		ImageView ivCheck;

@@ -11,7 +11,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,7 +28,6 @@ import com.wecall.contacts.R;
 import com.wecall.contacts.adapter.SortAdapter;
 import com.wecall.contacts.database.DatabaseManager;
 import com.wecall.contacts.entity.ContactItem;
-import com.wecall.contacts.util.PinYin;
 import com.wecall.contacts.view.SideBar;
 import com.wecall.contacts.view.SideBar.onTouchLetterChangeListener;
 
@@ -142,8 +140,8 @@ public class MainFragment extends Fragment {
 
 	protected void showOperationDialog(final int position) {
 		new AlertDialog.Builder(getActivity())
-				.setTitle("您要进行的操作是")
-				.setNegativeButton("编辑", new DialogInterface.OnClickListener() {
+				.setTitle(contactList.get(position).getName())
+				.setPositiveButton("编辑", new DialogInterface.OnClickListener() {
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
@@ -160,21 +158,13 @@ public class MainFragment extends Fragment {
 					}
 
 				})
-				.setNeutralButton("删除", new DialogInterface.OnClickListener() {
+				.setNegativeButton("删除", new DialogInterface.OnClickListener() {
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						Log.v(TAG, "delete");
 						dialog.dismiss();
 						showDeleteDialog(position);
-					}
-				})
-				.setPositiveButton("取消", new DialogInterface.OnClickListener() {
-
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						Log.v(TAG, "cancle");
-						dialog.dismiss();
 					}
 				}).show();
 	}
@@ -212,32 +202,42 @@ public class MainFragment extends Fragment {
 		return contactList.size();
 	}
 
-	/**
-	 * 根据输入框中的值来过滤数据并更新ListView 可根据拼音，汉字，缩写来过滤
-	 * 
-	 * @param filterStr
-	 */
-	public void filterData(String filterStr) {
-		List<ContactItem> filterDateList = new ArrayList<ContactItem>();
-
-		if (TextUtils.isEmpty(filterStr)) {
-			filterDateList = contactList;
-		} else {
-			filterDateList.clear();
-			for (ContactItem contactItem : contactList) {
-				String filterStrInPinyin = PinYin.getPinYin(filterStr);
-				String name = contactItem.getName();
-				String fullPinyin = contactItem.getFullPinyin();
-				String simplePinyin = contactItem.getSimplePinyin();
-				if (name.contains(filterStr)
-						|| fullPinyin.contains(filterStrInPinyin)
-						|| simplePinyin.contains(filterStrInPinyin)) {
-					filterDateList.add(contactItem);
-				}
-			}
-		}
-		adapter.updateListView(filterDateList);
-	}
+//	/**
+//	 * 根据输入框中的值来过滤数据并更新ListView 可根据拼音，汉字，缩写来过滤
+//	 * 
+//	 * @param filterStr
+//	 */
+//	@SuppressLint("DefaultLocale")
+//	public void filterData(String filterStr) {
+//		List<ContactItem> filterDateList = new ArrayList<ContactItem>();
+//
+//		if (TextUtils.isEmpty(filterStr)) {
+//			filterDateList = contactList;
+//		} else {
+//			filterDateList.clear();
+//			for (ContactItem contactItem : contactList) {
+//				// String filterStrInPinyin = PinYin.getPinYin(filterStr);
+//				// String name = contactItem.getName();
+//				// String fullPinyin = contactItem.getFullPinyin();
+//				// String simplePinyin = contactItem.getSimplePinyin();
+//				// if (name.contains(filterStr)
+//				// || fullPinyin.contains(filterStrInPinyin)
+//				// || simplePinyin.contains(filterStrInPinyin)) {
+//				// filterDateList.add(contactItem);
+//				// }
+//				String convertStr = filterStr.toLowerCase();
+//				Map<String, Integer> originMap = contactItem
+//						.contains(filterStr);
+//				Map<String, Integer> convertMap = contactItem
+//						.contains(convertStr);
+//				if (originMap != null && convertMap != null
+//						&& originMap.size() != 0 && convertMap.size() != 0) {
+//					filterDateList.add(contactItem);
+//				}
+//			}
+//		}
+//		adapter.updateListView(filterDateList);
+//	}
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -256,8 +256,8 @@ public class MainFragment extends Fragment {
 		}
 		super.onActivityResult(requestCode, resultCode, data);
 	}
-	
-	public void initSideBar(){
+
+	public void initSideBar() {
 		sideBar.init();
 	}
 }
