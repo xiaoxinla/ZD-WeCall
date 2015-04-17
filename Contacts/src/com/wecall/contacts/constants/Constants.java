@@ -21,6 +21,7 @@ public class Constants {
 	public static final String MAIN_COL_FULL_PINYIN = "fullPinyin";
 	//主表simplePinyin列名
 	public static final String MAIN_COL_SIM_PINYIN = "simplePinyin";
+	
 	//主表note列名
 	public static final String MAIN_COL_NOTE = "note";
 	//主表phoneNumber列名
@@ -34,7 +35,7 @@ public class Constants {
 	public static final String TAG_COL_CID = "c_id";
 	//标签表tag列名
 	public static final String TAG_COL_TAG = "tag";
-	
+
 	//数据库版本
 	public static final int DATABASE_VERSION = 1;
 	//保存图片的目录

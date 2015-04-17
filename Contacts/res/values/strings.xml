@@ -2,21 +2,29 @@
 <resources>
 
     <string name="app_name">微讯</string>
+    <string name="action_search">查找</string>
+    <string name="action_add">添加</string>
+    <string name="menu_group_chat">发起群聊</string>
+    <string name="menu_feedback">意见反馈</string>
+    <string name="menu_addfriend">添加朋友</string>
+    <string name="menu_scan">扫一扫</string>
+    <string name="tab_contact">通讯录</string>
+    <string name="tab_found">发现</string>
+    <string name="tab_me">我</string>
+    <string name="setting">设置</string>
+    <string name="scan_text">将二维码放入框内, 即可自动扫描</string>
     <string name="phone">电话</string>
     <string name="address">地址</string>
     <string name="note">备注</string>
     <string name="label">标签</string>
-    <string name="scan_text">将二维码放入框内, 即可自动扫描</string>
     <string name="sure">确定</string>
     <string name="cancel">取消</string>
     <string name="addcontact">新建联系人</string>
     <string name="name">姓名</string>
     <string name="scanQR">扫二维码</string>
-    <string name="setting">设置</string>
     <string name="returnlast">返回</string>
     <string name="about">关于微讯</string>
-    <string name="rules">
-#软件介绍：\n
+    <string name="rules">#软件介绍：\n
 微讯作为一款通讯录管理软件，可以让用户方便的管理自己的联系人，支持关键词匹配，模糊查找，二维码扫码等功能\n\n
 #已实现功能：\n
 1.主界面显示联系人列表，点击联系人进入联系人详细信息界面;可通过首字母索引，关键字查询快速找到联系人，也可以通过下方的添加按钮进入添加联系人界面\n
@@ -34,7 +42,17 @@
 本软件由WeCall团队自主开发，团队成员有下面6人组成（拼音排序）：\n
 陈驰、李国聪、黎坤旻、邱敏仪、谢凡、徐晓欣（组长）\n
 未经团队成员许可，请勿擅自使用或者修改软件的源代码\n
-感谢您的使用和尊重
-</string>
+感谢您的使用和尊重</string>
+    <string name="personinfo">个人信息</string>
+    <string name="inputname">请输入姓名</string>
+    <string name="inputphone">请输入电话</string>
+    <string name="contactinfo">联系人详情</string>
+    <string name="delete">删除</string>
+    <string name="edit">编辑</string>
+    <string name="add">添加</string>
+    <string name="save">保存</string>
+    <string name="editlabelinfo">编辑标签信息</string>
+    <string name="labelhint">请输入标签名</string>
+    <string name="title_activity_search">搜索</string>
 
 </resources>
