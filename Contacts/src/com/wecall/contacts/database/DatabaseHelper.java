@@ -22,7 +22,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
     private static int VERSION = 1;
     
     /* main表，存基本信息
-     * 列依次为：c_id, name, fullPinyin, simplePinyin, sortLetter, note
+     * 列依次为：c_id, name, fullPinyin, simplePinyin, sortLetter, note, phoneNumber, address
      */    
     private final static 
     String MAIN_TABLE = "CREATE TABLE IF NOT EXISTS main( "
@@ -30,8 +30,9 @@ public class DatabaseHelper extends SQLiteOpenHelper{
     					+ "name VARCHAR(100), "
     					+ "fullPinyin VARCHAR(100), "
     					+ "simplePinyin VARCHAR(20), "
-    					+ "sortLetter VARCHAR(5), "
-    					+ "note VARCHAR(255)"
+    					+ "note VARCHAR(255), "
+    					+ "phoneNumber VARCHAR(20), "
+    					+ "address VARCHAR(50)"
     					+ ");";
      
     /*
@@ -45,29 +46,14 @@ public class DatabaseHelper extends SQLiteOpenHelper{
     					+ "PRIMARY KEY(c_id, tag), " 
     					+ "FOREIGN KEY(c_id) REFERENCES main(c_id) ON DELETE CASCADE "
     					+ ");";   
-						
-    /*
-     * multiValue表，存所有多值元组
-     * 列依次为：c_id, kkey, vvalue
-     */
-    private final static 
-    String MULTI_VALUE_TABLE = "CREATE TABLE IF NOT EXISTS multiValue(" 
-    					+ "c_id INTEGER NOT NULL, "
-    					+ "kkey VARCHAR(50), "
-    					+ "vvalue VARCHAR(100), "
-    					+ "PRIMARY KEY(c_id, kkey, vvalue), "
-    					+ "FOREIGN KEY(c_id) REFERENCES Main(c_id) ON DELETE CASCADE "
-    					+ ");";
     
-    // tag表上对tag的索引
+    // 索引
     private final static
     String MAIN_ID_INDEX = "CREATE INDEX main_cid_index on main(c_id);";
     private final static
     String TAG_ID_INDEX = "CREATE INDEX tag_cid_index on tag(c_id);";
     private final static
     String TAG_TAG_INDEX = "CREATE INDEX tag_tag_index on tag(tag);";
-    private final static
-    String MULTI_ID_INDEX = "CREATE INDEX multi_cid_index on multiValue(c_id);";
     
     public DatabaseHelper(Context context, String name, CursorFactory factory, int version) {
         super(context, name, factory, version);
@@ -92,16 +78,13 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 			// 依次创建三个表
 			db.execSQL(MAIN_TABLE);
 			db.execSQL(TAG_TABLE);
-			db.execSQL(MULTI_VALUE_TABLE);
 			//建立多个索引
 			db.execSQL(MAIN_ID_INDEX);
 			db.execSQL(TAG_ID_INDEX);
 			db.execSQL(TAG_TAG_INDEX);
-			db.execSQL(MULTI_ID_INDEX);
 		} catch (SQLException se) {
-			// TODO Auto-generated catch block
 			se.printStackTrace();
-			Log.i("err", "create table failed.");
+			Log.e("err", "create table failed.");
 		}
     }
 
