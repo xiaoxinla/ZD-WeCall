@@ -259,6 +259,61 @@ public class DatabaseManager {
 	}
 	
 	/**
+	 * 删除联系人的一个标签
+	 */
+	public void deleteContactTag(int id, String tagName)
+	{
+		if (!isId(id) )
+			return;
+		try {
+			db.delete(Constants.TAG_TABLE_NAME, 
+					Constants.TAG_COL_CID + " = ? AND " + Constants.TAG_COL_TAG + " = ?", 
+					new String[] {id + "", tagName});
+		} catch (SQLException se) {
+			se.printStackTrace();
+			Log.e("err", "delete contact tag failed");
+		}
+	}
+	
+	/**
+	 * 获取所有现存标签
+	 */
+	public ArrayList<Label> queryAllTag()
+	{
+		ArrayList<Label> labels = new ArrayList<Label>();
+		
+		Cursor cursor = db.query(true, Constants.TAG_TABLE_NAME, new String[] {"*"}, 
+				null, null, null, null, null, null);
+		int tagNameIndex = cursor.getColumnIndex(Constants.TAG_COL_TAG);
+		
+		try {
+			while(cursor.moveToNext())
+			{
+				Label label = new Label();
+				label.setLname(cursor.getString(tagNameIndex));
+				labels.add(label);
+			}
+		} finally {
+			cursor.close();
+		}
+		
+		return labels;
+	}
+	
+	/**
+	 * 创建一个不关联任何人的标签
+	 */
+	public void addNewTag(Label label)
+	{
+		ContentValues value = new ContentValues();
+		value.putNull(Constants.TAG_COL_CID);
+		value.put(Constants.TAG_COL_TAG, label.getLname());
+		value.put(Constants.TAG_COL_TAG_FULLPY, label.getLabelFullPinyin());
+		value.put(Constants.TAG_COL_TAG_SIM_PINYIN, label.getLabelSimplePinyin());
+		db.insert(Constants.TAG_TABLE_NAME, null, value);
+	}
+	
+	/**
 	 * 通过联系人标识号删除一条联系人记录
 	 */
 	public void deleteContactById(int id)
