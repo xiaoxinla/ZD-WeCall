@@ -17,10 +17,7 @@ import com.wecall.contacts.constants.*;
  */
 
 public class DatabaseHelper extends SQLiteOpenHelper{
-	
-	// 数据库版本
-    private static int VERSION = 1;
-    
+	    
     /* main表，存基本信息
      * 列依次为：c_id, name, fullPinyin, simplePinyin, sortLetter, note, phoneNumber, address
      */    
@@ -37,12 +34,14 @@ public class DatabaseHelper extends SQLiteOpenHelper{
      
     /*
      * tag表，存标签，多个
-     * 列依次为：c_id, tag
+     * 列依次为：c_id, tag, tagFullPinyin, tagSimplePinyin
      */
     private final static 
     String TAG_TABLE = "CREATE TABLE IF NOT EXISTS tag( "
     					+ "c_id INTEGER NOT NULL, "
     					+ "tag VARCHAR(50),"
+    					+ "tagFullPinyin VARCHAR(150), "
+    					+ "tagSimplePinyin VARCHAR(50), "
     					+ "PRIMARY KEY(c_id, tag), " 
     					+ "FOREIGN KEY(c_id) REFERENCES main(c_id) ON DELETE CASCADE "
     					+ ");";   
@@ -64,7 +63,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
     }
     
     public DatabaseHelper(Context context, String name){
-        this(context, name, VERSION);
+        this(context, name, Constants.DATABASE_VERSION);
     }
     
     public DatabaseHelper(Context context)

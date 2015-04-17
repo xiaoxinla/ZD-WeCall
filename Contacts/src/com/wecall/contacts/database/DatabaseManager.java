@@ -2,7 +2,6 @@ package com.wecall.contacts.database;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -12,6 +11,8 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import com.wecall.contacts.entity.ContactItem;
+import com.wecall.contacts.entity.Label;
+
 import android.util.Log;
 import com.wecall.contacts.constants.Constants;
 
@@ -37,6 +38,28 @@ public class DatabaseManager {
 		// 通过shared preference初始化id值
 		preferences = context.getSharedPreferences("database", Context.MODE_PRIVATE);
 		id = preferences.getInt("id_count", 1);
+		
+		ArrayList<ContactItem> list = queryAllContact();
+		Log.i("databaseManager", list.size() + "");
+		if (list.size() == 0)
+		{
+			list = new ArrayList<ContactItem>();
+			
+			ContactItem item = new ContactItem();
+			item.setName("xiaoxinla");
+			item.setPhoneNumber("123123123");
+			item.setNote("Group leader");
+			item.setAddress("China GD GZ");
+			ArrayList<Label> labels = new ArrayList<Label>();
+			labels.add(new Label("Tall"));
+			labels.add(new Label("Rich"));
+			labels.add(new Label("Handsome"));		
+			item.setLabels(labels);
+			for(int i = 0; i < 500; i++)
+				list.add(item);
+			
+			addContacts(list);
+		}
 	}
 	
 	/**
@@ -58,12 +81,14 @@ public class DatabaseManager {
 			db.insert(Constants.MAIN_TABLE_NAME, null, values);
 			
 			// 插入tag表
-			ArrayList<String> list = item.getLabels();
+			ArrayList<Label> list = item.getLabels();
 			if (list != null) {
-				for (String l : list) {
+				for (Label label : list) {
 					values.clear();
 					values.put(Constants.TAG_COL_CID, id);
-					values.put(Constants.TAG_COL_TAG, l);
+					values.put(Constants.TAG_COL_TAG, label.getLname());
+					values.put(Constants.TAG_COL_TAG_FULLPY, label.getLabelFullPinyin());
+					values.put(Constants.TAG_COL_TAG_SIM_PINYIN, label.getLabelSimplePinyin());
 					db.insert(Constants.TAG_TABLE_NAME, null, values);
 				}
 			}		
@@ -199,10 +224,37 @@ public class DatabaseManager {
 		} catch(Exception e)
 		{
 			e.printStackTrace();
-			Log.i("err", "queryContactById error.");
+			Log.e("err", "queryContactById error.");
 		}
 
 		return item;
+	}
+	
+	/**
+	 * 通过tag名称搜联系人
+	 */
+	public ArrayList<ContactItem> queryContactByTag(String tagName)
+	{
+		ArrayList<ContactItem> list = new ArrayList<ContactItem>();
+		
+		Cursor cursor = db.query(true, Constants.TAG_TABLE_NAME, new String[] {"*"},
+				Constants.TAG_COL_TAG + "=?", new String[] {tagName}, null, null, null, null);
+		int idIndex = cursor.getColumnIndex(Constants.TAG_COL_CID);
+		
+		try
+		{
+			while(cursor.moveToNext())
+			{
+				int id = cursor.getInt(idIndex);
+				ContactItem item = queryContactById(id);
+				list.add(item);
+			}
+		} finally
+		{
+			cursor.close();
+		}
+		
+		return list;
 	}
 	
 	/**
@@ -225,19 +277,21 @@ public class DatabaseManager {
 	/**
 	 * 根据id更新tag表
 	 */
-	public void updateTagById(int id, ArrayList<String> tags)
+	public void updateTagById(int id, ArrayList<Label> labels)
 	{		
 		// 检查参数是否合法
-		if( !isId(id) || tags == null)
+		if( !isId(id) || labels == null)
 			return;
 		// 先删掉与当前id关联的所有tag
 		db.delete(Constants.TAG_TABLE_NAME, Constants.TAG_COL_CID + "= ?", new String[] {id + ""});
 		// 再插入全部新的tag
-		for(String s: tags)
+		for(Label s: labels)
 		{
 			ContentValues values = new ContentValues();
 			values.put(Constants.TAG_COL_CID, id + "");
-			values.put(Constants.TAG_COL_TAG, s);
+			values.put(Constants.TAG_COL_TAG, s.getLname());
+			values.put(Constants.TAG_COL_TAG_FULLPY, s.getLabelFullPinyin());
+			values.put(Constants.TAG_COL_TAG_SIM_PINYIN, s.getLabelSimplePinyin());
 			db.insert(Constants.TAG_TABLE_NAME, null, values);
 		}
 	}
@@ -254,14 +308,11 @@ public class DatabaseManager {
 						
 			// 更新tag表
 			updateTagById(item.getId(), item.getLabels());
-			
-			// 更新multi表
-			updateMultiById(item);
-			
+						
 			db.setTransactionSuccessful();
 		} catch (SQLException e) {
 			e.printStackTrace();
-			Log.i("err", "data update failed.");
+			Log.e("err", "data update failed.");
 		} finally
 		{
 			db.endTransaction();
@@ -305,18 +356,19 @@ public class DatabaseManager {
 	/**
 	 * 根据id查询对应的所有tag
 	 */
-	private ArrayList<String> queryTagById(int id) throws SQLException
+	private ArrayList<Label> queryTagById(int id) throws SQLException
 	{		
 		// 对应每个id搜tag表
 		Cursor tag_cursor = db.query(Constants.TAG_TABLE_NAME, new String[] {"*"}, 
-				"c_id=?", new String[] {id + ""}, null, null, null);
+				Constants.MAIN_COL_CID + "=?", new String[] {id + ""}, null, null, null);
 		
-		ArrayList<String> labels = new ArrayList<String>();
+		ArrayList<Label> labels = new ArrayList<Label>();
 		int tagIndex = tag_cursor.getColumnIndex(Constants.TAG_COL_TAG);
 		try {
 			while(tag_cursor.moveToNext())
 			{
-				labels.add(tag_cursor.getString(tagIndex));
+				Label label = new Label(tag_cursor.getString(tagIndex));				
+				labels.add(label);
 			}
 		} finally {
 			tag_cursor.close();
@@ -333,33 +385,13 @@ public class DatabaseManager {
 		if( item == null || !isId(item.getId()) )
 			return;
 		ContentValues values = new ContentValues();
-		values.put("name", item.getName());
-		values.put("fullPinyin", item.getFullPinyin());
-		values.put("simplePinyin", item.getSimplePinyin());
-		values.put("sortLetter", item.getSortLetter());
-		values.put("note", item.getNote());	
+		values.put(Constants.MAIN_COL_NAME, item.getName());
+		values.put(Constants.MAIN_COL_FULL_PINYIN, item.getFullPinyin());
+		values.put(Constants.MAIN_COL_SIM_PINYIN, item.getSimplePinyin());
+		values.put(Constants.MAIN_COL_NOTE, item.getNote());
+		values.put(Constants.MAIN_COl_PHONE, item.getPhoneNumber());
+		values.put(Constants.MAIN_COL_ADDRESS, item.getAddress());
 		db.update(Constants.MAIN_TABLE_NAME, values, "c_id=?", 
 				new String[]{ item.getId() + "" });
-	}
-	
-	/**
-	 * 根据id更新Multi表
-	 */
-	private void updateMultiById(ContactItem item) throws SQLException
-	{
-		// 检查是否传入合法id
-		if( item == null || !isId(item.getId()))
-			return;
-		ContentValues phone = new ContentValues();
-		phone.put(Constants.MULTI_COL_KEY, Constants.MULTI_KEY_PHONE);
-		phone.put(Constants.MULTI_COL_VALUE, item.getPhoneNumber());
-		db.update(Constants.MULTI_TABLE_NAME, phone,
-				Constants.MULTI_COL_CID + "=?", new String[] {item.getId() + ""});
-		
-		ContentValues address = new ContentValues();
-		address.put(Constants.MULTI_COL_KEY, Constants.MULTI_KEY_ADDRESS);
-		address.put(Constants.MULTI_COL_VALUE, item.getAddress());
-		db.update(Constants.MULTI_TABLE_NAME, address,
-				Constants.MULTI_COL_CID + "=?", new String[] {item.getId() + ""});
 	}
 }

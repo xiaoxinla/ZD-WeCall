@@ -29,7 +29,7 @@ public class ContactItem implements Comparable {
 	// 地址
 	private String address;
 	// 标签
-	private ArrayList<String> labels;
+	private ArrayList<Label> labels;
 	// 姓名全拼
 	private String fullPinyin;
 	// 姓名首字母组合
@@ -40,7 +40,7 @@ public class ContactItem implements Comparable {
 	}
 
 	public ContactItem(String name, String phoneNumber, String address,
-			String note, ArrayList<String> labels) {
+			String note, ArrayList<Label> labels) {
 		super();
 		setName(name);
 		setPhoneNumber(phoneNumber);
@@ -114,15 +114,15 @@ public class ContactItem implements Comparable {
 			this.address = new String(address);
 	}
 
-	public ArrayList<String> getLabels() {
+	public ArrayList<Label> getLabels() {
 		return labels;
 	}
 
-	public void setLabels(ArrayList<String> labels) {
+	public void setLabels(ArrayList<Label> labels) {
 		if (labels == null)
 			this.labels = null;
 		else
-			this.labels = new ArrayList<String>(labels);
+			this.labels = new ArrayList<Label>(labels);
 	}
 
 	public int getId() {
