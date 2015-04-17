@@ -39,27 +39,28 @@ public class DatabaseManager {
 		preferences = context.getSharedPreferences("database", Context.MODE_PRIVATE);
 		id = preferences.getInt("id_count", 1);
 		
-		ArrayList<ContactItem> list = queryAllContact();
-		Log.i("databaseManager", list.size() + "");
-		if (list.size() == 0)
-		{
-			list = new ArrayList<ContactItem>();
-			
-			ContactItem item = new ContactItem();
-			item.setName("xiaoxinla");
-			item.setPhoneNumber("123123123");
-			item.setNote("Group leader");
-			item.setAddress("China GD GZ");
-			ArrayList<Label> labels = new ArrayList<Label>();
-			labels.add(new Label("Tall"));
-			labels.add(new Label("Rich"));
-			labels.add(new Label("Handsome"));		
-			item.setLabels(labels);
-			for(int i = 0; i < 500; i++)
-				list.add(item);
-			
-			addContacts(list);
-		}
+//		// 加入测试数据
+//		ArrayList<ContactItem> list = queryAllContact();
+//		Log.i("databaseManager", list.size() + "");
+//		if (list.size() == 0)
+//		{
+//			list = new ArrayList<ContactItem>();
+//			
+//			ContactItem item = new ContactItem();
+//			item.setName("xiaoxinla");
+//			item.setPhoneNumber("123123123");
+//			item.setNote("Group leader");
+//			item.setAddress("China GD GZ");
+//			ArrayList<Label> labels = new ArrayList<Label>();
+//			labels.add(new Label("Tall"));
+//			labels.add(new Label("Rich"));
+//			labels.add(new Label("Handsome"));		
+//			item.setLabels(labels);
+//			for(int i = 0; i < 500; i++)
+//				list.add(item);
+//			
+//			addContacts(list);
+//		}
 	}
 	
 	/**
