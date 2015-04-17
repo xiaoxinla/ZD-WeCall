@@ -20,11 +20,13 @@ public class Constants {
 	//主表fullPinyin列名
 	public static final String MAIN_COL_FULL_PINYIN = "fullPinyin";
 	//主表simplePinyin列名
-	public static final String MAIN_COL_SIM_PINYIN = "simplePinyin";
-	//主表sortLetter列名
-	public static final String MAIN_COL_SORT = "sortLetter";
+	public static final String MAIN_COL_SIM_PINYIN = "simplePinyin";	
 	//主表note列名
 	public static final String MAIN_COL_NOTE = "note";
+	//主表phoneNumber列名
+	public static final String MAIN_COl_PHONE = "phoneNumber";
+	//主表address列名
+	public static final String MAIN_COL_ADDRESS = "address";
 	
 	//标签表名
 	public static final String TAG_TABLE_NAME = "tag";
@@ -32,19 +34,10 @@ public class Constants {
 	public static final String TAG_COL_CID = "c_id";
 	//标签表tag列名
 	public static final String TAG_COL_TAG = "tag";
-	
-	//多值表名
-	public static final String MULTI_TABLE_NAME = "multiValue";
-	//多值表cid列名
-	public static final String MULTI_COL_CID = "c_id";
-	//多值表key列名
-	public static final String MULTI_COL_KEY = "kkey";
-	//多值表value列名
-	public static final String MULTI_COL_VALUE = "vvalue";
-	//多值表key名：电话
-	public static final String MULTI_KEY_PHONE = "phoneNumber";
-	//多值表key名：地址
-	public static final String MULTI_KEY_ADDRESS = "address";
+	//标签表tagFullPinyin
+	public static final String TAG_COL_TAG_FULLPY = "tagFullPinyin";
+	//标签表tagSimplePinyin
+	public static final String TAG_COL_TAG_SIM_PINYIN = "tagSimplePinyin";
 	
 	//数据库版本
 	public static final int DATABASE_VERSION = 1;

@@ -177,7 +177,7 @@ public class MainFragment extends Fragment {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						dialog.dismiss();
-						mManager.deleteContact(contactList.get(position)
+						mManager.deleteContactById(contactList.get(position)
 								.getId());
 						updateContacts();
 						Toast.makeText(getActivity(), "联系人删除成功",

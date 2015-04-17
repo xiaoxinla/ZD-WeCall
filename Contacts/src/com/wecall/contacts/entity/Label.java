@@ -10,7 +10,6 @@ import com.wecall.contacts.util.PinYin;
 public class Label {
 
 	private String lname;
-	private int cid;
 	private String labelFullPinyin;
 	private String labelSimplePinyin;
 
@@ -18,10 +17,9 @@ public class Label {
 		
 	}
 	
-	public Label(String lname, int cid) {
+	public Label(String lname) {
 		super();
 		this.lname = lname;
-		this.cid = cid;
 		this.labelFullPinyin = PinYin.getPinYin(lname);
 		this.labelSimplePinyin = PinYin.getSimplePinYin(lname);
 	}
@@ -31,15 +29,10 @@ public class Label {
 	}
 
 	public void setLname(String lname) {
-		this.lname = lname;
-	}
-
-	public int getCid() {
-		return cid;
-	}
-
-	public void setCid(int cid) {
-		this.cid = cid;
+		if (lname == null)
+			this.lname = null;
+		else
+			this.lname = lname;
 	}
 
 	public String getLabelFullPinyin() {
@@ -52,7 +45,7 @@ public class Label {
 
 	@Override
 	public String toString() {
-		return "Label [lname=" + lname + ", cid=" + cid + ", labelFullPinyin="
+		return "Label [lname=" + lname + ", labelFullPinyin="
 				+ labelFullPinyin + ", labelSimplePinyin=" + labelSimplePinyin
 				+ "]";
 	}

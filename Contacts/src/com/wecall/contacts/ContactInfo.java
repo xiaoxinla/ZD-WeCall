@@ -191,6 +191,8 @@ public class ContactInfo extends Activity {
 
 	private void updateView(int cid) {
 		contact = mManager.queryContactById(cid);
+		
+		Log.i("Update View contact", contact.getName()+"");
 
 		SpannableStringBuilder styled = StringUtil.colorString(
 				contact.getName(), 0, 1, Color.RED);
@@ -247,7 +249,7 @@ public class ContactInfo extends Activity {
 			@Override
 			public void onClick(DialogInterface arg0, int arg1) {
 				arg0.dismiss();
-				mManager.deleteContact(cid);
+				mManager.deleteContactById(cid);
 				ImageUtil.deleteImage(Constants.ALBUM_PATH, "pic"+cid+".jpg");
 				setResult(RESULT_OK);
 				finish();
