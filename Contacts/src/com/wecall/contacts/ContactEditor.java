@@ -25,6 +25,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
 import android.view.ViewGroup.MarginLayoutParams;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -50,6 +51,7 @@ public class ContactEditor extends Activity {
 	private ImageView photoImg;
 	private FlowLayout labelLayout;
 	private ActionBar actionBar;
+	private ImageButton addLabelButton;
 	// 数据库管理对象
 	private DatabaseManager mManager;
 
@@ -59,11 +61,13 @@ public class ContactEditor extends Activity {
 	private int mCid = -1;
 	private String mName;
 	private String mPhone;
-	
+
 	private static final int ALBUM_REQUEST_CODE = 1;
 	private static final int CAMERA_REQUEST_CODE = 2;
 	private static final int CROP_REQUEST_CODE = 3;
 	private static final int SCAN_REQUEST_CODE = 4;
+
+	private static final int LABEL_EDIT_REQUEST_CODE = 0;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -86,15 +90,16 @@ public class ContactEditor extends Activity {
 		noteET = (EditText) findViewById(R.id.et_note_add);
 		photoImg = (ImageView) findViewById(R.id.img_photo_add);
 		labelLayout = (FlowLayout) findViewById(R.id.fl_editor_label);
+		addLabelButton = (ImageButton) findViewById(R.id.ibtn_label_add);
 		mManager = new DatabaseManager(this);
 
 		// 分新建和修改进行不同的初始化
 		if (mType == 1) {
 			actionBar.setTitle("新建联系人");
-			if(mName!=null&&!mName.isEmpty()){
+			if (mName != null && !mName.isEmpty()) {
 				nameET.setText(mName);
 			}
-			if(mPhone!=null&&!mPhone.isEmpty()){
+			if (mPhone != null && !mPhone.isEmpty()) {
 				phoneET.setText(mPhone);
 			}
 		} else if (mType == 2) {
@@ -121,14 +126,25 @@ public class ContactEditor extends Activity {
 				showPicDialog();
 			}
 		});
+
+		addLabelButton.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(ContactEditor.this,
+						ContactLabelEditor.class);
+				intent.putExtra("cid", mCid);
+				startActivityForResult(intent, LABEL_EDIT_REQUEST_CODE);
+			}
+		});
 	}
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.contact_editor_menu, menu);
 		return super.onCreateOptionsMenu(menu);
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
@@ -140,8 +156,8 @@ public class ContactEditor extends Activity {
 					MipcaActivityCapture.class);
 			startActivityForResult(intent, SCAN_REQUEST_CODE);
 			break;
-			case R.id.action_editor_save:
-				saveContact();
+		case R.id.action_editor_save:
+			saveContact();
 		default:
 			break;
 		}
@@ -151,24 +167,22 @@ public class ContactEditor extends Activity {
 	private void saveContact() {
 		String name = nameET.getText().toString();
 		if (name.isEmpty()) {
-			Toast.makeText(ContactEditor.this, "请填写姓名",
-					Toast.LENGTH_SHORT).show();
+			Toast.makeText(ContactEditor.this, "请填写姓名", Toast.LENGTH_SHORT)
+					.show();
 		} else {
 			if (mType == 1) {
 				int last = mManager.addContact(getContactFromView());
 				Log.v(TAG, "insetid:" + last);
-				ImageUtil.renameImage(Constants.ALBUM_PATH
-						+ "showpic.jpg", Constants.ALBUM_PATH + "pic"
-						+ last + ".jpg");
+				ImageUtil.renameImage(Constants.ALBUM_PATH + "showpic.jpg",
+						Constants.ALBUM_PATH + "pic" + last + ".jpg");
 				setResult(RESULT_OK);
 				finish();
 			} else if (mType == 2) {
 				ContactItem item = getContactFromView();
 				item.setId(mCid);
 				mManager.updateContact(item);
-				ImageUtil.renameImage(Constants.ALBUM_PATH
-						+ "showpic.jpg", Constants.ALBUM_PATH + "pic"
-						+ mCid + ".jpg");
+				ImageUtil.renameImage(Constants.ALBUM_PATH + "showpic.jpg",
+						Constants.ALBUM_PATH + "pic" + mCid + ".jpg");
 				setResult(RESULT_OK);
 				finish();
 			}
@@ -226,7 +240,9 @@ public class ContactEditor extends Activity {
 					setPicToView(data);
 				}
 				break;
-
+			case LABEL_EDIT_REQUEST_CODE:
+				Toast.makeText(this, "标签编辑成功", Toast.LENGTH_SHORT).show();
+				break;
 			default:
 				break;
 			}
@@ -244,7 +260,7 @@ public class ContactEditor extends Activity {
 	private void confireType() {
 		Bundle bundle = getIntent().getExtras();
 		mType = bundle.getInt("type");
-		if(mType==1){
+		if (mType == 1) {
 			mName = bundle.getString("name");
 			mPhone = bundle.getString("phone");
 		}
@@ -261,7 +277,7 @@ public class ContactEditor extends Activity {
 		item.setNote(noteET.getText().toString());
 		return item;
 	}
-	
+
 	private void setLabels() {
 		List<String> labelNames = new ArrayList<String>();
 		labelNames.add("逗比");
@@ -281,7 +297,7 @@ public class ContactEditor extends Activity {
 			lp.setMargins(5, 8, 0, 0);
 			tv.setText(labelNames.get(i));
 			tv.setBackgroundResource(R.drawable.label_bg);
-			labelLayout.addView(tv,lp);
+			labelLayout.addView(tv, lp);
 		}
 	}
 

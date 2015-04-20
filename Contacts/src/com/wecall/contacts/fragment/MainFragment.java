@@ -92,7 +92,13 @@ public class MainFragment extends Fragment {
 	@SuppressWarnings("unchecked")
 	public void updateContacts() {
 		contactList.clear();
-		contactList = mManager.queryAllContact();
+		try {
+			contactList = mManager.queryAllContact();
+		} catch (Exception e) {
+			e.printStackTrace();
+			Toast.makeText(getActivity(), "获取联系人列表失败", Toast.LENGTH_SHORT)
+					.show();
+		}
 		Collections.sort(contactList);
 		adapter.updateListView(contactList);
 	}
@@ -140,7 +146,7 @@ public class MainFragment extends Fragment {
 
 	protected void showOperationDialog(final int position) {
 		new AlertDialog.Builder(getActivity())
-				.setTitle(contactList.get(position).getName())
+				.setTitle(((ContactItem) adapter.getItem(position)).getName())
 				.setPositiveButton("编辑", new DialogInterface.OnClickListener() {
 
 					@Override
@@ -177,8 +183,8 @@ public class MainFragment extends Fragment {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						dialog.dismiss();
-						mManager.deleteContactById(contactList.get(position)
-								.getId());
+						mManager.deleteContactById(((ContactItem) adapter
+								.getItem(position)).getId());
 						updateContacts();
 						Toast.makeText(getActivity(), "联系人删除成功",
 								Toast.LENGTH_SHORT).show();
@@ -202,42 +208,42 @@ public class MainFragment extends Fragment {
 		return contactList.size();
 	}
 
-//	/**
-//	 * 根据输入框中的值来过滤数据并更新ListView 可根据拼音，汉字，缩写来过滤
-//	 * 
-//	 * @param filterStr
-//	 */
-//	@SuppressLint("DefaultLocale")
-//	public void filterData(String filterStr) {
-//		List<ContactItem> filterDateList = new ArrayList<ContactItem>();
-//
-//		if (TextUtils.isEmpty(filterStr)) {
-//			filterDateList = contactList;
-//		} else {
-//			filterDateList.clear();
-//			for (ContactItem contactItem : contactList) {
-//				// String filterStrInPinyin = PinYin.getPinYin(filterStr);
-//				// String name = contactItem.getName();
-//				// String fullPinyin = contactItem.getFullPinyin();
-//				// String simplePinyin = contactItem.getSimplePinyin();
-//				// if (name.contains(filterStr)
-//				// || fullPinyin.contains(filterStrInPinyin)
-//				// || simplePinyin.contains(filterStrInPinyin)) {
-//				// filterDateList.add(contactItem);
-//				// }
-//				String convertStr = filterStr.toLowerCase();
-//				Map<String, Integer> originMap = contactItem
-//						.contains(filterStr);
-//				Map<String, Integer> convertMap = contactItem
-//						.contains(convertStr);
-//				if (originMap != null && convertMap != null
-//						&& originMap.size() != 0 && convertMap.size() != 0) {
-//					filterDateList.add(contactItem);
-//				}
-//			}
-//		}
-//		adapter.updateListView(filterDateList);
-//	}
+	// /**
+	// * 根据输入框中的值来过滤数据并更新ListView 可根据拼音，汉字，缩写来过滤
+	// *
+	// * @param filterStr
+	// */
+	// @SuppressLint("DefaultLocale")
+	// public void filterData(String filterStr) {
+	// List<ContactItem> filterDateList = new ArrayList<ContactItem>();
+	//
+	// if (TextUtils.isEmpty(filterStr)) {
+	// filterDateList = contactList;
+	// } else {
+	// filterDateList.clear();
+	// for (ContactItem contactItem : contactList) {
+	// // String filterStrInPinyin = PinYin.getPinYin(filterStr);
+	// // String name = contactItem.getName();
+	// // String fullPinyin = contactItem.getFullPinyin();
+	// // String simplePinyin = contactItem.getSimplePinyin();
+	// // if (name.contains(filterStr)
+	// // || fullPinyin.contains(filterStrInPinyin)
+	// // || simplePinyin.contains(filterStrInPinyin)) {
+	// // filterDateList.add(contactItem);
+	// // }
+	// String convertStr = filterStr.toLowerCase();
+	// Map<String, Integer> originMap = contactItem
+	// .contains(filterStr);
+	// Map<String, Integer> convertMap = contactItem
+	// .contains(convertStr);
+	// if (originMap != null && convertMap != null
+	// && originMap.size() != 0 && convertMap.size() != 0) {
+	// filterDateList.add(contactItem);
+	// }
+	// }
+	// }
+	// adapter.updateListView(filterDateList);
+	// }
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -258,6 +264,7 @@ public class MainFragment extends Fragment {
 	}
 
 	public void initSideBar() {
+		// TODO There's something to fix
 		sideBar.init();
 	}
 }

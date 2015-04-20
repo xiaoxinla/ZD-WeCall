@@ -54,5 +54,6 @@
     <string name="editlabelinfo">编辑标签信息</string>
     <string name="labelhint">请输入标签名</string>
     <string name="title_activity_search">搜索</string>
+    <string name="load_local_contacts">导入本地联系人</string>
 
 </resources>

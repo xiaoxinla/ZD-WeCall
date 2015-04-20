@@ -12,8 +12,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.wecall.contacts.adapter.SortAdapter;
 import com.wecall.contacts.database.DatabaseManager;
@@ -26,6 +28,7 @@ public class SelectLabelMember extends Activity {
 	private static final String TAG = "SelectLabelMember";
 	private ListView contactListView;
 	private TextView letterTextView;
+	private EditText inputText;
 	// 侧边栏索引控件
 	private SideBar sideBar;
 	// 排序的适配器
@@ -56,6 +59,7 @@ public class SelectLabelMember extends Activity {
 		contactListView = (ListView) findViewById(R.id.lv_select_member);
 		letterTextView = (TextView) findViewById(R.id.tv_show_letter);
 		sideBar = (SideBar) findViewById(R.id.sidebar_mem);
+		inputText = (EditText) findViewById(R.id.et_label_input);
 
 		sideBar.setTouchLetterChangeListener(new onTouchLetterChangeListener() {
 
@@ -93,9 +97,9 @@ public class SelectLabelMember extends Activity {
 		contactListView.setAdapter(adapter);
 
 		Collections.sort(contactList);
-		adapter.updateListView(contactList,checkList);
+		adapter.updateListView(contactList, checkList);
 	}
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.label_editor_menu, menu);
@@ -109,8 +113,13 @@ public class SelectLabelMember extends Activity {
 			finish();
 			break;
 		case R.id.action_save_label:
-			// TODO 保存到数据库
-			finish();
+			if (inputText.getText().toString().equals("")) {
+				Toast.makeText(SelectLabelMember.this, "请输入标签名",
+						Toast.LENGTH_SHORT).show();
+			} else {
+				// TODO 保存到数据库
+				finish();
+			}
 		default:
 			break;
 		}

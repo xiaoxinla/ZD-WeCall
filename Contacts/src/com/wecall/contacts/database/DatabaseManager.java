@@ -357,7 +357,7 @@ public class DatabaseManager {
 	/**
 	 * 根据id查询对应的所有tag
 	 */
-	private ArrayList<Label> queryTagById(int id) throws SQLException
+	public ArrayList<Label> queryTagById(int id) throws SQLException
 	{		
 		// 对应每个id搜tag表
 		Cursor tag_cursor = db.query(Constants.TAG_TABLE_NAME, new String[] {"*"}, 
@@ -376,6 +376,47 @@ public class DatabaseManager {
 		}
 		return labels;
 	}
+	
+	/**
+	 * 获取所有现存标签
+	 */
+	public ArrayList<Label> queryAllTags()
+	{
+		ArrayList<Label> labels = new ArrayList<Label>();
+		
+		Cursor cursor = db.query(true, Constants.TAG_TABLE_NAME, new String[] {"*"}, 
+				null, null, null, null, null, null);
+		int tagNameIndex = cursor.getColumnIndex(Constants.TAG_COL_TAG);
+		
+		try {
+			while(cursor.moveToNext())
+			{
+				Label label = new Label();
+				label.setLname(cursor.getString(tagNameIndex));
+				labels.add(label);
+			}
+		} finally {
+			cursor.close();
+		}
+		
+		return labels;
+	}
+	
+	/**
+	 * 删除所有联系人的某个标签
+	 * @param tagName
+	 */
+	public void deleteTagForAllContact(String tagName)
+	{
+		try {
+			db.delete(Constants.TAG_TABLE_NAME, Constants.TAG_COL_TAG + "=?", 
+					new String[] {tagName});
+		} catch (SQLException se) {
+			se.printStackTrace();
+			Log.e("err", "deleteTagForAllContact failed.");
+		}
+	}
+
 	
 	/**
 	 * 根据id更新Main表
