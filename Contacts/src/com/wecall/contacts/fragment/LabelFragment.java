@@ -57,7 +57,7 @@ public class LabelFragment extends Fragment {
 	public void onActivityCreated(@Nullable Bundle savedInstanceState) {
 		initData();
 		adapter = new ArrayAdapter<String>(getActivity(),
-				android.R.layout.simple_list_item_1, list);
+				R.layout.label_item, list);
 		lableListView.setAdapter(adapter);
 		super.onActivityCreated(savedInstanceState);
 	}

@@ -76,13 +76,13 @@
         </activity>
         <activity
             android:name=".SearchActivity"
-            android:screenOrientation="portrait"
-            android:label="@string/title_activity_search" >
+            android:label="@string/title_activity_search"
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name=".ContactLabelEditor"
-            android:screenOrientation="portrait"
-            android:label="@string/edit" >
+            android:label="@string/edit"
+            android:screenOrientation="portrait" >
         </activity>
     </application>
 

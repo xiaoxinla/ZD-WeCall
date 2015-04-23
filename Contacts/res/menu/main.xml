@@ -2,22 +2,22 @@
 
     <item
         android:id="@+id/action_search"
-        android:icon="@drawable/actionbar_search_icon"
+        android:icon="@drawable/easyicon_search_icon"
         android:showAsAction="ifRoom"
         android:title="@string/action_search"/>
  
 
     <item
         android:id="@+id/action_add_friend"
-        android:icon="@drawable/menu_add_icon"
+        android:icon="@drawable/easyicon_addfriend_icon"
         android:title="@string/menu_addfriend"/>
     <item
         android:id="@+id/action_scan"
-        android:icon="@drawable/men_scan_icon"
+        android:icon="@drawable/easyicon_scan_icon"
         android:title="@string/menu_scan"/>
     <item
         android:id="@+id/action_feedback"
-        android:icon="@drawable/menu_feedback_icon"
+        android:icon="@drawable/easyicon_feedback_icon"
         android:title="@string/menu_feedback"/>
 
 </menu>

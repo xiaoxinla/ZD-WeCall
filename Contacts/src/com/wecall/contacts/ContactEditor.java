@@ -47,7 +47,7 @@ public class ContactEditor extends Activity {
 	private static final String TAG = "ContactEditor";
 
 	// ¸÷ÖÖ±à¼­¿ò
-	private EditText nameET, phoneET, addressET, noteET;
+	private EditText nameET,phoneET, addressET, noteET;
 	private ImageView photoImg;
 	private FlowLayout labelLayout;
 	private ActionBar actionBar;

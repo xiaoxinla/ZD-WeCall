@@ -23,7 +23,7 @@ import com.wecall.contacts.R;
 public class ChangeColorIconWithText extends View
 {
 
-	private int mColor = 0xFF45C01A;
+	private int mColor = 0xff0CC9D7;
 	private Bitmap mIconBitmap;
 	private String mText = "΢Ѷ";
 	private int mTextSize = (int) TypedValue.applyDimension(
@@ -76,7 +76,7 @@ public class ChangeColorIconWithText extends View
 				mIconBitmap = drawable.getBitmap();
 				break;
 			case R.styleable.ChangeColorIconWithText_color:
-				mColor = a.getColor(attr, 0xFF45C01A);
+				mColor = a.getColor(attr, 0xFF63EBFF);
 				break;
 			case R.styleable.ChangeColorIconWithText_text:
 				mText = a.getString(attr);
@@ -95,7 +95,7 @@ public class ChangeColorIconWithText extends View
 		mTextBound = new Rect();
 		mTextPaint = new Paint();
 		mTextPaint.setTextSize(mTextSize);
-		mTextPaint.setColor(0Xff555555);
+		mTextPaint.setColor(0xff555555);
 		mTextPaint.getTextBounds(mText, 0, mText.length(), mTextBound);
 
 	}
