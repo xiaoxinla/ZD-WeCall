@@ -3,12 +3,12 @@
 
     <item
         android:id="@+id/action_editor_scan"
-        android:icon="@drawable/men_scan_icon"
+        android:icon="@drawable/easyicon_scan_icon"
         android:showAsAction="ifRoom"
         android:title="@string/menu_scan"/>
     <item
         android:id="@+id/action_editor_save"
-        android:icon="@drawable/ic_menu_save"
+        android:icon="@drawable/easyicon_ok_icon"
         android:showAsAction="ifRoom"
         android:title="@string/save"/>
 
