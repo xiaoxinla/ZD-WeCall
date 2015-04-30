@@ -32,7 +32,7 @@ public class Label {
 		if (lname == null)
 			this.lname = null;
 		else
-			this.lname = lname;
+			this.lname = new String(lname);
 	}
 
 	public String getLabelFullPinyin() {
@@ -45,9 +45,8 @@ public class Label {
 
 	@Override
 	public String toString() {
-		return "Label [lname=" + lname + ", labelFullPinyin="
-				+ labelFullPinyin + ", labelSimplePinyin=" + labelSimplePinyin
-				+ "]";
+		return "Label [lname=" + lname + ", labelFullPinyin=" + labelFullPinyin
+				+ ", labelSimplePinyin=" + labelSimplePinyin + "]";
 	}
 	
 }

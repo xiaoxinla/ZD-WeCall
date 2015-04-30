@@ -2,9 +2,12 @@ package com.wecall.contacts.entity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import android.annotation.SuppressLint;
+
 import com.wecall.contacts.util.PinYin;
 
 /**
@@ -23,34 +26,35 @@ public class ContactItem implements Comparable {
 	// 首字母
 	private String sortLetter;
 	// 电话号码
-	private String phoneNumber;
+	private Set<String> phoneNumber;
 	// 备注
 	private String note;
 	// 地址
 	private String address;
 	// 标签
-	private ArrayList<Label> labels;
+	// 没必要保存label的拼音
+	// private List<Label> labels;
+	private Set<String> labels;
+	
+	// FIXME: 其实只需要在数据库中存在,没必要存在类里面
 	// 姓名全拼
 	private String fullPinyin;
 	// 姓名首字母组合
 	private String simplePinyin;
+	
 
 	public ContactItem() {
 
 	}
 
-	public ContactItem(String name, String phoneNumber, String address,
-			String note, ArrayList<Label> labels) {
+	public ContactItem(String name, HashSet<String> phoneNumber, String address,
+			String note, HashSet<String> labels) {
 		super();
 		setName(name);
 		setPhoneNumber(phoneNumber);
 		setAddress(address);
 		setNote(note);
 		setLabels(labels);
-
-		fullPinyin = PinYin.getPinYin(this.name);
-		simplePinyin = PinYin.getSimplePinYin(this.name);
-		setSortLetter(fullPinyin);
 	}
 
 	public String getName() {
@@ -81,15 +85,15 @@ public class ContactItem implements Comparable {
 		return simplePinyin;
 	}
 
-	public String getPhoneNumber() {
+	public Set<String> getPhoneNumber() {
 		return phoneNumber;
 	}
 
-	public void setPhoneNumber(String phoneNumber) {
+	public void setPhoneNumber(HashSet<String> phoneNumber) {
 		if(phoneNumber == null)
 			this.phoneNumber = null;
 		else
-			this.phoneNumber = new String(phoneNumber);
+			this.phoneNumber = new HashSet<String>(phoneNumber);
 	}
 
 	public String getNote() {
@@ -114,16 +118,43 @@ public class ContactItem implements Comparable {
 			this.address = new String(address);
 	}
 
-	public ArrayList<Label> getLabels() {
+	public Set<String> getLabels() {
 		return labels;
 	}
+	
+//	/**
+//	 * 只返回标签的名字，不返回标签类
+//	 * @return ArrayList<String>
+//	 */
+//	public ArrayList<String> getLabelNames() {
+//		ArrayList<String> list = new ArrayList<String>();
+//		for(Label l: this.labels)
+//		{
+//			list.add(l.getLname());
+//		}
+//		return list;
+//	}
 
-	public void setLabels(ArrayList<Label> labels) {
+	public void setLabels(HashSet<String> labels) {
 		if (labels == null)
 			this.labels = null;
 		else
-			this.labels = new ArrayList<Label>(labels);
+			this.labels = new HashSet<String>(labels);
 	}
+	
+//	/**
+//	 * 只用标签名字作参数初始化，不用标签类
+//	 * @param labelsName
+//	 */
+//	public void setLabelNames(ArrayList<String> labelsName)
+//	{
+//		Label l = new Label();
+//		for (String s: labelsName)
+//		{
+//			l.setLname(s);
+//			this.labels.add(l);
+//		}
+//	}
 
 	public int getId() {
 		return id;
@@ -169,26 +200,26 @@ public class ContactItem implements Comparable {
 		}
 	}
 
-	public Map<String, Integer> contains(String str){
-		Map<String, Integer> map = new HashMap<String, Integer>();
-		if(name!=null&&name.indexOf(str)!=-1){
-			map.put("name",name.indexOf(str));
-		}
-		if(phoneNumber!=null&&phoneNumber.indexOf(str)!=-1){
-			map.put("phone",phoneNumber.indexOf(str));
-		}
-		if(address!=null&&address.indexOf(str)!=-1){
-			map.put("address",address.indexOf(str));
-		}
-		if(note!=null&&note.indexOf(str)!=-1){
-			map.put("note",note.indexOf(str));
-		}
-		if(fullPinyin!=null&&fullPinyin.indexOf(str)!=-1){
-			map.put("fullpinyin",fullPinyin.indexOf(str));
-		}
-		if(simplePinyin!=null&&simplePinyin.indexOf(str)!=-1){
-			map.put("simplepinyin",simplePinyin.indexOf(str));
-		}
-		return map;
-	}
+//	public Map<String, Integer> contains(String str){
+//		Map<String, Integer> map = new HashMap<String, Integer>();
+//		if(name!=null&&name.indexOf(str)!=-1){
+//			map.put("name",name.indexOf(str));
+//		}
+//		if(phoneNumber!=null&&phoneNumber.indexOf(str)!=-1){
+//			map.put("phone",phoneNumber.indexOf(str));
+//		}
+//		if(address!=null&&address.indexOf(str)!=-1){
+//			map.put("address",address.indexOf(str));
+//		}
+//		if(note!=null&&note.indexOf(str)!=-1){
+//			map.put("note",note.indexOf(str));
+//		}
+//		if(fullPinyin!=null&&fullPinyin.indexOf(str)!=-1){
+//			map.put("fullpinyin",fullPinyin.indexOf(str));
+//		}
+//		if(simplePinyin!=null&&simplePinyin.indexOf(str)!=-1){
+//			map.put("simplepinyin",simplePinyin.indexOf(str));
+//		}
+//		return map;
+//	}
 }

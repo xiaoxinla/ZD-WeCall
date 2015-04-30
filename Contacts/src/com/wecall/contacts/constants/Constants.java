@@ -11,34 +11,48 @@ public class Constants {
 
 	//数据库名
 	public static final String DATABASE_NAME = "contact.db";
+	
 	//主表名
-	public static final String MAIN_TABLE_NAME = "main";
-	//主表 cid列名
+	public static final String TABLE_NAME_MAIN = "main";
+	//主表 各列名
 	public static final String MAIN_COL_CID = "c_id";
-	//主表 name列名
-	public static final String MAIN_COL_NAME = "name";
-	//主表fullPinyin列名
-	public static final String MAIN_COL_FULL_PINYIN = "fullPinyin";
-	//主表simplePinyin列名
-	public static final String MAIN_COL_SIM_PINYIN = "simplePinyin";	
-	//主表note列名
+	public static final String MAIN_COL_NAME = "name";	
 	public static final String MAIN_COL_NOTE = "note";
-	//主表phoneNumber列名
-	public static final String MAIN_COl_PHONE = "phoneNumber";
-	//主表address列名
+	public static final String MAIN_COl_PHONE = "phone";
+	public static final String MAIN_COL_TAG = "tag";
 	public static final String MAIN_COL_ADDRESS = "address";
+	public static final String MAIN_COL_OTHER = "other";
 	
-	//标签表名
-	public static final String TAG_TABLE_NAME = "tag";
-	//标签表cid列名
-	public static final String TAG_COL_CID = "c_id";
-	//标签表tag列名
-	public static final String TAG_COL_TAG = "tag";
-	//标签表tagFullPinyin
-	public static final String TAG_COL_TAG_FULLPY = "tagFullPinyin";
-	//标签表tagSimplePinyin
-	public static final String TAG_COL_TAG_SIM_PINYIN = "tagSimplePinyin";
+	//搜索表名
+	public static final String TABLE_NAME_SEARCH = "search";
+	//搜索表各列名
+	public static final String SEARCH_COL_CID = "c_id";
+	public static final String SEARCH_COL_TYPEID = "type_id";
+	public static final String SEARCH_COL_DATA1 = "data1";
+	public static final String SEARCH_COL_DATA2 = "data2";
+	public static final String SEARCH_COL_DATA3 = "data3";
+	public static final String SEARCH_COL_DATA4 = "data4";
 	
+	//标签表
+	public static final String TABLE_NAME_TAG = "tag";
+	//标签表列名
+	public static final String TAG_COL_TAG_ID = "t_id";
+	public static final String TAG_COL_TAG_NAME = "tagName";
+	
+//	//tagToContact表
+//	public static final String TABLE_NAME_T2C = "t2c";
+//	//列名
+//	public static final String T2C_COL_TAG_ID = "t_id";
+//	public static final String T2C_COL_CID = "c_id";
+	
+	//各类型typeId
+	public static final int TYPE_NAME = 1;
+	public static final int TYPE_NOTE = 2;
+	public static final int TYPE_PHONE = 3;
+	public static final int TYPE_ADDRESS = 4;
+	public static final int TYPE_TAG = 5;
+	public static final int TYPE_OTHER = 6;
+		
 	//数据库版本
 	public static final int DATABASE_VERSION = 1;
 	//保存图片的目录
