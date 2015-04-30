@@ -26,6 +26,7 @@ import android.widget.Toast;
 import com.wecall.contacts.LabelInfo;
 import com.wecall.contacts.R;
 import com.wecall.contacts.SelectLabelMember;
+import com.wecall.contacts.database.DatabaseManager;
 
 /**
  * 标签页fragment
@@ -44,6 +45,7 @@ public class LabelFragment extends Fragment {
 	private ArrayAdapter<String> adapter;
 	// 数据
 	private List<String> list = new ArrayList<String>();
+	private DatabaseManager mManager;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater,
@@ -55,6 +57,7 @@ public class LabelFragment extends Fragment {
 
 	@Override
 	public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+		mManager = new DatabaseManager(getActivity());
 		initData();
 		adapter = new ArrayAdapter<String>(getActivity(),
 				android.R.layout.simple_list_item_1, list);
@@ -64,6 +67,7 @@ public class LabelFragment extends Fragment {
 
 	// 初始化数据
 	private void initData() {
+		Log.v(TAG, mManager.queryAllTags().toString());
 		list.clear();
 		list.add("逗比");
 		list.add("什么鬼");

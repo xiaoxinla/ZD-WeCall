@@ -28,6 +28,7 @@ import com.wecall.contacts.R;
 import com.wecall.contacts.adapter.SortAdapter;
 import com.wecall.contacts.database.DatabaseManager;
 import com.wecall.contacts.entity.ContactItem;
+import com.wecall.contacts.entity.SimpleContact;
 import com.wecall.contacts.view.SideBar;
 import com.wecall.contacts.view.SideBar.onTouchLetterChangeListener;
 
@@ -48,7 +49,7 @@ public class MainFragment extends Fragment {
 	// 排序的适配器
 	private SortAdapter adapter;
 	// 联系人信息
-	private List<ContactItem> contactList = new ArrayList<ContactItem>();
+	private List<SimpleContact> contactList = new ArrayList<SimpleContact>();
 	// 数据库管理实例
 	private DatabaseManager mManager;
 
@@ -93,7 +94,7 @@ public class MainFragment extends Fragment {
 	public void updateContacts() {
 		contactList.clear();
 		try {
-			contactList = mManager.queryAllContact();
+			contactList = mManager.queryAllContacts();
 		} catch (Exception e) {
 			e.printStackTrace();
 			Toast.makeText(getActivity(), "获取联系人列表失败", Toast.LENGTH_SHORT)
@@ -126,7 +127,7 @@ public class MainFragment extends Fragment {
 				Intent intent = new Intent(getActivity(), ContactInfo.class);
 				Bundle bundle = new Bundle();
 				bundle.putInt("cid",
-						((ContactItem) adapter.getItem(arg2)).getId());
+						((SimpleContact) adapter.getItem(arg2)).getId());
 				intent.putExtras(bundle);
 				startActivityForResult(intent, INFO_REQUEST_CODE);
 			}
@@ -265,6 +266,8 @@ public class MainFragment extends Fragment {
 
 	public void initSideBar() {
 		// TODO There's something to fix
-		sideBar.init();
+		if (sideBar != null) {
+			sideBar.init();
+		}
 	}
 }

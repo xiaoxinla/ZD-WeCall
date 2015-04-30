@@ -27,6 +27,7 @@ import android.widget.TextView;
 import com.wecall.contacts.adapter.SearchAdapter;
 import com.wecall.contacts.database.DatabaseManager;
 import com.wecall.contacts.entity.ContactItem;
+import com.wecall.contacts.entity.SimpleContact;
 
 /**
  * 搜索页
@@ -46,7 +47,7 @@ public class SearchActivity extends Activity {
 	private DatabaseManager mManager;
 
 	// 联系人信息
-	private List<ContactItem> contactList = new ArrayList<ContactItem>();
+	private List<SimpleContact> contactList = new ArrayList<SimpleContact>();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +81,7 @@ public class SearchActivity extends Activity {
 		mResultText = (TextView) findViewById(R.id.tv_result_search);
 		mContactListView = (ListView) findViewById(R.id.lv_search_contact_list);
 		mManager = new DatabaseManager(this);
-		contactList = mManager.queryAllContact();
+		contactList = mManager.queryAllContacts();
 		Collections.sort(contactList);
 		adapter = new SearchAdapter(this, null, null);
 		mContactListView.setAdapter(adapter);
@@ -146,11 +147,11 @@ public class SearchActivity extends Activity {
 	 */
 	@SuppressLint("DefaultLocale")
 	private void filterData(String filterStr) {
-		List<ContactItem> filterDateList = new ArrayList<ContactItem>();
+		List<SimpleContact> filterDateList = new ArrayList<SimpleContact>();
 		List<Map<String, Integer>> mapList = new ArrayList<Map<String, Integer>>();
 		if (!TextUtils.isEmpty(filterStr)) {
 			filterDateList.clear();
-			for (ContactItem contactItem : contactList) {
+			for (SimpleContact contactItem : contactList) {
 				String convertStr = filterStr.toLowerCase();
 				Map<String, Integer> originMap = contactItem
 						.contains(filterStr);
@@ -226,7 +227,7 @@ public class SearchActivity extends Activity {
 
 	@SuppressWarnings("unchecked")
 	private void updateContacts() {
-		contactList = mManager.queryAllContact();
+		contactList = mManager.queryAllContacts();
 		Collections.sort(contactList);
 		filterData(mSearchView.getQuery().toString());
 	}

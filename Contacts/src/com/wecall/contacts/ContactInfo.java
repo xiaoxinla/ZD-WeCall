@@ -2,6 +2,7 @@ package com.wecall.contacts;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -184,7 +185,10 @@ public class ContactInfo extends Activity {
 		// nameTV.setText(bundle.getString("cname"));
 		addressTVT.setText(StringUtil.formatString(contact.getAddress()));
 		noteTVT.setText(StringUtil.formatString(contact.getNote()));
-		phoneTV.setText(StringUtil.formatString(contact.getPhoneNumber()));
+		Set<String> phoneSet = contact.getPhoneNumber();
+		for(String str:phoneSet){
+			phoneTV.setText(StringUtil.formatString(str));
+		}
 		showContactPhoto();
 		setLabels();
 	}
@@ -230,7 +234,13 @@ public class ContactInfo extends Activity {
 	private Bitmap getQRCode() {
 		Bitmap bitmap = null;
 		String name = contact.getName();
-		String phone = contact.getPhoneNumber();
+		String phone = "";
+		//TODO Multi Case
+		Set<String> phoneSet = contact.getPhoneNumber();
+		for(String str:phoneSet){
+			
+			phone = str;
+		}
 		try {
 			JSONObject jsonObject = new JSONObject();
 			String codedJson;

@@ -2,7 +2,9 @@ package com.wecall.contacts;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -19,7 +21,7 @@ import android.widget.Toast;
 
 import com.wecall.contacts.adapter.SortAdapter;
 import com.wecall.contacts.database.DatabaseManager;
-import com.wecall.contacts.entity.ContactItem;
+import com.wecall.contacts.entity.SimpleContact;
 import com.wecall.contacts.view.SideBar;
 import com.wecall.contacts.view.SideBar.onTouchLetterChangeListener;
 
@@ -34,7 +36,7 @@ public class SelectLabelMember extends Activity {
 	// 排序的适配器
 	private SortAdapter adapter;
 	// 联系人信息
-	private List<ContactItem> contactList = new ArrayList<ContactItem>();
+	private List<SimpleContact> contactList = new ArrayList<SimpleContact>();
 	private List<Boolean> checkList = new ArrayList<Boolean>();
 	// 数据库管理实例
 	private DatabaseManager mManager;
@@ -88,7 +90,7 @@ public class SelectLabelMember extends Activity {
 
 		sideBar.setLetterShow(letterTextView);
 		mManager = new DatabaseManager(this);
-		contactList = mManager.queryAllContact();
+		contactList = mManager.queryAllContacts();
 		for (int i = 0; i < contactList.size(); i++) {
 			checkList.add(false);
 		}
@@ -118,11 +120,24 @@ public class SelectLabelMember extends Activity {
 						Toast.LENGTH_SHORT).show();
 			} else {
 				// TODO 保存到数据库
+				addTag();
 				finish();
 			}
 		default:
-			break;
+			break; 
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	private void addTag() {
+		Set<Integer> tagSet = new HashSet<Integer>();
+		for (int i = 0; i < checkList.size(); i++) {
+			if (checkList.get(i)) {
+				tagSet.add(contactList.get(i).getId());
+			}
+		}
+		String tagName = inputText.getText().toString();
+		mManager.addTagToIds(tagName, tagSet);
+		Log.v(TAG, mManager.queryContactByTag(tagName).toString());
 	}
 }

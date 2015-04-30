@@ -109,6 +109,7 @@ public class MainActivity extends FragmentActivity implements OnClickListener,
 	// ³õÊ¼»¯¿Ø¼þ
 	private void initView() {
 		mViewPager = (ViewPager) findViewById(R.id.id_viewpager);
+		mViewPager.setOffscreenPageLimit(2);
 
 		ChangeColorIconWithText one = (ChangeColorIconWithText) findViewById(R.id.id_indicator_one);
 		mTabIndicators.add(one);
