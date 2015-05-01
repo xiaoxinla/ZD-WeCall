@@ -16,10 +16,10 @@ import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -48,17 +48,15 @@ public class Setting extends Activity {
 
 	// Activity上的控件们
 	private EditText nameET, phoneET;
-	private Button confireBTN;
-	private LinearLayout aboutLayout;
+	private LinearLayout aboutLayout, loadLayout;
 	private ImageButton pictureIBTN;
-	private Button loadButton;
 
 	// 用户名和电话
 	private String mName;
 	private String mPhone;
 	private List<ContactItem> contactList;
 	private DatabaseManager mManager;
-	
+
 	@SuppressLint("HandlerLeak")
 	private Handler handler = new Handler() {
 
@@ -66,11 +64,10 @@ public class Setting extends Activity {
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 			case LOCAL_CONTACTS_OBTAINED:
-//				Log.v(TAG, "LocalContacts:" + contactList.toString());
+				// Log.v(TAG, "LocalContacts:" + contactList.toString());
 				Log.v(TAG, "LOCAL_CONTACTS_OBTAINED");
-				CommonUtil.notifyMessage(Setting.this, R.drawable.icon,
-						"加载完毕", "联系人加载完毕", "共加载"+contactList.size()+"位联系人");
 				updateContacts();
+
 				break;
 
 			default:
@@ -85,17 +82,23 @@ public class Setting extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_setting);
-		
+
 		getActionBar().setIcon(R.drawable.ic_menu_back);
 		getActionBar().setDisplayShowHomeEnabled(false);
 		getActionBar().setDisplayHomeAsUpEnabled(true);
-		
+
 		// 初始化控件
 		initView();
 		// 初始化数据
 		initData();
 	}
-	
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.label_editor_menu, menu);
+		return super.onCreateOptionsMenu(menu);
+	}
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
@@ -103,7 +106,16 @@ public class Setting extends Activity {
 			Log.v(TAG, "home click");
 			finish();
 			break;
-
+		case R.id.action_save_label:
+			// 向配置文件中写入配置信息
+			SPUtil.put(Setting.this, "name", nameET.getText().toString());
+			SPUtil.put(Setting.this, "phone", phoneET.getText().toString());
+			ImageUtil.renameImage(Constants.ALBUM_PATH + "showuser.jpg",
+					Constants.ALBUM_PATH + "user.jpg");
+			// 设置成功，并结束
+			setResult(RESULT_OK);
+			finish();
+			break;
 		default:
 			break;
 		}
@@ -114,24 +126,9 @@ public class Setting extends Activity {
 	private void initView() {
 		nameET = (EditText) findViewById(R.id.et_setting_name);
 		phoneET = (EditText) findViewById(R.id.et_setting_phone);
-		confireBTN = (Button) findViewById(R.id.btn_setting_confire);
 		aboutLayout = (LinearLayout) findViewById(R.id.ll_setting_about);
 		pictureIBTN = (ImageButton) findViewById(R.id.ibtn_setting_photo);
-		loadButton = (Button) findViewById(R.id.btn_load_contact);
-		confireBTN.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View arg0) {
-				// 向配置文件中写入配置信息
-				SPUtil.put(Setting.this, "name", nameET.getText().toString());
-				SPUtil.put(Setting.this, "phone", phoneET.getText().toString());
-				ImageUtil.renameImage(Constants.ALBUM_PATH + "showuser.jpg",
-						Constants.ALBUM_PATH + "user.jpg");
-				// 设置成功，并结束
-				setResult(RESULT_OK);
-				finish();
-			}
-		});
+		loadLayout = (LinearLayout) findViewById(R.id.ll_setting_load);
 
 		// 点击关于，跳转到关于界面
 		aboutLayout.setOnClickListener(new OnClickListener() {
@@ -160,18 +157,19 @@ public class Setting extends Activity {
 				showPicDialog();
 			}
 		});
-		
-		loadButton.setOnClickListener(new OnClickListener() {
 
-			@SuppressLint("ShowToast") @Override
+		loadLayout.setOnClickListener(new OnClickListener() {
+
+			@SuppressLint("ShowToast")
+			@Override
 			public void onClick(View arg0) {
-				Toast.makeText(Setting.this, "联系人正在加载中，请稍后...", Toast.LENGTH_LONG).show();
+				Toast.makeText(Setting.this, "联系人正在加载中，请稍后...",
+						Toast.LENGTH_LONG).show();
 				new Thread(new Runnable() {
 
 					@Override
 					public void run() {
-						contactList = CommonUtil
-								.getLocalContacts(Setting.this);
+						contactList = CommonUtil.getLocalContacts(Setting.this);
 						handler.sendEmptyMessage(LOCAL_CONTACTS_OBTAINED);
 					}
 				}).start();
@@ -179,11 +177,19 @@ public class Setting extends Activity {
 		});
 	}
 
-	private void updateContacts(){
+	private void updateContacts() {
 		mManager = new DatabaseManager(Setting.this);
-		mManager.addContacts(contactList);
+		new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				mManager.addContacts(contactList);
+				CommonUtil.notifyMessage(Setting.this, R.drawable.icon, "加载完毕",
+						"联系人加载完毕", "共加载" + contactList.size() + "位联系人");
+			}
+		}).start();
 	}
-	
+
 	// 处理从其他Activity返回的数据
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {

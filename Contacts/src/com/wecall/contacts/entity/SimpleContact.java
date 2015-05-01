@@ -55,7 +55,7 @@ public class SimpleContact implements Comparable{
 			this.name = new String(name);
 			fullPinyin = PinYin.getPinYin(this.name);
 			simplePinyin = PinYin.getSimplePinYin(this.name);
-			setSortLetter(name);
+			setSortLetter(fullPinyin);
 		}
 	}
 	
@@ -92,7 +92,7 @@ public class SimpleContact implements Comparable{
 
 	@Override
 	public int compareTo(Object arg0) {
-		ContactItem tmpItem = (ContactItem) arg0;
+		SimpleContact tmpItem = (SimpleContact) arg0;
 		if (tmpItem.getSortLetter().equals("#") && !getSortLetter().equals("#")) {
 			return -1;
 		} else if (!tmpItem.getSortLetter().equals("#")

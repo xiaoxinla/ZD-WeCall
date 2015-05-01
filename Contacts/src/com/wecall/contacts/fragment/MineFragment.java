@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.zxing.WriterException;
 import com.wecall.contacts.R;
@@ -107,20 +108,22 @@ public class MineFragment extends Fragment {
 				codedJson = jsonObject.toString();
 				e.printStackTrace();
 			}
-			bitmap = ImageUtil.CreateQRCode(codedJson,300);
+			bitmap = ImageUtil.CreateQRCode(codedJson, 300);
 		} catch (WriterException e) {
 			e.printStackTrace();
 		}
 		qrcodeImage.setImageBitmap(bitmap);
 	}
-	
+
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		Log.v(TAG, "requestCode:"+requestCode+",resultCode:"+resultCode);
-		if(resultCode==Activity.RESULT_OK){
+		Log.v(TAG, "requestCode:" + requestCode + ",resultCode:" + resultCode);
+		if (resultCode == Activity.RESULT_OK) {
 			switch (requestCode) {
 			case SETTING_REQUEST_CODE:
-				setUserInfo();				
+				setUserInfo();
+				Toast.makeText(getActivity(), "用户信息修改成功", Toast.LENGTH_SHORT)
+						.show();
 				break;
 
 			default:

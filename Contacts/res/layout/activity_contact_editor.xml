@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" xmlns:app="http://schemas.android.com/apk/res/com.wecall.contacts">"
+    android:layout_margin="5dp"
+    android:orientation="vertical">
 
 	<LinearLayout android:layout_width="fill_parent"
 	    android:layout_height="wrap_content"
@@ -59,11 +60,13 @@
 	        android:textSize="20sp"
 	        android:layout_marginLeft="15dp"
 	        android:layout_marginTop="10dp"/>
-	    <Button android:layout_width="wrap_content"
+	    <ImageButton android:id="@+id/ibtn_label_add"
+	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-	        android:text="编辑"
 	        android:layout_alignParentRight="true"
-	        android:textSize="15sp"/>
+	        android:src="@drawable/easyicon_label_add"
+	        android:background="@null"
+	        android:layout_margin="5dp"/>
 	</RelativeLayout>
 
 	<com.wecall.contacts.view.FlowLayout 

@@ -7,47 +7,58 @@ import java.util.Map;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 import android.widget.SearchView;
-import android.widget.SearchView.OnCloseListener;
+import android.widget.Toast;
 import android.widget.SearchView.OnQueryTextListener;
 import android.widget.TextView;
 
-import com.wecall.contacts.adapter.SortAdapter;
+import com.wecall.contacts.adapter.SearchAdapter;
 import com.wecall.contacts.database.DatabaseManager;
 import com.wecall.contacts.entity.ContactItem;
+import com.wecall.contacts.entity.SimpleContact;
 
 /**
  * 搜索页
- * @author xiaoxin
- * 2015-4-16
+ * 
+ * @author xiaoxin 2015-4-16
  */
 public class SearchActivity extends Activity {
 
 	private static final String TAG = "SearchActivity";
+	private static final int INFO_REQUEST_CODE = 1;
+	private static final int EDIT_REQUEST_CODE = 2;
+
 	private SearchView mSearchView;
 	private TextView mResultText;
 	private ListView mContactListView;
-	private SortAdapter adapter;
+	private SearchAdapter adapter;
 	private DatabaseManager mManager;
 
 	// 联系人信息
-	private List<ContactItem> contactList = new ArrayList<ContactItem>();
+	private List<SimpleContact> contactList = new ArrayList<SimpleContact>();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_search);
-		
+
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 		getActionBar().setDisplayShowHomeEnabled(false);
 		init();
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
@@ -70,10 +81,34 @@ public class SearchActivity extends Activity {
 		mResultText = (TextView) findViewById(R.id.tv_result_search);
 		mContactListView = (ListView) findViewById(R.id.lv_search_contact_list);
 		mManager = new DatabaseManager(this);
-		contactList = mManager.queryAllContact();
+		contactList = mManager.queryAllContacts();
 		Collections.sort(contactList);
-		adapter = new SortAdapter(null, this, false);
+		adapter = new SearchAdapter(this, null, null);
 		mContactListView.setAdapter(adapter);
+
+		mContactListView.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+					long arg3) {
+				Intent intent = new Intent(SearchActivity.this,
+						ContactInfo.class);
+				intent.putExtra("cid",
+						((ContactItem) adapter.getItem(arg2)).getId());
+				startActivityForResult(intent, INFO_REQUEST_CODE);
+			}
+		});
+
+		mContactListView
+				.setOnItemLongClickListener(new OnItemLongClickListener() {
+
+					@Override
+					public boolean onItemLongClick(AdapterView<?> arg0,
+							View arg1, int arg2, long arg3) {
+						showOperationDialog(arg2);
+						return false;
+					}
+				});
 
 		mSearchView.setQueryHint("可搜索" + contactList.size() + "位联系人");
 		mSearchView.setOnQueryTextListener(new OnQueryTextListener() {
@@ -92,14 +127,17 @@ public class SearchActivity extends Activity {
 				return false;
 			}
 		});
-		mSearchView.setOnCloseListener(new OnCloseListener() {
+	}
 
-			@Override
-			public boolean onClose() {
-				Log.v(TAG, "onClose");
-				return false;
-			}
-		});
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == INFO_REQUEST_CODE) {
+			updateContacts();
+		}
+		if (requestCode == EDIT_REQUEST_CODE) {
+			updateContacts();
+		}
+		super.onActivityResult(requestCode, resultCode, data);
 	}
 
 	/**
@@ -109,11 +147,11 @@ public class SearchActivity extends Activity {
 	 */
 	@SuppressLint("DefaultLocale")
 	private void filterData(String filterStr) {
-		List<ContactItem> filterDateList = new ArrayList<ContactItem>();
-
+		List<SimpleContact> filterDateList = new ArrayList<SimpleContact>();
+		List<Map<String, Integer>> mapList = new ArrayList<Map<String, Integer>>();
 		if (!TextUtils.isEmpty(filterStr)) {
 			filterDateList.clear();
-			for (ContactItem contactItem : contactList) {
+			for (SimpleContact contactItem : contactList) {
 				String convertStr = filterStr.toLowerCase();
 				Map<String, Integer> originMap = contactItem
 						.contains(filterStr);
@@ -122,10 +160,75 @@ public class SearchActivity extends Activity {
 				if (originMap != null && convertMap != null
 						&& originMap.size() != 0 && convertMap.size() != 0) {
 					filterDateList.add(contactItem);
+					mapList.add(originMap);
 				}
 			}
 		}
 		mResultText.setText("搜索到" + filterDateList.size() + "位联系人");
-		adapter.updateListView(filterDateList);
+		adapter.updateListView(filterDateList, mapList, filterStr.length());
+	}
+
+	protected void showOperationDialog(final int position) {
+		new AlertDialog.Builder(this)
+				.setTitle(((ContactItem) adapter.getItem(position)).getName())
+				.setPositiveButton("编辑", new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						Log.v(TAG, "edit");
+						dialog.dismiss();
+						Intent intent = new Intent(SearchActivity.this,
+								ContactEditor.class);
+						Bundle bundle = new Bundle();
+						bundle.putInt("cid", ((ContactItem) adapter
+								.getItem(position)).getId());
+						bundle.putInt("type", 2);
+						intent.putExtras(bundle);
+						startActivityForResult(intent, EDIT_REQUEST_CODE);
+					}
+
+				})
+				.setNegativeButton("删除", new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						Log.v(TAG, "delete");
+						dialog.dismiss();
+						showDeleteDialog(position);
+					}
+				}).show();
+	}
+
+	private void showDeleteDialog(final int position) {
+		new AlertDialog.Builder(this)
+				.setTitle("是否确认删除？")
+				.setPositiveButton("是", new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.dismiss();
+						// 从数据库中删除来记录
+						mManager.deleteContactById(((ContactItem) adapter
+								.getItem(position)).getId());
+						// 删除之后获取最新的联系人信息
+						updateContacts();
+						Toast.makeText(SearchActivity.this, "联系人删除成功",
+								Toast.LENGTH_SHORT).show();
+					}
+				})
+				.setNegativeButton("否", new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.dismiss();
+					}
+				}).show();
+	}
+
+	@SuppressWarnings("unchecked")
+	private void updateContacts() {
+		contactList = mManager.queryAllContacts();
+		Collections.sort(contactList);
+		filterData(mSearchView.getQuery().toString());
 	}
 }

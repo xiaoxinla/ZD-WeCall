@@ -1,9 +1,7 @@
 package com.wecall.contacts.entity;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import android.annotation.SuppressLint;
@@ -47,8 +45,8 @@ public class ContactItem implements Comparable {
 
 	}
 
-	public ContactItem(String name, HashSet<String> phoneNumber, String address,
-			String note, HashSet<String> labels) {
+	public ContactItem(String name, Set<String> phoneNumber, String address,
+			String note, Set<String> labels) {
 		super();
 		setName(name);
 		setPhoneNumber(phoneNumber);
@@ -89,7 +87,7 @@ public class ContactItem implements Comparable {
 		return phoneNumber;
 	}
 
-	public void setPhoneNumber(HashSet<String> phoneNumber) {
+	public void setPhoneNumber(Set<String> phoneNumber) {
 		if(phoneNumber == null)
 			this.phoneNumber = null;
 		else
@@ -135,7 +133,7 @@ public class ContactItem implements Comparable {
 //		return list;
 //	}
 
-	public void setLabels(HashSet<String> labels) {
+	public void setLabels(Set<String> labels) {
 		if (labels == null)
 			this.labels = null;
 		else

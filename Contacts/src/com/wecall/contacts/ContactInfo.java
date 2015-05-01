@@ -2,6 +2,7 @@ package com.wecall.contacts;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -48,15 +49,14 @@ public class ContactInfo extends Activity {
 
 	// 各种信息的显示标签
 	private TextView nameTV;
-	private ImageButton callImageButton,msgImageButton;
-	private TextViewWithTitle addressTVT,noteTVT;
+	private ImageButton callImageButton, msgImageButton;
+	private TextViewWithTitle addressTVT, noteTVT;
 	private TextView phoneTV;
-	// 显示二维码
-	private ImageView testImg;
 	// 联系人头像
 	private ImageView photoImg;
 	// 标签栏
 	private FlowLayout labelLayout;
+	private ImageButton showQRCode;
 	// 数据库管理对象
 	private DatabaseManager mManager;
 
@@ -112,9 +112,9 @@ public class ContactInfo extends Activity {
 		phoneTV = (TextView) findViewById(R.id.tv_phone_info);
 		callImageButton = (ImageButton) findViewById(R.id.ibtn_phone_call);
 		msgImageButton = (ImageButton) findViewById(R.id.ibtn_phone_msg);
-		testImg = (ImageView) findViewById(R.id.iv_test);
 		photoImg = (ImageView) findViewById(R.id.img_contact_photo);
 		labelLayout = (FlowLayout) findViewById(R.id.fl_label_show);
+		showQRCode = (ImageButton) findViewById(R.id.ibtn_qrcode_show);
 
 		mManager = new DatabaseManager(this);
 
@@ -126,56 +126,43 @@ public class ContactInfo extends Activity {
 		final String phoneNumber = phoneTV.getText().toString();
 
 		callImageButton.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View arg0) {
-				if(phoneNumber.equals("无")){
-					Toast.makeText(ContactInfo.this, "号码为空，无法拨打电话", Toast.LENGTH_SHORT).show();
-				}else {
-					Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:"
-							+ phoneNumber));
-					ContactInfo.this.startActivity(intent);					
-				}
-			}
-		});
-		
-		msgImageButton.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				if(phoneNumber.equals("无")){
-					Toast.makeText(ContactInfo.this, "电话为空，无法发送短信", Toast.LENGTH_SHORT).show();
-				}else {
-					Intent intent = new Intent(Intent.ACTION_SENDTO, Uri
-							.parse("smsto:" + phoneNumber));
-					ContactInfo.this.startActivity(intent);					
+				if (phoneNumber.equals("无")) {
+					Toast.makeText(ContactInfo.this, "号码为空，无法拨打电话",
+							Toast.LENGTH_SHORT).show();
+				} else {
+					Intent intent = new Intent(Intent.ACTION_CALL, Uri
+							.parse("tel:" + phoneNumber));
+					ContactInfo.this.startActivity(intent);
 				}
 			}
 		});
 
-		try {
-			JSONObject jsonObject = new JSONObject();
-			String name = contact.getName();
-			String codedJson;
-			try {
-				jsonObject.put("name", name);
-				jsonObject.put("phone", phoneNumber);
-			} catch (JSONException e) {
-				e.printStackTrace();
+		msgImageButton.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				if (phoneNumber.equals("无")) {
+					Toast.makeText(ContactInfo.this, "电话为空，无法发送短信",
+							Toast.LENGTH_SHORT).show();
+				} else {
+					Intent intent = new Intent(Intent.ACTION_SENDTO, Uri
+							.parse("smsto:" + phoneNumber));
+					ContactInfo.this.startActivity(intent);
+				}
 			}
-			Log.v("TAG", jsonObject.toString());
-			try {
-				codedJson = EncodeUtil.encrypt(Constants.AESKEY,
-						jsonObject.toString());
-			} catch (Exception e) {
-				codedJson = jsonObject.toString();
-				e.printStackTrace();
+		});
+
+		showQRCode.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				showQRDialog();
 			}
-			Bitmap bitmap = ImageUtil.CreateQRCode(codedJson, 300);
-			testImg.setImageBitmap(bitmap);
-		} catch (WriterException e) {
-			e.printStackTrace();
-		}
+		});
+
 	}
 
 	@Override
@@ -191,8 +178,6 @@ public class ContactInfo extends Activity {
 
 	private void updateView(int cid) {
 		contact = mManager.queryContactById(cid);
-		
-		Log.i("Update View contact", contact.getName()+"");
 
 		SpannableStringBuilder styled = StringUtil.colorString(
 				contact.getName(), 0, 1, Color.RED);
@@ -200,7 +185,10 @@ public class ContactInfo extends Activity {
 		// nameTV.setText(bundle.getString("cname"));
 		addressTVT.setText(StringUtil.formatString(contact.getAddress()));
 		noteTVT.setText(StringUtil.formatString(contact.getNote()));
-		phoneTV.setText(StringUtil.formatString(contact.getPhoneNumber()));
+		Set<String> phoneSet = contact.getPhoneNumber();
+		for(String str:phoneSet){
+			phoneTV.setText(StringUtil.formatString(str));
+		}
 		showContactPhoto();
 		setLabels();
 	}
@@ -242,27 +230,85 @@ public class ContactInfo extends Activity {
 			labelLayout.addView(tv, lp);
 		}
 	}
-	
-	private void showDeleteDialog(){
-		new AlertDialog.Builder(this).setTitle("是否确认删除？").setPositiveButton("是", new DialogInterface.OnClickListener() {
+
+	private Bitmap getQRCode() {
+		Bitmap bitmap = null;
+		String name = contact.getName();
+		String phone = "";
+		//TODO Multi Case
+		Set<String> phoneSet = contact.getPhoneNumber();
+		for(String str:phoneSet){
 			
-			@Override
-			public void onClick(DialogInterface arg0, int arg1) {
-				arg0.dismiss();
-				mManager.deleteContactById(cid);
-				ImageUtil.deleteImage(Constants.ALBUM_PATH, "pic"+cid+".jpg");
-				setResult(RESULT_OK);
-				finish();
+			phone = str;
+		}
+		try {
+			JSONObject jsonObject = new JSONObject();
+			String codedJson;
+			try {
+				jsonObject.put("name", name);
+				jsonObject.put("phone", phone);
+			} catch (JSONException e) {
+				e.printStackTrace();
 			}
-		}).setNegativeButton("否", new DialogInterface.OnClickListener() {
-			
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				dialog.dismiss();
+			Log.v("TAG", jsonObject.toString());
+			try {
+				codedJson = EncodeUtil.encrypt(Constants.AESKEY,
+						jsonObject.toString());
+			} catch (Exception e) {
+				codedJson = jsonObject.toString();
+				e.printStackTrace();
 			}
-		}).show();
+			bitmap = ImageUtil.CreateQRCode(codedJson, 300);
+		} catch (WriterException e) {
+			e.printStackTrace();
+		}
+		return bitmap;
 	}
-	
+
+	/**
+	 * 显示删除对话框
+	 */
+	private void showDeleteDialog() {
+		new AlertDialog.Builder(this)
+				.setTitle("是否确认删除？")
+				.setPositiveButton("是", new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface arg0, int arg1) {
+						arg0.dismiss();
+						mManager.deleteContactById(cid);
+						ImageUtil.deleteImage(Constants.ALBUM_PATH, "pic" + cid
+								+ ".jpg");
+						setResult(RESULT_OK);
+						finish();
+					}
+				})
+				.setNegativeButton("否", new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.dismiss();
+					}
+				}).show();
+	}
+
+	/**
+	 * 显示二维码对话框
+	 */
+	protected void showQRDialog() {
+		ImageView tempImageView = new ImageView(this);
+		tempImageView.setImageBitmap(getQRCode());
+		new AlertDialog.Builder(this).setTitle(contact.getName())
+				.setView(tempImageView)
+				.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface arg0, int arg1) {
+						arg0.dismiss();
+					}
+				}).show();
+	}
+
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();

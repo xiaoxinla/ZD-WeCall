@@ -28,6 +28,7 @@ import com.wecall.contacts.R;
 import com.wecall.contacts.adapter.SortAdapter;
 import com.wecall.contacts.database.DatabaseManager;
 import com.wecall.contacts.entity.ContactItem;
+import com.wecall.contacts.entity.SimpleContact;
 import com.wecall.contacts.view.SideBar;
 import com.wecall.contacts.view.SideBar.onTouchLetterChangeListener;
 
@@ -48,7 +49,7 @@ public class MainFragment extends Fragment {
 	// 排序的适配器
 	private SortAdapter adapter;
 	// 联系人信息
-	private List<ContactItem> contactList = new ArrayList<ContactItem>();
+	private List<SimpleContact> contactList = new ArrayList<SimpleContact>();
 	// 数据库管理实例
 	private DatabaseManager mManager;
 
@@ -92,7 +93,13 @@ public class MainFragment extends Fragment {
 	@SuppressWarnings("unchecked")
 	public void updateContacts() {
 		contactList.clear();
-		contactList = mManager.queryAllContact();
+		try {
+			contactList = mManager.queryAllContacts();
+		} catch (Exception e) {
+			e.printStackTrace();
+			Toast.makeText(getActivity(), "获取联系人列表失败", Toast.LENGTH_SHORT)
+					.show();
+		}
 		Collections.sort(contactList);
 		adapter.updateListView(contactList);
 	}
@@ -120,7 +127,7 @@ public class MainFragment extends Fragment {
 				Intent intent = new Intent(getActivity(), ContactInfo.class);
 				Bundle bundle = new Bundle();
 				bundle.putInt("cid",
-						((ContactItem) adapter.getItem(arg2)).getId());
+						((SimpleContact) adapter.getItem(arg2)).getId());
 				intent.putExtras(bundle);
 				startActivityForResult(intent, INFO_REQUEST_CODE);
 			}
@@ -140,7 +147,7 @@ public class MainFragment extends Fragment {
 
 	protected void showOperationDialog(final int position) {
 		new AlertDialog.Builder(getActivity())
-				.setTitle(contactList.get(position).getName())
+				.setTitle(((ContactItem) adapter.getItem(position)).getName())
 				.setPositiveButton("编辑", new DialogInterface.OnClickListener() {
 
 					@Override
@@ -177,8 +184,8 @@ public class MainFragment extends Fragment {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						dialog.dismiss();
-						mManager.deleteContactById(contactList.get(position)
-								.getId());
+						mManager.deleteContactById(((ContactItem) adapter
+								.getItem(position)).getId());
 						updateContacts();
 						Toast.makeText(getActivity(), "联系人删除成功",
 								Toast.LENGTH_SHORT).show();
@@ -202,42 +209,42 @@ public class MainFragment extends Fragment {
 		return contactList.size();
 	}
 
-//	/**
-//	 * 根据输入框中的值来过滤数据并更新ListView 可根据拼音，汉字，缩写来过滤
-//	 * 
-//	 * @param filterStr
-//	 */
-//	@SuppressLint("DefaultLocale")
-//	public void filterData(String filterStr) {
-//		List<ContactItem> filterDateList = new ArrayList<ContactItem>();
-//
-//		if (TextUtils.isEmpty(filterStr)) {
-//			filterDateList = contactList;
-//		} else {
-//			filterDateList.clear();
-//			for (ContactItem contactItem : contactList) {
-//				// String filterStrInPinyin = PinYin.getPinYin(filterStr);
-//				// String name = contactItem.getName();
-//				// String fullPinyin = contactItem.getFullPinyin();
-//				// String simplePinyin = contactItem.getSimplePinyin();
-//				// if (name.contains(filterStr)
-//				// || fullPinyin.contains(filterStrInPinyin)
-//				// || simplePinyin.contains(filterStrInPinyin)) {
-//				// filterDateList.add(contactItem);
-//				// }
-//				String convertStr = filterStr.toLowerCase();
-//				Map<String, Integer> originMap = contactItem
-//						.contains(filterStr);
-//				Map<String, Integer> convertMap = contactItem
-//						.contains(convertStr);
-//				if (originMap != null && convertMap != null
-//						&& originMap.size() != 0 && convertMap.size() != 0) {
-//					filterDateList.add(contactItem);
-//				}
-//			}
-//		}
-//		adapter.updateListView(filterDateList);
-//	}
+	// /**
+	// * 根据输入框中的值来过滤数据并更新ListView 可根据拼音，汉字，缩写来过滤
+	// *
+	// * @param filterStr
+	// */
+	// @SuppressLint("DefaultLocale")
+	// public void filterData(String filterStr) {
+	// List<ContactItem> filterDateList = new ArrayList<ContactItem>();
+	//
+	// if (TextUtils.isEmpty(filterStr)) {
+	// filterDateList = contactList;
+	// } else {
+	// filterDateList.clear();
+	// for (ContactItem contactItem : contactList) {
+	// // String filterStrInPinyin = PinYin.getPinYin(filterStr);
+	// // String name = contactItem.getName();
+	// // String fullPinyin = contactItem.getFullPinyin();
+	// // String simplePinyin = contactItem.getSimplePinyin();
+	// // if (name.contains(filterStr)
+	// // || fullPinyin.contains(filterStrInPinyin)
+	// // || simplePinyin.contains(filterStrInPinyin)) {
+	// // filterDateList.add(contactItem);
+	// // }
+	// String convertStr = filterStr.toLowerCase();
+	// Map<String, Integer> originMap = contactItem
+	// .contains(filterStr);
+	// Map<String, Integer> convertMap = contactItem
+	// .contains(convertStr);
+	// if (originMap != null && convertMap != null
+	// && originMap.size() != 0 && convertMap.size() != 0) {
+	// filterDateList.add(contactItem);
+	// }
+	// }
+	// }
+	// adapter.updateListView(filterDateList);
+	// }
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -258,6 +265,9 @@ public class MainFragment extends Fragment {
 	}
 
 	public void initSideBar() {
-		sideBar.init();
+		// TODO There's something to fix
+		if (sideBar != null) {
+			sideBar.init();
+		}
 	}
 }

@@ -29,10 +29,7 @@ public class Label {
 	}
 
 	public void setLname(String lname) {
-		if (lname == null)
-			this.lname = null;
-		else
-			this.lname = new String(lname);
+		this.lname = lname;
 	}
 
 	public String getLabelFullPinyin() {
