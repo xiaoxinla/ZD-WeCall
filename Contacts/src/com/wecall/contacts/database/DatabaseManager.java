@@ -10,7 +10,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
-import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
@@ -58,8 +57,14 @@ public class DatabaseManager {
 			values.put(Constants.MAIN_COL_NOTE, item.getNote());
 			values.put(Constants.MAIN_COL_ADDRESS, item.getAddress());
 			// 是其他类型的域先转换为json		
-			values.put(Constants.MAIN_COl_PHONE, gson.toJson(item.getPhoneNumber()));	
-			values.put(Constants.MAIN_COL_TAG, gson.toJson(item.getLabels()));
+			if (item.getPhoneNumber() != null)
+				values.put(Constants.MAIN_COl_PHONE, gson.toJson(item.getPhoneNumber()));	
+			else
+				values.put(Constants.MAIN_COl_PHONE, gson.toJson(new HashSet<String>()));
+			if (item.getLabels() != null)
+				values.put(Constants.MAIN_COL_TAG, gson.toJson(item.getLabels()));
+			else
+				values.put(Constants.MAIN_COL_TAG, gson.toJson(new HashSet<String>()));
 			// 未来使用,先留空
 			values.put(Constants.MAIN_COL_OTHER, "");
 			// 得到插入到的数据库列数，即id
@@ -355,6 +360,8 @@ public class DatabaseManager {
 	 *            存id的数组
 	 */
 	public void addTagToIds(String tagName, Set<Integer> cids) {
+		Log.i("in", tagName);
+		Log.i("cids", cids.toString());
 		SQLiteDatabase db = mHelper.getWritableDatabase();
 		int tid = getTagId(db, tagName);
 		for (int id : cids) {
@@ -368,10 +375,9 @@ public class DatabaseManager {
 
 				if (cursor.moveToFirst()) {
 					HashSet<String> tags = gson.fromJson(cursor.getString(0),
-							new TypeToken<HashSet<String>>() {
-							}.getType());
+							new TypeToken<HashSet<String>>(){}.getType());
 					// 如果不存在，需要更新
-					if (tags!=null&&!tags.contains(tagName)) {
+					if (tags != null && !tags.contains(tagName)) {
 						// 更新main表
 						tags.add(tagName);
 						ContentValues values = new ContentValues();
@@ -647,7 +653,7 @@ public class DatabaseManager {
 		}
 
 		// tag
-		Set<String> tagSet = item.getPhoneNumber();
+		Set<String> tagSet = item.getLabels();
 		if (tagSet != null) {
 			Iterator<String> tagIt = tagSet.iterator();
 			while (tagIt.hasNext()) {
