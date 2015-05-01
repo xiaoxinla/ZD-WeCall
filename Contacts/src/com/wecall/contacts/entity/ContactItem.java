@@ -42,7 +42,8 @@ public class ContactItem implements Comparable {
 	
 
 	public ContactItem() {
-
+		phoneNumber = new HashSet<String>();
+		labels = new HashSet<String>();
 	}
 
 	public ContactItem(String name, Set<String> phoneNumber, String address,
@@ -88,9 +89,7 @@ public class ContactItem implements Comparable {
 	}
 
 	public void setPhoneNumber(Set<String> phoneNumber) {
-		if(phoneNumber == null)
-			this.phoneNumber = null;
-		else
+		if(phoneNumber != null)
 			this.phoneNumber = new HashSet<String>(phoneNumber);
 	}
 
@@ -134,9 +133,7 @@ public class ContactItem implements Comparable {
 //	}
 
 	public void setLabels(Set<String> labels) {
-		if (labels == null)
-			this.labels = null;
-		else
+		if (labels != null)
 			this.labels = new HashSet<String>(labels);
 	}
 	

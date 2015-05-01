@@ -56,15 +56,9 @@ public class DatabaseManager {
 			values.put(Constants.MAIN_COL_NAME, item.getName());
 			values.put(Constants.MAIN_COL_NOTE, item.getNote());
 			values.put(Constants.MAIN_COL_ADDRESS, item.getAddress());
-			// 是其他类型的域先转换为json		
-			if (item.getPhoneNumber() != null)
-				values.put(Constants.MAIN_COl_PHONE, gson.toJson(item.getPhoneNumber()));	
-			else
-				values.put(Constants.MAIN_COl_PHONE, gson.toJson(new HashSet<String>()));
-			if (item.getLabels() != null)
-				values.put(Constants.MAIN_COL_TAG, gson.toJson(item.getLabels()));
-			else
-				values.put(Constants.MAIN_COL_TAG, gson.toJson(new HashSet<String>()));
+			// 是其他类型的域先转换为json	
+			values.put(Constants.MAIN_COl_PHONE, gson.toJson(item.getPhoneNumber()));	
+			values.put(Constants.MAIN_COL_TAG, gson.toJson(item.getLabels()));	
 			// 未来使用,先留空
 			values.put(Constants.MAIN_COL_OTHER, "");
 			// 得到插入到的数据库列数，即id
@@ -315,6 +309,7 @@ public class DatabaseManager {
 
 	/**
 	 * 更新联系人信息，通过ContactItem中的id指定特定联系人
+	 * FIXME 因为是全部信息更新，有可能会洗掉原来加上的tag
 	 * 
 	 * @param item
 	 */
@@ -592,8 +587,7 @@ public class DatabaseManager {
 				// 插入tag表
 				ContentValues tagValues = new ContentValues();
 				tagValues.put(Constants.TAG_COL_TAG_NAME, tag);
-				tid = (int) db
-						.insert(Constants.TABLE_NAME_TAG, null, tagValues);
+				tid = (int) db.insert(Constants.TABLE_NAME_TAG, null, tagValues);
 			}
 			cursor.close();
 		} catch (SQLException e) {
@@ -649,7 +643,6 @@ public class DatabaseManager {
 				values.put(Constants.SEARCH_COL_DATA1, phone);
 				db.insert(Constants.TABLE_NAME_SEARCH, null, values);
 			}
-
 		}
 
 		// tag
@@ -669,7 +662,6 @@ public class DatabaseManager {
 				values.put(Constants.SEARCH_COL_DATA4, tid);
 				db.insert(Constants.TABLE_NAME_SEARCH, null, values);
 			}
-
 		}
 		values = null;
 	}
