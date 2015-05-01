@@ -56,10 +56,9 @@ public class DatabaseManager {
 			values.put(Constants.MAIN_COL_NAME, item.getName());
 			values.put(Constants.MAIN_COL_NOTE, item.getNote());
 			values.put(Constants.MAIN_COL_ADDRESS, item.getAddress());
-			// 是其他类型的域先转换为json
-			values.put(Constants.MAIN_COl_PHONE,
-					gson.toJson(item.getPhoneNumber()));
-			values.put(Constants.MAIN_COL_TAG, gson.toJson(item.getLabels()));
+			// 是其他类型的域先转换为json	
+			values.put(Constants.MAIN_COl_PHONE, gson.toJson(item.getPhoneNumber()));	
+			values.put(Constants.MAIN_COL_TAG, gson.toJson(item.getLabels()));	
 			// 未来使用,先留空
 			values.put(Constants.MAIN_COL_OTHER, "");
 			// 得到插入到的数据库列数，即id
@@ -152,6 +151,7 @@ public class DatabaseManager {
 
 	/**
 	 * 通过id搜单个联系人，不存在返回null
+
 	 * 
 	 * @param id
 	 * @return
@@ -161,6 +161,7 @@ public class DatabaseManager {
 			return null;
 		ContactItem item = new ContactItem();
 		SQLiteDatabase db = mHelper.getReadableDatabase();
+
 		try {
 			Cursor cursor = db.query(Constants.TABLE_NAME_MAIN,
 					new String[] { "*" }, Constants.MAIN_COL_CID + " = ? ",
@@ -308,6 +309,7 @@ public class DatabaseManager {
 
 	/**
 	 * 更新联系人信息，通过ContactItem中的id指定特定联系人
+	 * FIXME 因为是全部信息更新，有可能会洗掉原来加上的tag
 	 * 
 	 * @param item
 	 */
@@ -320,6 +322,7 @@ public class DatabaseManager {
 		values.put(Constants.MAIN_COL_NAME, item.getName());
 		values.put(Constants.MAIN_COL_NOTE, item.getNote());
 		values.put(Constants.MAIN_COL_ADDRESS, item.getAddress());
+
 		// 是其他类型的域先转换为json
 		values.put(Constants.MAIN_COl_PHONE, gson.toJson(item.getPhoneNumber()));
 		values.put(Constants.MAIN_COL_TAG, gson.toJson(item.getLabels()));
@@ -352,6 +355,8 @@ public class DatabaseManager {
 	 *            存id的数组
 	 */
 	public void addTagToIds(String tagName, Set<Integer> cids) {
+		Log.i("in", tagName);
+		Log.i("cids", cids.toString());
 		SQLiteDatabase db = mHelper.getWritableDatabase();
 		int tid = getTagId(db, tagName);
 		for (int id : cids) {
@@ -365,14 +370,14 @@ public class DatabaseManager {
 
 				if (cursor.moveToFirst()) {
 					HashSet<String> tags = gson.fromJson(cursor.getString(0),
-							new TypeToken<HashSet<String>>() {
-							}.getType());
+							new TypeToken<HashSet<String>>(){}.getType());
 					// 如果不存在，需要更新
-					if (tags!=null&&!tags.contains(tagName)) {
+					if (tags != null && !tags.contains(tagName)) {
 						// 更新main表
 						tags.add(tagName);
 						ContentValues values = new ContentValues();
 						values.put(Constants.MAIN_COL_TAG, gson.toJson(tags));
+
 						db.update(Constants.TABLE_NAME_MAIN, values,
 								Constants.MAIN_COL_CID + " = ?",
 								new String[] { id + "" });
@@ -582,8 +587,7 @@ public class DatabaseManager {
 				// 插入tag表
 				ContentValues tagValues = new ContentValues();
 				tagValues.put(Constants.TAG_COL_TAG_NAME, tag);
-				tid = (int) db
-						.insert(Constants.TABLE_NAME_TAG, null, tagValues);
+				tid = (int) db.insert(Constants.TABLE_NAME_TAG, null, tagValues);
 			}
 			cursor.close();
 		} catch (SQLException e) {
@@ -639,11 +643,10 @@ public class DatabaseManager {
 				values.put(Constants.SEARCH_COL_DATA1, phone);
 				db.insert(Constants.TABLE_NAME_SEARCH, null, values);
 			}
-
 		}
 
 		// tag
-		Set<String> tagSet = item.getPhoneNumber();
+		Set<String> tagSet = item.getLabels();
 		if (tagSet != null) {
 			Iterator<String> tagIt = tagSet.iterator();
 			while (tagIt.hasNext()) {
@@ -659,7 +662,6 @@ public class DatabaseManager {
 				values.put(Constants.SEARCH_COL_DATA4, tid);
 				db.insert(Constants.TABLE_NAME_SEARCH, null, values);
 			}
-
 		}
 		values = null;
 	}
@@ -670,6 +672,6 @@ public class DatabaseManager {
 	 * @deprecated
 	 */
 	public void test() {
-
+		
 	}
 }
