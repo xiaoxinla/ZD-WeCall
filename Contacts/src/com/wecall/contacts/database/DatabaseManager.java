@@ -93,6 +93,9 @@ public class DatabaseManager {
 		} finally {
 			db.endTransaction();
 		}
+		db.execSQL("INSERT INTO " + Constants.TABLE_NAME_SEARCH + 
+				"(" + Constants.TABLE_NAME_SEARCH + ")" + 
+				" VALUES('optimize');");
 		db.close();
 	}
 
