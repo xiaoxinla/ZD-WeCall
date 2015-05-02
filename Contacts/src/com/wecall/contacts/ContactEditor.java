@@ -3,7 +3,9 @@ package com.wecall.contacts;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -47,7 +49,7 @@ public class ContactEditor extends Activity {
 	private static final String TAG = "ContactEditor";
 
 	// 各种编辑框
-	private EditText nameET,phoneET, addressET, noteET;
+	private EditText nameET, phoneET, addressET, noteET;
 	private ImageView photoImg;
 	private FlowLayout labelLayout;
 	private ActionBar actionBar;
@@ -106,7 +108,11 @@ public class ContactEditor extends Activity {
 			actionBar.setTitle("编辑联系人");
 			ContactItem item = mManager.queryContactById(mCid);
 			nameET.setText(item.getName());
-			phoneET.setText(item.getPhoneNumber());
+			Set<String> phoneSet = item.getPhoneNumber();
+			for(String str:phoneSet){
+				phoneET.setText(str);
+			}
+			
 			addressET.setText(item.getAddress());
 			noteET.setText(item.getNote());
 			Bitmap bitmap = ImageUtil.getLocalBitmap(Constants.ALBUM_PATH,
@@ -272,7 +278,9 @@ public class ContactEditor extends Activity {
 	private ContactItem getContactFromView() {
 		ContactItem item = new ContactItem();
 		item.setName(nameET.getText().toString());
-		item.setPhoneNumber(phoneET.getText().toString());
+		Set<String> phoneSet = new HashSet<String>();
+		phoneSet.add(phoneET.getText().toString());
+		item.setPhoneNumber(phoneSet);
 		item.setAddress(addressET.getText().toString());
 		item.setNote(noteET.getText().toString());
 		return item;

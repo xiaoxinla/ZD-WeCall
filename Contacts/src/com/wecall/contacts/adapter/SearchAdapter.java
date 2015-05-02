@@ -19,7 +19,7 @@ import android.widget.TextView;
 
 import com.wecall.contacts.R;
 import com.wecall.contacts.constants.Constants;
-import com.wecall.contacts.entity.ContactItem;
+import com.wecall.contacts.entity.SimpleContact;
 import com.wecall.contacts.util.ImageUtil;
 import com.wecall.contacts.util.StringUtil;
 
@@ -27,18 +27,18 @@ public class SearchAdapter extends BaseAdapter {
 
 	private static final String TAG = "SearchAdapter";
 	private Context mContext;
-	private List<ContactItem> mList;
+	private List<SimpleContact> mList;
 	private List<Map<String, Integer>> mIndex;
 	private int strlen = 0;
 
-	public SearchAdapter(Context context, List<ContactItem> list,
+	public SearchAdapter(Context context, List<SimpleContact> list,
 			List<Map<String, Integer>> index) {
 		this.mContext = context;
 		this.mList = list;
 		this.mIndex = index;
 	}
 
-	public SearchAdapter(Context context, List<ContactItem> list,
+	public SearchAdapter(Context context, List<SimpleContact> list,
 			List<Map<String, Integer>> index, int strlen) {
 		this.mContext = context;
 		this.mList = list;
@@ -67,7 +67,7 @@ public class SearchAdapter extends BaseAdapter {
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		ViewHolder holder = null;
-		ContactItem item = mList.get(position);
+		SimpleContact item = mList.get(position);
 		Map<String, Integer> map = mIndex.get(position);
 //		Log.v(TAG, "item:" + item.toString() + "map:" + map.toString());
 		if (convertView == null) {
@@ -105,8 +105,9 @@ public class SearchAdapter extends BaseAdapter {
 
 			if (entity.getKey().equals("phone")) {
 				int index = entity.getValue();
-				ssbOther = StringUtil.colorString(item.getPhoneNumber(), index,
-						index + strlen, Color.RED);
+//				ssbOther = StringUtil.colorString(item.getPhoneNumber(), index,
+//						index + strlen, Color.RED);
+				//TODO add phone inflater
 			}
 		}
 		holder.tvName.setText(ssbName);
@@ -119,7 +120,7 @@ public class SearchAdapter extends BaseAdapter {
 		return convertView;
 	}
 
-	public void updateListView(List<ContactItem> list,
+	public void updateListView(List<SimpleContact> list,
 			List<Map<String, Integer>> index, int strlen) {
 		this.mList = list;
 		this.mIndex = index;

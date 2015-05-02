@@ -3,58 +3,51 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
-    android:orientation="vertical" 
-     >
+    android:orientation="vertical" >
 
     <TextView
         android:id="@+id/catalog"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_weight="1.0"
         android:background="#E0E0E0"
-        android:paddingBottom="5dip"
+        android:textColor="#454545"
+        android:layout_weight="1.0"
         android:paddingLeft="5dip"
         android:paddingTop="5dip"
-        android:text="A"
-        android:textColor="#454545" />
-
-    <LinearLayout
+        android:paddingBottom="5dip"
+        android:text="A"/>
+<LinearLayout
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
+    <ImageView android:id="@+id/iv_header"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_margin="7dp"
+        android:src="@drawable/ic_contact_picture"
+        android:background="@null"
+        android:scaleType="fitXY"/>
+    <TextView
+        android:id="@+id/title"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
+        android:layout_gravity="center_vertical"
         android:gravity="center_vertical"
-        android:orientation="horizontal" >
-
-        <ImageView
-            android:id="@+id/iv_header"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:layout_margin="7dp"
-            android:background="@null"
-            android:scaleType="fitXY"
-            android:src="@drawable/ic_contact_picture" />
-
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_gravity="center_vertical"
-            android:layout_marginLeft="3dip"
-            android:layout_weight="1"
-            android:gravity="center_vertical"
-            android:paddingBottom="15dp"
-            android:paddingTop="15dp"
-            android:text="hhhh"
-            android:textColor="#000000"
-            android:textSize="15sp" />
-
-        <ImageView
-            android:id="@+id/iv_item_check"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical|right"
-            android:layout_marginRight="20dp"
-            android:background="@null"
-            android:src="@drawable/btn_check_off" />
+        android:layout_weight="1"
+        android:textColor="#000000"
+        android:layout_marginLeft="3dip"
+        android:paddingTop="15dp"
+        android:paddingBottom="15dp"
+        android:textSize="15sp"
+        android:text="hhhh"/>
+    <ImageView android:id="@+id/iv_item_check"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/btn_check_off"
+        android:background="@null"
+        android:layout_gravity="center_vertical|right"
+        android:layout_marginRight="20dp"/>
     </LinearLayout>
 
 </LinearLayout>

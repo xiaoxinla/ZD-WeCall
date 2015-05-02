@@ -1,18 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
 
-    <color name="result_view">#b0000000</color>
-    <color name="viewfinder_mask">#60000000</color>
-    <color name="possible_result_points">#c0ffff00</color>
-    <color name="gray">#808080</color> <!-- 灰色 -->
-    <color name="grey">#808080</color> <!-- 灰色 -->
-	<color name="powderblue">#B0E0E6</color><!--粉蓝色 -->
-	<color name="blanchedalmond">#FFEBCD</color><!--白杏色 -->
-	<color name="floralwhite">#FFFAF0</color><!--花白色 -->
-	<color name="cornsilk">#FFF8DC</color><!--米绸色 -->
-<color name="mediumseagreen">#3CB371</color><!--中海蓝 -->
-	<color name="royalblue">#B2E8FF</color><!--皇家蓝 -->
-	<color name="themeblue">#0CC9D7</color><!-- 主题蓝 -->
-	<color name="white">#FFFFFF</color><!-- 白色 -->
-	<color name="powerwhite">#EEEEEE</color><!-- 灰白色 -->
+     <color name="result_view">#b0000000</color>
+      <color name="viewfinder_mask">#60000000</color>
+      <color name="possible_result_points">#c0ffff00</color> 
 </resources>

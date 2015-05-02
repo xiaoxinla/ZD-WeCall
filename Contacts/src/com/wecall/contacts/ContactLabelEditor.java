@@ -1,10 +1,6 @@
 package com.wecall.contacts;
 
-import java.util.List;
-
-import com.wecall.contacts.database.DatabaseManager;
-import com.wecall.contacts.entity.Label;
-import com.wecall.contacts.view.FlowLayout;
+import java.util.Set;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -13,13 +9,16 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.widget.EditText;
 
+import com.wecall.contacts.database.DatabaseManager;
+import com.wecall.contacts.view.FlowLayout;
+
 public class ContactLabelEditor extends Activity {
 
 	private static final String TAG = "ContactLabelEditor";
 	private EditText input;
 	private FlowLayout labelAdded,labelOther;
 	
-	private List<Label> addedList,otherList;
+	private Set<String> addedList,otherList;
 	private int cid;
 	private DatabaseManager mManager;
 	
@@ -42,7 +41,7 @@ public class ContactLabelEditor extends Activity {
 		Bundle bundle = intent.getExtras();
 		cid = bundle.getInt("cid");
 		
-		addedList = mManager.queryTagById(cid);
+		addedList = mManager.queryTagsByContactId(cid);
 		Log.v(TAG, addedList.toString());
 	}
 

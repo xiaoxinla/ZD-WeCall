@@ -10,7 +10,6 @@ import com.wecall.contacts.constants.*;
 
 /*
  * 辅助访问数据库
- * 数据库包含4个表：main, tag, keyValue 
  * 
  * @author KM
  * 
@@ -19,40 +18,54 @@ import com.wecall.contacts.constants.*;
 public class DatabaseHelper extends SQLiteOpenHelper{
 	    
     /* main表，存基本信息
-     * 列依次为：c_id, name, fullPinyin, simplePinyin, sortLetter, note, phoneNumber, address
+     * 列依次为：c_id, name, note, phone,	address, tag, other
      */    
     private final static 
     String MAIN_TABLE = "CREATE TABLE IF NOT EXISTS main( "
-    					+ "c_id INTEGER PRIMARY KEY, "
-    					+ "name VARCHAR(100), "
-    					+ "fullPinyin VARCHAR(100), "
-    					+ "simplePinyin VARCHAR(20), "
-    					+ "note VARCHAR(255), "
-    					+ "phoneNumber VARCHAR(20), "
-    					+ "address VARCHAR(50)"
-    					+ ");";
-     
-    /*
-     * tag表，存标签，多个
-     * 列依次为：c_id, tag, tagFullPinyin, tagSimplePinyin
-     */
-    private final static 
-    String TAG_TABLE = "CREATE TABLE IF NOT EXISTS tag( "
-    					+ "c_id INTEGER NOT NULL, "
-    					+ "tag VARCHAR(50),"
-    					+ "tagFullPinyin VARCHAR(150), "
-    					+ "tagSimplePinyin VARCHAR(50), "
-    					+ "PRIMARY KEY(c_id, tag), " 
-    					+ "FOREIGN KEY(c_id) REFERENCES main(c_id) ON DELETE CASCADE "
+    					+ "c_id INTEGER PRIMARY KEY AUTOINCREMENT, "
+    					+ "name TEXT, "
+    					+ "note TEXT, "
+    					+ "phone TEXT, "
+    					+ "tag TEXT, "
+    					+ "address TEXT, "
+    					+ "other TEXT"
     					+ ");";   
+    
+    /*
+     * tag表，存标签及其标号
+     * 列依次为：t_id, tagName
+     */
+    private final static
+    String TAG_TABLE = "CREATE TABLE IF NOT EXISTS tag( " +
+    				"t_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+    				"tagName TEXT UNIQUE" +
+    				");";
+    
+    /*
+     * search表，fts4虚表，主要用来查询
+     * 列依次为：c_id, type_id, data1, data2, data3 （自带rowid）
+     */
+    private final static
+    String SEARCH_TABLE = "CREATE VIRTUAL TABLE search USING" +
+    					" fts4(c_id, type_id, data1, data2, data3, data4);";
+    
+//    /*
+//     * t2c表，建立tag表与main表的联系
+//     * 列依次为：c_id, t_id
+//     */
+//    private final static 
+//    String T2C_TABLE = "CREATE TABLE IF NOT EXISTS t2c( " +
+//    				"c_id INTEGER REFERENCES main(c_id) ON DELETE CASCADE, " + 
+//    				"t_id INTEGER REFERENCES tag(t_id) ON DELETE CASCADE, " +
+//    				"PRIMARY KEY (c_id, t_id) ); ";
     
     // 索引
     private final static
-    String MAIN_ID_INDEX = "CREATE INDEX main_cid_index on main(c_id);";
+    String CONTACT_ID_INDEX = "CREATE INDEX contact_cid_index on main(c_id);";
+    private final static 
+    String TAG_NAME_INDEX = "CREATE INDEX tag_name_index on tag(tagName);";
     private final static
-    String TAG_ID_INDEX = "CREATE INDEX tag_cid_index on tag(c_id);";
-    private final static
-    String TAG_TAG_INDEX = "CREATE INDEX tag_tag_index on tag(tag);";
+    String TAG_ID_INDEX = "CREATE INDEX tag_id_index on tag(t_id);";
     
     public DatabaseHelper(Context context, String name, CursorFactory factory, int version) {
         super(context, name, factory, version);
@@ -74,13 +87,14 @@ public class DatabaseHelper extends SQLiteOpenHelper{
     @Override
     public void onCreate(SQLiteDatabase db) {
     	try {
-			// 依次创建三个表
+			// 依次创建表
 			db.execSQL(MAIN_TABLE);
+			db.execSQL(SEARCH_TABLE);
 			db.execSQL(TAG_TABLE);
-			//建立多个索引
-			db.execSQL(MAIN_ID_INDEX);
+			//建立索引
+			db.execSQL(CONTACT_ID_INDEX);
+			db.execSQL(TAG_NAME_INDEX);
 			db.execSQL(TAG_ID_INDEX);
-			db.execSQL(TAG_TAG_INDEX);
 		} catch (SQLException se) {
 			se.printStackTrace();
 			Log.e("err", "create table failed.");

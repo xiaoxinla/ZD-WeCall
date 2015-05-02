@@ -24,10 +24,10 @@
             android:layout_height="fill_parent"
             android:layout_weight="1"
             android:padding="5dp"
-            custom:icon="@drawable/easyicon_mine"
+            custom:icon="@drawable/ic_menu_emoticons"
             custom:text="@string/tab_me"
             custom:text_size="12sp"
-            custom:color="#ff0CC9D7" />
+            custom:color="#ff45c01a" />
 
         <com.wecall.contacts.view.ChangeColorIconWithText
             android:id="@+id/id_indicator_two"
@@ -35,10 +35,10 @@
             android:layout_height="fill_parent"
             android:layout_weight="1"
             android:padding="5dp"
-            custom:icon="@drawable/easyicon_contact"
+            custom:icon="@drawable/ic_menu_friendslist"
             custom:text="@string/tab_contact"
             custom:text_size="12sp"
-            custom:color="#ff0CC9D7" />
+            custom:color="#ff45c01a" />
 
         <com.wecall.contacts.view.ChangeColorIconWithText
             android:id="@+id/id_indicator_three"
@@ -46,10 +46,10 @@
             android:layout_height="fill_parent"
             android:layout_weight="1"
             android:padding="5dp"
-            custom:icon="@drawable/easyicon_label"
+            custom:icon="@drawable/ic_menu_star"
             custom:text="@string/label"
             custom:text_size="12sp"
-            custom:color="#ff0CC9D7" />
+            custom:color="#ff45c01a" />
 
 
     </LinearLayout>

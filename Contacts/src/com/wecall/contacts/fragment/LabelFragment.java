@@ -2,8 +2,8 @@ package com.wecall.contacts.fragment;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -26,6 +26,7 @@ import android.widget.Toast;
 import com.wecall.contacts.LabelInfo;
 import com.wecall.contacts.R;
 import com.wecall.contacts.SelectLabelMember;
+import com.wecall.contacts.database.DatabaseManager;
 
 /**
  * 标签页fragment
@@ -36,6 +37,7 @@ public class LabelFragment extends Fragment {
 
 	private static final String TAG = "LabelFragment";
 	private static final int EDIT_REQUEST_CODE = 1;
+	protected static final int INFO_REQUEST_CODE = 0;
 	// 标签列表
 	private ListView lableListView;
 	// 添加标签按钮
@@ -44,6 +46,7 @@ public class LabelFragment extends Fragment {
 	private ArrayAdapter<String> adapter;
 	// 数据
 	private List<String> list = new ArrayList<String>();
+	private DatabaseManager mManager;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater,
@@ -55,34 +58,22 @@ public class LabelFragment extends Fragment {
 
 	@Override
 	public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+		mManager = new DatabaseManager(getActivity());
 		initData();
 		adapter = new ArrayAdapter<String>(getActivity(),
-				R.layout.label_item, list);
+				android.R.layout.simple_list_item_1, list);
 		lableListView.setAdapter(adapter);
 		super.onActivityCreated(savedInstanceState);
 	}
 
 	// 初始化数据
 	private void initData() {
+		Set<String> tagSet = mManager.queryAllTags();
+		Log.v(TAG, tagSet.toString());
 		list.clear();
-		list.add("逗比");
-		list.add("什么鬼");
-		list.add("幼儿园同床");
-		list.add("作死星人");
-		list.add("你来咬我呀！");
-		list.add("柔情信仰战");
-		list.add("小猫咪");
-		list.add("一直跟我抢麦");
-		list.add("微讯团队");
-		list.add("逗比");
-		list.add("什么鬼");
-		list.add("幼儿园同床");
-		list.add("作死星人");
-		list.add("你来咬我呀！");
-		list.add("柔情信仰战");
-		list.add("小猫咪");
-		list.add("一直跟我抢麦");
-		list.add("微讯团队");
+		for (String str : tagSet) {
+			list.add(str);
+		}
 	}
 
 	// 初始化控件
@@ -97,7 +88,7 @@ public class LabelFragment extends Fragment {
 					long arg3) {
 				Intent intent = new Intent(getActivity(), LabelInfo.class);
 				intent.putExtra("label", list.get(arg2));
-				startActivity(intent);
+				startActivityForResult(intent,INFO_REQUEST_CODE);
 			}
 		});
 
@@ -118,8 +109,7 @@ public class LabelFragment extends Fragment {
 				Log.v(TAG, "AddBtnClick");
 				Intent intent = new Intent(getActivity(),
 						SelectLabelMember.class);
-				Bundle bundle = new Bundle();
-				bundle.putInt("type", 1);
+				intent.putExtra("tagName", "");
 				startActivityForResult(intent, EDIT_REQUEST_CODE);
 			}
 		});
@@ -127,18 +117,18 @@ public class LabelFragment extends Fragment {
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (resultCode == Activity.RESULT_OK) {
-			switch (requestCode) {
-			case EDIT_REQUEST_CODE:
-				Toast.makeText(getActivity(), "编辑成功", Toast.LENGTH_SHORT)
-						.show();
-				initData();
-				adapter.notifyDataSetChanged();
-				break;
-
-			default:
-				break;
-			}
+		Log.v(TAG, "requestCode:" + requestCode + " resultCode:" + resultCode);
+		switch (requestCode) {
+		case EDIT_REQUEST_CODE:
+			initData();
+			adapter.notifyDataSetChanged();
+			break;
+		case INFO_REQUEST_CODE:
+			initData();
+			adapter.notifyDataSetChanged();
+			break;
+		default:
+			break;
 		}
 		super.onActivityResult(requestCode, resultCode, data);
 	}
