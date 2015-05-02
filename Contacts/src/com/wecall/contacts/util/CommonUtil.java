@@ -1,7 +1,9 @@
 package com.wecall.contacts.util;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -51,7 +53,9 @@ public class CommonUtil {
 								.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
 				ContactItem item = new ContactItem();
 				item.setName(contact);
-				item.setPhoneNumber(strPhoneNumber);
+				Set<String> phoneSet = new HashSet<String>();
+				phoneSet.add(strPhoneNumber);
+				item.setPhoneNumber(phoneSet);
 				list.add(item);
 			}
 			phoneCursor.close();

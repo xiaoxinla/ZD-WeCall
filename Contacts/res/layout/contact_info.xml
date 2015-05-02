@@ -3,106 +3,89 @@
     xmlns:custom="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-     >
-
-    <RelativeLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/bg_border"
-        android:gravity="center_vertical" >
-
+    android:orientation="vertical">
+	<RelativeLayout android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:gravity="center_vertical">
         <TextView
             android:id="@+id/tv_contact_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
             android:layout_marginLeft="20dp"
             android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
             android:singleLine="true"
             android:textSize="30sp" />
-
-        <ImageButton
-            android:id="@+id/ibtn_qrcode_show"
+        <ImageButton android:id="@+id/ibtn_qrcode_show"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:src="@drawable/easyicon_qricon"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="20dp"
-            android:layout_marginTop="10dp"
             android:background="@null"
-            android:src="@drawable/easyicon_qricon" />
-    </RelativeLayout>
+            android:layout_centerVertical="true"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="20dp"/>
+        </RelativeLayout>
 
     <ScrollView
         android:layout_width="fill_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:scrollbars="none" >
+        android:scrollbars="none"
+        android:layout_weight="1" >
 
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:orientation="vertical"
-        	android:paddingTop="20dp"
-        	android:paddingBottom="20dp"
-        	>
+            android:layout_margin="15dp"
+            android:orientation="vertical" >
 
-            <ImageView
-                android:id="@+id/img_contact_photo"
+            <ImageView android:id="@+id/img_contact_photo"
                 android:layout_width="150dp"
                 android:layout_height="150dp"
-                android:layout_gravity="center_horizontal"
-                android:background="@drawable/bg_border" />
-
-            <LinearLayout
-                android:layout_width="fill_parent"
+                android:layout_gravity="center_horizontal"/>
+            
+            <LinearLayout android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="20dp"
                 android:gravity="center_vertical"
-                android:orientation="horizontal" 
-                android:background="@drawable/bg_border">
-
-                <ImageButton
-                    android:id="@+id/ibtn_phone_call"
+                android:orientation="horizontal">
+                <ImageButton android:id="@+id/ibtn_phone_call"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@null"
-                    android:src="@drawable/easyicon_call" />
-
-                <TextView
-                    android:id="@+id/tv_phone_info"
+                    android:src="@drawable/easyicon_call"
+                    android:background="@null"/>
+                <TextView android:id="@+id/tv_phone_info"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
+                    android:textSize="24sp"
                     android:padding="5dp"
-                    android:textSize="24sp" />
-
-                <ImageButton
-                    android:id="@+id/ibtn_phone_msg"
+                    android:gravity="center"
+                    android:layout_weight="1"/>
+                <ImageButton android:id="@+id/ibtn_phone_msg"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@null"
-                    android:src="@drawable/easyicon_msg_2" />
+                    android:src="@drawable/easyicon_msg_2"
+                    android:background="@null"/>
             </LinearLayout>
 
-            <com.wecall.contacts.view.TextViewWithTitle
+            <com.wecall.contacts.view.TextViewWithTitle 
                 android:id="@+id/tvt_address"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                custom:text_size="11sp"
                 custom:title="@string/address"
-                custom:title_size="11sp" >
+                custom:title_size="11sp"
+                custom:text_size="11sp"
+                >
+                
             </com.wecall.contacts.view.TextViewWithTitle>
 
-            <com.wecall.contacts.view.TextViewWithTitle
+            <com.wecall.contacts.view.TextViewWithTitle 
                 android:id="@+id/tvt_note"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                custom:text_size="11sp"
                 custom:title="@string/note"
-                custom:title_size="11sp" >
+                custom:title_size="11sp"
+                custom:text_size="11sp">
+                
             </com.wecall.contacts.view.TextViewWithTitle>
 
             <TextView
@@ -110,15 +93,17 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/label"
-                android:textSize="24sp" 
-                android:layout_marginTop="20dp"/>
+                android:textSize="24sp" />
 
             <com.wecall.contacts.view.FlowLayout
                 android:id="@+id/fl_label_show"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content" >
+                
             </com.wecall.contacts.view.FlowLayout>
+
         </LinearLayout>
     </ScrollView>
+
 
 </LinearLayout>

@@ -15,7 +15,7 @@ import android.widget.TextView;
 
 import com.wecall.contacts.R;
 import com.wecall.contacts.constants.Constants;
-import com.wecall.contacts.entity.ContactItem;
+import com.wecall.contacts.entity.SimpleContact;
 import com.wecall.contacts.util.ImageUtil;
 
 /**
@@ -28,13 +28,13 @@ public class SortAdapter extends BaseAdapter implements SectionIndexer {
 
 	// private static final String TAG = "SortAdapter";
 	// 要显示的数据信息
-	private List<ContactItem> mContacts = null;
+	private List<SimpleContact> mContacts = null;
 	private List<Boolean> mChecks = null;
 	private boolean isVisiable = false;
 	// 控件所在上下文
 	private Context mContext;
 
-	public SortAdapter(List<ContactItem> mContacts, Context mContext,
+	public SortAdapter(List<SimpleContact> mContacts, Context mContext,
 			boolean isVisiable) {
 		// super();
 		this.mContacts = mContacts;
@@ -42,7 +42,7 @@ public class SortAdapter extends BaseAdapter implements SectionIndexer {
 		this.isVisiable = isVisiable;
 	}
 
-	public SortAdapter(List<ContactItem> mContacts, Context mContext,
+	public SortAdapter(List<SimpleContact> mContacts, Context mContext,
 			boolean isVisiable, List<Boolean> mChecks) {
 		// super();
 		this.mContacts = mContacts;
@@ -71,7 +71,7 @@ public class SortAdapter extends BaseAdapter implements SectionIndexer {
 	@Override
 	public View getView(int position, View view, ViewGroup arg2) {
 		ViewHolder holder = null;
-		final ContactItem contactItem = mContacts.get(position);
+		final SimpleContact contactItem = mContacts.get(position);
 		if (view == null) {
 			holder = new ViewHolder();
 			view = LayoutInflater.from(mContext).inflate(R.layout.contactitem,
@@ -148,12 +148,12 @@ public class SortAdapter extends BaseAdapter implements SectionIndexer {
 	 * @param list
 	 *            传入的联系人列表
 	 */
-	public void updateListView(List<ContactItem> list) {
+	public void updateListView(List<SimpleContact> list) {
 		this.mContacts = list;
 		notifyDataSetChanged();
 	}
 
-	public void updateListView(List<ContactItem> list, List<Boolean> checks) {
+	public void updateListView(List<SimpleContact> list, List<Boolean> checks) {
 		this.mContacts = list;
 		this.mChecks = checks;
 		notifyDataSetChanged();

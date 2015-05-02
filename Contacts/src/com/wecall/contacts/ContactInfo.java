@@ -1,7 +1,6 @@
 package com.wecall.contacts;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -184,7 +183,10 @@ public class ContactInfo extends Activity {
 		// nameTV.setText(bundle.getString("cname"));
 		addressTVT.setText(StringUtil.formatString(contact.getAddress()));
 		noteTVT.setText(StringUtil.formatString(contact.getNote()));
-		phoneTV.setText(StringUtil.formatString(contact.getPhoneNumber()));
+		Set<String> phoneSet = contact.getPhoneNumber();
+		for(String str:phoneSet){
+			phoneTV.setText(StringUtil.formatString(str));
+		}
 		showContactPhoto();
 		setLabels();
 	}
@@ -204,23 +206,13 @@ public class ContactInfo extends Activity {
 	 * 设置联系人的表签
 	 */
 	private void setLabels() {
-		List<String> labelNames = new ArrayList<String>();
-		labelNames.add("逗比");
-		labelNames.add("什么鬼");
-		labelNames.add("幼儿园同床");
-		labelNames.add("作死星人");
-		labelNames.add("你来咬我呀！");
-		labelNames.add("柔情信仰战");
-		labelNames.add("小猫咪");
-		labelNames.add("一直跟我抢麦");
-		labelNames.add("微讯团队");
-
-		for (int i = 0; i < labelNames.size(); i++) {
+		Set<String> tagSet = mManager.queryTagsByContactId(cid);
+		for(String str:tagSet){
 			TextView tv = new TextView(this);
 			MarginLayoutParams lp = new MarginLayoutParams(
 					LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 			lp.setMargins(7, 10, 0, 0);
-			tv.setText(labelNames.get(i));
+			tv.setText(str);
 			tv.setBackgroundResource(R.drawable.label_bg);
 			tv.setTextSize(15);
 			labelLayout.addView(tv, lp);
@@ -230,7 +222,13 @@ public class ContactInfo extends Activity {
 	private Bitmap getQRCode() {
 		Bitmap bitmap = null;
 		String name = contact.getName();
-		String phone = contact.getPhoneNumber();
+		String phone = "";
+		//TODO Multi Case
+		Set<String> phoneSet = contact.getPhoneNumber();
+		for(String str:phoneSet){
+			
+			phone = str;
+		}
 		try {
 			JSONObject jsonObject = new JSONObject();
 			String codedJson;
