@@ -181,8 +181,18 @@ public class ContactInfo extends Activity {
 				contact.getName(), 0, 1, Color.RED);
 		nameTV.setText(styled);
 		// nameTV.setText(bundle.getString("cname"));
-		addressTVT.setText(StringUtil.formatString(contact.getAddress()));
-		noteTVT.setText(StringUtil.formatString(contact.getNote()));
+		if(StringUtil.formatString(contact.getAddress()).length()>15){
+			addressTVT.setText(StringUtil.formatString(contact.getAddress()).substring(0, 14)+"...");
+		}
+		else{
+			addressTVT.setText(StringUtil.formatString(contact.getAddress()));
+		}
+		if(StringUtil.formatString(contact.getNote()).length()>15){
+			noteTVT.setText(StringUtil.formatString(contact.getNote()).substring(0, 14)+"...");
+		}
+		else{
+			noteTVT.setText(StringUtil.formatString(contact.getNote()));
+		}
 		Set<String> phoneSet = contact.getPhoneNumber();
 		for(String str:phoneSet){
 			phoneTV.setText(StringUtil.formatString(str));
@@ -203,19 +213,24 @@ public class ContactInfo extends Activity {
 	}
 
 	/**
-	 * 设置联系人的表签
+	 * 设置联系人的标签
 	 */
 	private void setLabels() {
+		
+		labelLayout.removeAllViews();
+		
 		Set<String> tagSet = mManager.queryTagsByContactId(cid);
+		Log.v("tagsize",String.valueOf( tagSet.size()));
 		for(String str:tagSet){
 			TextView tv = new TextView(this);
 			MarginLayoutParams lp = new MarginLayoutParams(
 					LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 			lp.setMargins(7, 10, 0, 0);
 			tv.setText(str);
-			tv.setBackgroundResource(R.drawable.label_bg);
+			tv.setBackgroundResource(R.drawable.label_bg_selected);
 			tv.setTextSize(15);
 			labelLayout.addView(tv, lp);
+			Log.v("contact_labels", str);
 		}
 	}
 

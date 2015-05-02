@@ -20,6 +20,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -63,6 +64,7 @@ public class ContactEditor extends Activity {
 	private int mCid = -1;
 	private String mName;
 	private String mPhone;
+	private Set<String> preLabel;
 
 	private static final int ALBUM_REQUEST_CODE = 1;
 	private static final int CAMERA_REQUEST_CODE = 2;
@@ -122,6 +124,7 @@ public class ContactEditor extends Activity {
 			} else {
 				photoImg.setImageBitmap(bitmap);
 			}
+			preLabel = mManager.queryTagsByContactId(mCid);
 			setLabels();
 		}
 
@@ -155,7 +158,7 @@ public class ContactEditor extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case android.R.id.home:
-			finish();
+			showReturnDialog();
 			break;
 		case R.id.action_editor_scan:
 			Intent intent = new Intent(ContactEditor.this,
@@ -193,6 +196,36 @@ public class ContactEditor extends Activity {
 				finish();
 			}
 		}
+	}
+	
+	private void showReturnDialog(){
+		new AlertDialog.Builder(this)
+		.setTitle("退出此次编辑？")
+		.setPositiveButton("是", new DialogInterface.OnClickListener() {
+
+			@Override
+			public void onClick(DialogInterface arg0, int arg1) {
+				mManager.updateContactTags(mCid, preLabel);
+				finish();
+			}
+		})
+		.setNegativeButton("否", new DialogInterface.OnClickListener() {
+
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.dismiss();
+			}
+		}).show();
+	}
+	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		
+		if (keyCode == KeyEvent.KEYCODE_BACK
+				&& event.getAction() == KeyEvent.ACTION_DOWN) {
+			showReturnDialog();
+		}
+		return super.onKeyDown(keyCode, event);
 	}
 
 	@Override
@@ -247,6 +280,7 @@ public class ContactEditor extends Activity {
 				}
 				break;
 			case LABEL_EDIT_REQUEST_CODE:
+				setLabels();
 				Toast.makeText(this, "标签编辑成功", Toast.LENGTH_SHORT).show();
 				break;
 			default:
@@ -272,6 +306,7 @@ public class ContactEditor extends Activity {
 		}
 		if (mType == 2) {
 			mCid = bundle.getInt("cid");
+			
 		}
 	}
 
@@ -283,29 +318,25 @@ public class ContactEditor extends Activity {
 		item.setPhoneNumber(phoneSet);
 		item.setAddress(addressET.getText().toString());
 		item.setNote(noteET.getText().toString());
+		Set<String> tagSet = mManager.queryTagsByContactId(mCid);
+		item.setLabels(tagSet);
 		return item;
 	}
 
-	private void setLabels() {
-		List<String> labelNames = new ArrayList<String>();
-		labelNames.add("逗比");
-		labelNames.add("什么鬼");
-		labelNames.add("幼儿园同床");
-		labelNames.add("作死星人");
-		labelNames.add("你来咬我呀！");
-		labelNames.add("柔情信仰战");
-		labelNames.add("小猫咪");
-		labelNames.add("一直跟我抢麦");
-		labelNames.add("微讯团队");
-
-		for (int i = 0; i < labelNames.size(); i++) {
+	private void setLabels() {		
+		labelLayout.removeAllViews();
+		Set<String> tagSet = mManager.queryTagsByContactId(mCid);
+		for(String str:tagSet){
 			TextView tv = new TextView(this);
 			MarginLayoutParams lp = new MarginLayoutParams(
 					LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-			lp.setMargins(5, 8, 0, 0);
-			tv.setText(labelNames.get(i));
-			tv.setBackgroundResource(R.drawable.label_bg);
+			lp.setMargins(7, 10, 0, 0);
+			tv.setText(str);
+			tv.setBackgroundResource(R.drawable.label_bg_selected);
+			tv.setTextSize(15);
 			labelLayout.addView(tv, lp);
+			
+			Log.v("labels", str);
 		}
 	}
 

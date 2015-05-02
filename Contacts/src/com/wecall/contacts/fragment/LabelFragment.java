@@ -61,7 +61,7 @@ public class LabelFragment extends Fragment {
 		mManager = new DatabaseManager(getActivity());
 		initData();
 		adapter = new ArrayAdapter<String>(getActivity(),
-				android.R.layout.simple_list_item_1, list);
+				R.layout.label_item, list);
 		lableListView.setAdapter(adapter);
 		super.onActivityCreated(savedInstanceState);
 	}
@@ -171,7 +171,7 @@ public class LabelFragment extends Fragment {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						dialog.dismiss();
-						// TODO 修改到数据库中
+						mManager.deleteTagByName(list.get(position));
 						list.remove(position);
 						adapter.notifyDataSetChanged();
 						Toast.makeText(getActivity(), "标签删除成功",

@@ -77,7 +77,7 @@ public class TextViewWithTitle extends LinearLayout {
 		mTextView.setBackgroundResource(R.drawable.jog_tab_bar_right_end_confirm_gray);
 		mTitleText.setText(mTitle);
 		mTitleText.setTextSize(mTitleSize);
-		mTitleText.setBackgroundResource(R.drawable.jog_tab_bar_left_end_confirm_green);
+		mTitleText.setBackgroundResource(R.drawable.jog_tab_bar_left_end_confirm_blue);
 
 		LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT,
 				LayoutParams.WRAP_CONTENT);

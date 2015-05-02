@@ -16,6 +16,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -104,7 +105,7 @@ public class Setting extends Activity {
 		switch (item.getItemId()) {
 		case android.R.id.home:
 			Log.v(TAG, "home click");
-			finish();
+			showReturnDialog();
 			break;
 		case R.id.action_save_label:
 			// 向配置文件中写入配置信息
@@ -324,4 +325,34 @@ public class Setting extends Activity {
 					}
 				}).show();
 	}
+	
+	private void showReturnDialog(){
+		new AlertDialog.Builder(this)
+		.setTitle("退出此次编辑？")
+		.setPositiveButton("是", new DialogInterface.OnClickListener() {
+
+			@Override
+			public void onClick(DialogInterface arg0, int arg1) {
+				finish();
+			}
+		})
+		.setNegativeButton("否", new DialogInterface.OnClickListener() {
+
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.dismiss();
+			}
+		}).show();
+	}
+	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		
+		if (keyCode == KeyEvent.KEYCODE_BACK
+				&& event.getAction() == KeyEvent.ACTION_DOWN) {
+			showReturnDialog();
+		}
+		return super.onKeyDown(keyCode, event);
+	}
+	
 }
