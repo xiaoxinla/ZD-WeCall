@@ -130,4 +130,13 @@ public class SimpleContact implements Comparable{
 		}
 		return map;
 	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if(o instanceof SimpleContact){
+			SimpleContact item = (SimpleContact)o;
+			return cid==item.cid;
+		}
+		return super.equals(o);
+	}
 }

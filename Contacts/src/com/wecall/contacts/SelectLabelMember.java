@@ -40,6 +40,7 @@ public class SelectLabelMember extends Activity {
 	private List<Boolean> checkList = new ArrayList<Boolean>();
 	// 数据库管理实例
 	private DatabaseManager mManager;
+	private String tagName = "";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +49,9 @@ public class SelectLabelMember extends Activity {
 
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 		getActionBar().setDisplayShowHomeEnabled(false);
+
+		tagName = getIntent().getStringExtra("tagName");
+
 		findView();
 	}
 
@@ -62,6 +66,8 @@ public class SelectLabelMember extends Activity {
 		letterTextView = (TextView) findViewById(R.id.tv_show_letter);
 		sideBar = (SideBar) findViewById(R.id.sidebar_mem);
 		inputText = (EditText) findViewById(R.id.et_label_input);
+
+		inputText.setText(tagName);
 
 		sideBar.setTouchLetterChangeListener(new onTouchLetterChangeListener() {
 
@@ -91,14 +97,19 @@ public class SelectLabelMember extends Activity {
 		sideBar.setLetterShow(letterTextView);
 		mManager = new DatabaseManager(this);
 		contactList = mManager.queryAllContacts();
+		Collections.sort(contactList);
+		List<SimpleContact> checkedSet = mManager.queryContactByTag(tagName);
+		Log.v(TAG, "checkedSet:" + checkedSet.size());
 		for (int i = 0; i < contactList.size(); i++) {
-			checkList.add(false);
+			if (checkedSet.contains(contactList.get(i))) {
+				checkList.add(true);
+				Log.v(TAG, "index:" + i);
+			} else {
+				checkList.add(false);
+			}
 		}
 		adapter = new SortAdapter(contactList, this, true);
-
 		contactListView.setAdapter(adapter);
-
-		Collections.sort(contactList);
 		adapter.updateListView(contactList, checkList);
 	}
 
@@ -119,12 +130,11 @@ public class SelectLabelMember extends Activity {
 				Toast.makeText(SelectLabelMember.this, "请输入标签名",
 						Toast.LENGTH_SHORT).show();
 			} else {
-				// TODO 保存到数据库
 				addTag();
 				finish();
 			}
 		default:
-			break; 
+			break;
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -138,6 +148,7 @@ public class SelectLabelMember extends Activity {
 		}
 		String tagName = inputText.getText().toString();
 		mManager.addTagToIds(tagName, tagSet);
-		Log.v(TAG, mManager.queryContactByTag(tagName).toString());
+		setResult(RESULT_OK);
+		Toast.makeText(this, "编辑成功", Toast.LENGTH_SHORT).show();
 	}
 }

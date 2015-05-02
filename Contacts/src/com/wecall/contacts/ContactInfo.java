@@ -1,7 +1,5 @@
 package com.wecall.contacts;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 import org.json.JSONException;
@@ -208,23 +206,13 @@ public class ContactInfo extends Activity {
 	 * 设置联系人的表签
 	 */
 	private void setLabels() {
-		List<String> labelNames = new ArrayList<String>();
-		labelNames.add("逗比");
-		labelNames.add("什么鬼");
-		labelNames.add("幼儿园同床");
-		labelNames.add("作死星人");
-		labelNames.add("你来咬我呀！");
-		labelNames.add("柔情信仰战");
-		labelNames.add("小猫咪");
-		labelNames.add("一直跟我抢麦");
-		labelNames.add("微讯团队");
-
-		for (int i = 0; i < labelNames.size(); i++) {
+		Set<String> tagSet = mManager.queryTagsByContactId(cid);
+		for(String str:tagSet){
 			TextView tv = new TextView(this);
 			MarginLayoutParams lp = new MarginLayoutParams(
 					LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 			lp.setMargins(7, 10, 0, 0);
-			tv.setText(labelNames.get(i));
+			tv.setText(str);
 			tv.setBackgroundResource(R.drawable.label_bg);
 			tv.setTextSize(15);
 			labelLayout.addView(tv, lp);
