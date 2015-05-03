@@ -98,7 +98,7 @@ public class MainFragment extends Fragment {
 		} catch (Exception e) {
 			e.printStackTrace();
 			Toast.makeText(getActivity(), "获取联系人列表失败", Toast.LENGTH_SHORT)
-					.show();
+			.show();
 		}
 		Collections.sort(contactList);
 		adapter.updateListView(contactList);
@@ -133,71 +133,71 @@ public class MainFragment extends Fragment {
 			}
 		});
 		contactListView
-				.setOnItemLongClickListener(new OnItemLongClickListener() {
+		.setOnItemLongClickListener(new OnItemLongClickListener() {
 
-					@Override
-					public boolean onItemLongClick(AdapterView<?> arg0,
-							View arg1, int arg2, long arg3) {
-						Log.v(TAG, "position:" + arg2);
-						showOperationDialog(arg2);
-						return false;
-					}
-				});
+			@Override
+			public boolean onItemLongClick(AdapterView<?> arg0,
+					View arg1, int arg2, long arg3) {
+				Log.v(TAG, "position:" + arg2);
+				showOperationDialog(arg2);
+				return false;
+			}
+		});
 	}
 
 	protected void showOperationDialog(final int position) {
 		new AlertDialog.Builder(getActivity())
-				.setTitle(((ContactItem) adapter.getItem(position)).getName())
-				.setPositiveButton("编辑", new DialogInterface.OnClickListener() {
+		.setTitle(((ContactItem) adapter.getItem(position)).getName())
+		.setPositiveButton("编辑", new DialogInterface.OnClickListener() {
 
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						Log.v(TAG, "edit");
-						dialog.dismiss();
-						Intent intent = new Intent(getActivity(),
-								ContactEditor.class);
-						Bundle bundle = new Bundle();
-						bundle.putInt("cid", ((ContactItem) adapter
-								.getItem(position)).getId());
-						bundle.putInt("type", 2);
-						intent.putExtras(bundle);
-						startActivityForResult(intent, EDIT_REQUEST_CODE);
-					}
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				Log.v(TAG, "edit");
+				dialog.dismiss();
+				Intent intent = new Intent(getActivity(),
+						ContactEditor.class);
+				Bundle bundle = new Bundle();
+				bundle.putInt("cid", ((ContactItem) adapter
+						.getItem(position)).getId());
+				bundle.putInt("type", 2);
+				intent.putExtras(bundle);
+				startActivityForResult(intent, EDIT_REQUEST_CODE);
+			}
 
-				})
-				.setNegativeButton("删除", new DialogInterface.OnClickListener() {
+		})
+		.setNegativeButton("删除", new DialogInterface.OnClickListener() {
 
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						Log.v(TAG, "delete");
-						dialog.dismiss();
-						showDeleteDialog(position);
-					}
-				}).show();
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				Log.v(TAG, "delete");
+				dialog.dismiss();
+				showDeleteDialog(position);
+			}
+		}).show();
 	}
 
 	private void showDeleteDialog(final int position) {
 		new AlertDialog.Builder(getActivity())
-				.setTitle("是否确认删除？")
-				.setPositiveButton("是", new DialogInterface.OnClickListener() {
+		.setTitle("是否确认删除？")
+		.setPositiveButton("是", new DialogInterface.OnClickListener() {
 
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						dialog.dismiss();
-						mManager.deleteContactById(((ContactItem) adapter
-								.getItem(position)).getId());
-						updateContacts();
-						Toast.makeText(getActivity(), "联系人删除成功",
-								Toast.LENGTH_SHORT).show();
-					}
-				})
-				.setNegativeButton("否", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.dismiss();
+				mManager.deleteContactById(((ContactItem) adapter
+						.getItem(position)).getId());
+				updateContacts();
+				Toast.makeText(getActivity(), "联系人删除成功",
+						Toast.LENGTH_SHORT).show();
+			}
+		})
+		.setNegativeButton("否", new DialogInterface.OnClickListener() {
 
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						dialog.dismiss();
-					}
-				}).show();
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.dismiss();
+			}
+		}).show();
 	}
 
 	/**

@@ -201,12 +201,12 @@ public class Setting extends Activity {
 			case ALBUM_REQUEST_CODE:
 				startPhotoZoom(data.getData());
 				break;
-			// 从相机返回
+				// 从相机返回
 			case CAMERA_REQUEST_CODE:
 				File tmp = new File(Constants.ALBUM_PATH + "tmpuser.jpg");
 				startPhotoZoom(Uri.fromFile(tmp));
 				break;
-			// 从裁剪后返回
+				// 从裁剪后返回
 			case CROP_REQUEST_CODE:
 				if (data != null) {
 					setPicToView(data);
@@ -282,50 +282,50 @@ public class Setting extends Activity {
 	// 显示对话框
 	private void showPicDialog() {
 		new AlertDialog.Builder(this)
-				.setTitle("设置头像")
-				.setNegativeButton("相册", new DialogInterface.OnClickListener() {
+		.setTitle("设置头像")
+		.setNegativeButton("相册", new DialogInterface.OnClickListener() {
 
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						// 让对话框消失
-						dialog.dismiss();
-						// ACTION_PICK，从数据集合中选择一个返回，官方文档解释如下
-						// Activity Action:
-						// Pick an item from the data, returning what was
-						// selected.
-						Intent intent = new Intent(Intent.ACTION_PICK, null);
-						// 设置数据来源和类型
-						intent.setDataAndType(
-								MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-								"image/*");
-						startActivityForResult(intent, ALBUM_REQUEST_CODE);
-					}
-				})
-				.setPositiveButton("拍照", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				// 让对话框消失
+				dialog.dismiss();
+				// ACTION_PICK，从数据集合中选择一个返回，官方文档解释如下
+				// Activity Action:
+				// Pick an item from the data, returning what was
+				// selected.
+				Intent intent = new Intent(Intent.ACTION_PICK, null);
+				// 设置数据来源和类型
+				intent.setDataAndType(
+						MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+						"image/*");
+				startActivityForResult(intent, ALBUM_REQUEST_CODE);
+			}
+		})
+		.setPositiveButton("拍照", new DialogInterface.OnClickListener() {
 
-					@Override
-					public void onClick(DialogInterface dialog, int arg1) {
-						dialog.dismiss();
-						/**
-						 * 下面这句还是老样子，调用快速拍照功能，至于为什么叫快速拍照，大家可以参考如下官方
-						 * 文档，you_sdk_path/docs/guide/topics/media/camera.html
-						 */
-						Intent intent = new Intent(
-								MediaStore.ACTION_IMAGE_CAPTURE);
-						// 打开图片所在目录，如果该目录不存在，则创建该目录
-						File dirFile = new File(Constants.ALBUM_PATH);
-						if (!dirFile.exists()) {
-							dirFile.mkdirs();
-						}
-						// 将图片保存到该目录下
-						intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri
-								.fromFile(new File(Constants.ALBUM_PATH,
-										"tmpuser.jpg")));
-						startActivityForResult(intent, CAMERA_REQUEST_CODE);
-					}
-				}).show();
+			@Override
+			public void onClick(DialogInterface dialog, int arg1) {
+				dialog.dismiss();
+				/**
+				 * 下面这句还是老样子，调用快速拍照功能，至于为什么叫快速拍照，大家可以参考如下官方
+				 * 文档，you_sdk_path/docs/guide/topics/media/camera.html
+				 */
+				Intent intent = new Intent(
+						MediaStore.ACTION_IMAGE_CAPTURE);
+				// 打开图片所在目录，如果该目录不存在，则创建该目录
+				File dirFile = new File(Constants.ALBUM_PATH);
+				if (!dirFile.exists()) {
+					dirFile.mkdirs();
+				}
+				// 将图片保存到该目录下
+				intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri
+						.fromFile(new File(Constants.ALBUM_PATH,
+								"tmpuser.jpg")));
+				startActivityForResult(intent, CAMERA_REQUEST_CODE);
+			}
+		}).show();
 	}
-	
+
 	private void showReturnDialog(){
 		new AlertDialog.Builder(this)
 		.setTitle("退出此次编辑？")
@@ -344,15 +344,15 @@ public class Setting extends Activity {
 			}
 		}).show();
 	}
-	
+
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		
+
 		if (keyCode == KeyEvent.KEYCODE_BACK
 				&& event.getAction() == KeyEvent.ACTION_DOWN) {
 			showReturnDialog();
 		}
 		return super.onKeyDown(keyCode, event);
 	}
-	
+
 }
