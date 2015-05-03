@@ -61,13 +61,13 @@ public class LabelFragment extends Fragment {
 		mManager = new DatabaseManager(getActivity());
 		initData();
 		adapter = new ArrayAdapter<String>(getActivity(),
-				android.R.layout.simple_list_item_1, list);
+				R.layout.label_item, list);
 		lableListView.setAdapter(adapter);
 		super.onActivityCreated(savedInstanceState);
 	}
 
 	// 初始化数据
-	private void initData() {
+	public void initData() {
 		Set<String> tagSet = mManager.queryAllTags();
 		Log.v(TAG, tagSet.toString());
 		list.clear();
@@ -75,6 +75,11 @@ public class LabelFragment extends Fragment {
 			list.add(str);
 		}
 	}
+
+	public void refreshListView(){
+		adapter.notifyDataSetChanged();
+	}
+
 
 	// 初始化控件
 	private void findView(View view) {
@@ -135,55 +140,55 @@ public class LabelFragment extends Fragment {
 
 	protected void showOperationDialog(final int position) {
 		new AlertDialog.Builder(getActivity())
-				.setTitle(list.get(position))
-				.setPositiveButton("编辑", new DialogInterface.OnClickListener() {
+		.setTitle(list.get(position))
+		.setPositiveButton("编辑", new DialogInterface.OnClickListener() {
 
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						Log.v(TAG, "edit");
-						dialog.dismiss();
-						Intent intent = new Intent(getActivity(),
-								SelectLabelMember.class);
-						Bundle bundle = new Bundle();
-						bundle.putString("label", list.get(position));
-						bundle.putInt("type", 2);
-						intent.putExtras(bundle);
-						startActivityForResult(intent, EDIT_REQUEST_CODE);
-					}
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				Log.v(TAG, "edit");
+				dialog.dismiss();
+				Intent intent = new Intent(getActivity(),
+						SelectLabelMember.class);
+				Bundle bundle = new Bundle();
+				bundle.putString("label", list.get(position));
+				bundle.putInt("type", 2);
+				intent.putExtras(bundle);
+				startActivityForResult(intent, EDIT_REQUEST_CODE);
+			}
 
-				})
-				.setNegativeButton("删除", new DialogInterface.OnClickListener() {
+		})
+		.setNegativeButton("删除", new DialogInterface.OnClickListener() {
 
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						Log.v(TAG, "delete");
-						dialog.dismiss();
-						showDeleteDialog(position);
-					}
-				}).show();
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				Log.v(TAG, "delete");
+				dialog.dismiss();
+				showDeleteDialog(position);
+			}
+		}).show();
 	}
 
 	private void showDeleteDialog(final int position) {
 		new AlertDialog.Builder(getActivity())
-				.setTitle("是否确认删除？")
-				.setPositiveButton("是", new DialogInterface.OnClickListener() {
+		.setTitle("是否确认删除？")
+		.setPositiveButton("是", new DialogInterface.OnClickListener() {
 
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						dialog.dismiss();
-						// TODO 修改到数据库中
-						list.remove(position);
-						adapter.notifyDataSetChanged();
-						Toast.makeText(getActivity(), "标签删除成功",
-								Toast.LENGTH_SHORT).show();
-					}
-				})
-				.setNegativeButton("否", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.dismiss();
+				mManager.deleteTagByName(list.get(position));
+				list.remove(position);
+				adapter.notifyDataSetChanged();
+				Toast.makeText(getActivity(), "标签删除成功",
+						Toast.LENGTH_SHORT).show();
+			}
+		})
+		.setNegativeButton("否", new DialogInterface.OnClickListener() {
 
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						dialog.dismiss();
-					}
-				}).show();
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.dismiss();
+			}
+		}).show();
 	}
 }

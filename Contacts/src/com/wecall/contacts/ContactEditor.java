@@ -20,6 +20,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -63,6 +64,7 @@ public class ContactEditor extends Activity {
 	private int mCid = -1;
 	private String mName;
 	private String mPhone;
+	private Set<String> preLabel;
 
 	private static final int ALBUM_REQUEST_CODE = 1;
 	private static final int CAMERA_REQUEST_CODE = 2;
@@ -112,7 +114,7 @@ public class ContactEditor extends Activity {
 			for(String str:phoneSet){
 				phoneET.setText(str);
 			}
-			
+
 			addressET.setText(item.getAddress());
 			noteET.setText(item.getNote());
 			Bitmap bitmap = ImageUtil.getLocalBitmap(Constants.ALBUM_PATH,
@@ -122,6 +124,7 @@ public class ContactEditor extends Activity {
 			} else {
 				photoImg.setImageBitmap(bitmap);
 			}
+			preLabel = mManager.queryTagsByContactId(mCid);
 			setLabels();
 		}
 
@@ -155,7 +158,7 @@ public class ContactEditor extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case android.R.id.home:
-			finish();
+			showReturnDialog();
 			break;
 		case R.id.action_editor_scan:
 			Intent intent = new Intent(ContactEditor.this,
@@ -174,7 +177,7 @@ public class ContactEditor extends Activity {
 		String name = nameET.getText().toString();
 		if (name.isEmpty()) {
 			Toast.makeText(ContactEditor.this, "请填写姓名", Toast.LENGTH_SHORT)
-					.show();
+			.show();
 		} else {
 			if (mType == 1) {
 				int last = mManager.addContact(getContactFromView());
@@ -193,6 +196,36 @@ public class ContactEditor extends Activity {
 				finish();
 			}
 		}
+	}
+
+	private void showReturnDialog(){
+		new AlertDialog.Builder(this)
+		.setTitle("退出此次编辑？")
+		.setPositiveButton("是", new DialogInterface.OnClickListener() {
+
+			@Override
+			public void onClick(DialogInterface arg0, int arg1) {
+				mManager.updateContactTags(mCid, preLabel);
+				finish();
+			}
+		})
+		.setNegativeButton("否", new DialogInterface.OnClickListener() {
+
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.dismiss();
+			}
+		}).show();
+	}
+
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+		if (keyCode == KeyEvent.KEYCODE_BACK
+				&& event.getAction() == KeyEvent.ACTION_DOWN) {
+			showReturnDialog();
+		}
+		return super.onKeyDown(keyCode, event);
 	}
 
 	@Override
@@ -231,22 +264,23 @@ public class ContactEditor extends Activity {
 					}
 				}
 				break;
-			// 从相册返回
+				// 从相册返回
 			case ALBUM_REQUEST_CODE:
 				startPhotoZoom(data.getData());
 				break;
-			// 从相机返回
+				// 从相机返回
 			case CAMERA_REQUEST_CODE:
 				File tmp = new File(Constants.ALBUM_PATH + "tmppic.jpg");
 				startPhotoZoom(Uri.fromFile(tmp));
 				break;
-			// 从裁剪后返回
+				// 从裁剪后返回
 			case CROP_REQUEST_CODE:
 				if (data != null) {
 					setPicToView(data);
 				}
 				break;
 			case LABEL_EDIT_REQUEST_CODE:
+				setLabels();
 				Toast.makeText(this, "标签编辑成功", Toast.LENGTH_SHORT).show();
 				break;
 			default:
@@ -272,6 +306,7 @@ public class ContactEditor extends Activity {
 		}
 		if (mType == 2) {
 			mCid = bundle.getInt("cid");
+
 		}
 	}
 
@@ -283,29 +318,25 @@ public class ContactEditor extends Activity {
 		item.setPhoneNumber(phoneSet);
 		item.setAddress(addressET.getText().toString());
 		item.setNote(noteET.getText().toString());
+		Set<String> tagSet = mManager.queryTagsByContactId(mCid);
+		item.setLabels(tagSet);
 		return item;
 	}
 
-	private void setLabels() {
-		List<String> labelNames = new ArrayList<String>();
-		labelNames.add("逗比");
-		labelNames.add("什么鬼");
-		labelNames.add("幼儿园同床");
-		labelNames.add("作死星人");
-		labelNames.add("你来咬我呀！");
-		labelNames.add("柔情信仰战");
-		labelNames.add("小猫咪");
-		labelNames.add("一直跟我抢麦");
-		labelNames.add("微讯团队");
-
-		for (int i = 0; i < labelNames.size(); i++) {
+	private void setLabels() {		
+		labelLayout.removeAllViews();
+		Set<String> tagSet = mManager.queryTagsByContactId(mCid);
+		for(String str:tagSet){
 			TextView tv = new TextView(this);
 			MarginLayoutParams lp = new MarginLayoutParams(
 					LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-			lp.setMargins(5, 8, 0, 0);
-			tv.setText(labelNames.get(i));
-			tv.setBackgroundResource(R.drawable.label_bg);
+			lp.setMargins(7, 10, 0, 0);
+			tv.setText(str);
+			tv.setBackgroundResource(R.drawable.label_bg_selected);
+			tv.setTextSize(15);
 			labelLayout.addView(tv, lp);
+
+			Log.v("labels", str);
 		}
 	}
 
@@ -313,48 +344,48 @@ public class ContactEditor extends Activity {
 	// TODO: 将该函数复用
 	private void showPicDialog() {
 		new AlertDialog.Builder(this)
-				.setTitle("设置头像")
-				.setNegativeButton("相册", new DialogInterface.OnClickListener() {
+		.setTitle("设置头像")
+		.setNegativeButton("相册", new DialogInterface.OnClickListener() {
 
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						// 让对话框消失
-						dialog.dismiss();
-						// ACTION_PICK，从数据集合中选择一个返回，官方文档解释如下
-						// Activity Action:
-						// Pick an item from the data, returning what was
-						// selected.
-						Intent intent = new Intent(Intent.ACTION_PICK, null);
-						// 设置数据来源和类型
-						intent.setDataAndType(
-								MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-								"image/*");
-						startActivityForResult(intent, ALBUM_REQUEST_CODE);
-					}
-				})
-				.setPositiveButton("拍照", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				// 让对话框消失
+				dialog.dismiss();
+				// ACTION_PICK，从数据集合中选择一个返回，官方文档解释如下
+				// Activity Action:
+				// Pick an item from the data, returning what was
+				// selected.
+				Intent intent = new Intent(Intent.ACTION_PICK, null);
+				// 设置数据来源和类型
+				intent.setDataAndType(
+						MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+						"image/*");
+				startActivityForResult(intent, ALBUM_REQUEST_CODE);
+			}
+		})
+		.setPositiveButton("拍照", new DialogInterface.OnClickListener() {
 
-					@Override
-					public void onClick(DialogInterface dialog, int arg1) {
-						dialog.dismiss();
-						/**
-						 * 下面这句还是老样子，调用快速拍照功能，至于为什么叫快速拍照，大家可以参考如下官方
-						 * 文档，you_sdk_path/docs/guide/topics/media/camera.html
-						 */
-						Intent intent = new Intent(
-								MediaStore.ACTION_IMAGE_CAPTURE);
-						// 打开图片所在目录，如果该目录不存在，则创建该目录
-						File dirFile = new File(Constants.ALBUM_PATH);
-						if (!dirFile.exists()) {
-							dirFile.mkdirs();
-						}
-						// 将图片保存到该目录下
-						intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri
-								.fromFile(new File(Constants.ALBUM_PATH,
-										"tmppic.jpg")));
-						startActivityForResult(intent, CAMERA_REQUEST_CODE);
-					}
-				}).show();
+			@Override
+			public void onClick(DialogInterface dialog, int arg1) {
+				dialog.dismiss();
+				/**
+				 * 下面这句还是老样子，调用快速拍照功能，至于为什么叫快速拍照，大家可以参考如下官方
+				 * 文档，you_sdk_path/docs/guide/topics/media/camera.html
+				 */
+				Intent intent = new Intent(
+						MediaStore.ACTION_IMAGE_CAPTURE);
+				// 打开图片所在目录，如果该目录不存在，则创建该目录
+				File dirFile = new File(Constants.ALBUM_PATH);
+				if (!dirFile.exists()) {
+					dirFile.mkdirs();
+				}
+				// 将图片保存到该目录下
+				intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri
+						.fromFile(new File(Constants.ALBUM_PATH,
+								"tmppic.jpg")));
+				startActivityForResult(intent, CAMERA_REQUEST_CODE);
+			}
+		}).show();
 	}
 
 	// 将取得的图片设置到控件上
