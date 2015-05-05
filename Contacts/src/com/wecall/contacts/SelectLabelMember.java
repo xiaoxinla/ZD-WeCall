@@ -7,8 +7,11 @@ import java.util.List;
 import java.util.Set;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -123,7 +126,7 @@ public class SelectLabelMember extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case android.R.id.home:
-			finish();
+			showReturnDialog();
 			break;
 		case R.id.action_save_label:
 			if (inputText.getText().toString().equals("")) {
@@ -151,4 +154,34 @@ public class SelectLabelMember extends Activity {
 		setResult(RESULT_OK);
 		Toast.makeText(this, "编辑成功", Toast.LENGTH_SHORT).show();
 	}
+	
+	private void showReturnDialog(){
+		new AlertDialog.Builder(this)
+		.setTitle("退出此次编辑？")
+		.setPositiveButton("是", new DialogInterface.OnClickListener() {
+
+			@Override
+			public void onClick(DialogInterface arg0, int arg1) {
+				finish();
+			}
+		})
+		.setNegativeButton("否", new DialogInterface.OnClickListener() {
+
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.dismiss();
+			}
+		}).show();
+	}
+	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		
+		if (keyCode == KeyEvent.KEYCODE_BACK
+				&& event.getAction() == KeyEvent.ACTION_DOWN) {
+			showReturnDialog();
+		}
+		return super.onKeyDown(keyCode, event);
+	}
+	
 }

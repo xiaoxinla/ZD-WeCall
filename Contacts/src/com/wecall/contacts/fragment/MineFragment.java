@@ -123,7 +123,7 @@ public class MineFragment extends Fragment {
 			case SETTING_REQUEST_CODE:
 				setUserInfo();
 				Toast.makeText(getActivity(), "用户信息修改成功", Toast.LENGTH_SHORT)
-						.show();
+				.show();
 				break;
 
 			default:

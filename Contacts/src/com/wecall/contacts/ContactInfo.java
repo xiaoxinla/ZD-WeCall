@@ -181,8 +181,18 @@ public class ContactInfo extends Activity {
 				contact.getName(), 0, 1, Color.RED);
 		nameTV.setText(styled);
 		// nameTV.setText(bundle.getString("cname"));
-		addressTVT.setText(StringUtil.formatString(contact.getAddress()));
-		noteTVT.setText(StringUtil.formatString(contact.getNote()));
+		if(StringUtil.formatString(contact.getAddress()).length()>14){
+			addressTVT.setText(StringUtil.formatString(contact.getAddress()).substring(0, 13)+"...");
+		}
+		else{
+			addressTVT.setText(StringUtil.formatString(contact.getAddress()));
+		}
+		if(StringUtil.formatString(contact.getNote()).length()>14){
+			noteTVT.setText(StringUtil.formatString(contact.getNote()).substring(0, 13)+"...");
+		}
+		else{
+			noteTVT.setText(StringUtil.formatString(contact.getNote()));
+		}
 		Set<String> phoneSet = contact.getPhoneNumber();
 		for(String str:phoneSet){
 			phoneTV.setText(StringUtil.formatString(str));
@@ -203,19 +213,24 @@ public class ContactInfo extends Activity {
 	}
 
 	/**
-	 * 设置联系人的表签
+	 * 设置联系人的标签
 	 */
 	private void setLabels() {
+
+		labelLayout.removeAllViews();
+
 		Set<String> tagSet = mManager.queryTagsByContactId(cid);
+		Log.v("tagsize",String.valueOf( tagSet.size()));
 		for(String str:tagSet){
 			TextView tv = new TextView(this);
 			MarginLayoutParams lp = new MarginLayoutParams(
 					LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 			lp.setMargins(7, 10, 0, 0);
 			tv.setText(str);
-			tv.setBackgroundResource(R.drawable.label_bg);
+			tv.setBackgroundResource(R.drawable.label_bg_selected);
 			tv.setTextSize(15);
 			labelLayout.addView(tv, lp);
+			Log.v("contact_labels", str);
 		}
 	}
 
@@ -226,7 +241,7 @@ public class ContactInfo extends Activity {
 		//TODO Multi Case
 		Set<String> phoneSet = contact.getPhoneNumber();
 		for(String str:phoneSet){
-			
+
 			phone = str;
 		}
 		try {
@@ -258,26 +273,26 @@ public class ContactInfo extends Activity {
 	 */
 	private void showDeleteDialog() {
 		new AlertDialog.Builder(this)
-				.setTitle("是否确认删除？")
-				.setPositiveButton("是", new DialogInterface.OnClickListener() {
+		.setTitle("是否确认删除？")
+		.setPositiveButton("是", new DialogInterface.OnClickListener() {
 
-					@Override
-					public void onClick(DialogInterface arg0, int arg1) {
-						arg0.dismiss();
-						mManager.deleteContactById(cid);
-						ImageUtil.deleteImage(Constants.ALBUM_PATH, "pic" + cid
-								+ ".jpg");
-						setResult(RESULT_OK);
-						finish();
-					}
-				})
-				.setNegativeButton("否", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface arg0, int arg1) {
+				arg0.dismiss();
+				mManager.deleteContactById(cid);
+				ImageUtil.deleteImage(Constants.ALBUM_PATH, "pic" + cid
+						+ ".jpg");
+				setResult(RESULT_OK);
+				finish();
+			}
+		})
+		.setNegativeButton("否", new DialogInterface.OnClickListener() {
 
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						dialog.dismiss();
-					}
-				}).show();
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.dismiss();
+			}
+		}).show();
 	}
 
 	/**
@@ -287,14 +302,14 @@ public class ContactInfo extends Activity {
 		ImageView tempImageView = new ImageView(this);
 		tempImageView.setImageBitmap(getQRCode());
 		new AlertDialog.Builder(this).setTitle(contact.getName())
-				.setView(tempImageView)
-				.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+		.setView(tempImageView)
+		.setPositiveButton("确定", new DialogInterface.OnClickListener() {
 
-					@Override
-					public void onClick(DialogInterface arg0, int arg1) {
-						arg0.dismiss();
-					}
-				}).show();
+			@Override
+			public void onClick(DialogInterface arg0, int arg1) {
+				arg0.dismiss();
+			}
+		}).show();
 	}
 
 	@Override
