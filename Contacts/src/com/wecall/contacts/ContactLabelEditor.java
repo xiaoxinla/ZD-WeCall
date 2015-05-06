@@ -1,5 +1,8 @@
 package com.wecall.contacts;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -22,6 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.wecall.contacts.database.DatabaseManager;
+import com.wecall.contacts.entity.ContactItem;
 import com.wecall.contacts.view.FlowLayout;
 
 public class ContactLabelEditor extends Activity {
@@ -31,7 +35,7 @@ public class ContactLabelEditor extends Activity {
 	private FlowLayout labelAdded,labelOther;
 	private ImageButton addBtn;
 	
-	private Set<String> addedList,allList,otherList;
+	private Set<String> addedList = new HashSet<String>(),allList,otherList;
 	private int cid;
 	private DatabaseManager mManager;
 	
@@ -54,7 +58,11 @@ public class ContactLabelEditor extends Activity {
 		Bundle bundle = intent.getExtras();
 		cid = bundle.getInt("cid");
 		
-		addedList = mManager.queryTagsByContactId(cid);
+		//addedList = mManager.queryTagsByContactId(cid);
+		String[] aLabel = new String[bundle.getInt("labelSize")];
+		aLabel = bundle.getStringArray("addedLabel");
+		addedList.removeAll(addedList);
+		addedList.addAll(Arrays.asList(aLabel));
 		Log.v(TAG, addedList.toString());
 		
 		allList = mManager.queryAllTags();
@@ -62,7 +70,6 @@ public class ContactLabelEditor extends Activity {
 		
 		otherList.addAll(allList);
 		otherList.removeAll(addedList);
-		Log.v(TAG, "otherlabel");
 	}
 
 	private void initView() {
@@ -128,6 +135,7 @@ public class ContactLabelEditor extends Activity {
 				}
 			});
 		}
+		Log.v(TAG, addedList.toString());
 	}
 	
 	/*重绘没有添加的标签*/
@@ -159,6 +167,7 @@ public class ContactLabelEditor extends Activity {
 	}
 	
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
@@ -167,8 +176,15 @@ public class ContactLabelEditor extends Activity {
 			break;
 		
 		case R.id.action_save_contact_label:
-			mManager.updateContactTags(cid, addedList);
-			setResult(RESULT_OK);
+			//mManager.updateContactTags(cid, addedList);
+			String[] aLabel = new String[addedList.size()];
+			Intent intent = new Intent();
+			Bundle bundle = new Bundle();
+			addedList.toArray(aLabel);
+			bundle.putStringArray("addedLabel", aLabel);
+			bundle.putInt("labelSize", addedList.size());
+			intent.putExtras(bundle);
+			setResult(RESULT_OK, intent);
 			finish();
 			break;
 		default:
