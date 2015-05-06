@@ -169,6 +169,7 @@ OnPageChangeListener {
 			intent = new Intent(MainActivity.this, ContactEditor.class);
 			bundle = new Bundle();
 			bundle.putInt("type", 1);
+			bundle.putInt("cid", -1);
 			intent.putExtras(bundle);
 			startActivityForResult(intent, EDIT_REQUEST_CODE);
 			break;

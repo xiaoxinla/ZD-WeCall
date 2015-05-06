@@ -3,6 +3,7 @@ package com.wecall.contacts;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -64,7 +65,7 @@ public class ContactEditor extends Activity {
 	private int mCid = -1;
 	private String mName;
 	private String mPhone;
-	private Set<String> preLabel;
+	private Set<String> contactLabel = new HashSet<String>();
 
 	private static final int ALBUM_REQUEST_CODE = 1;
 	private static final int CAMERA_REQUEST_CODE = 2;
@@ -106,6 +107,7 @@ public class ContactEditor extends Activity {
 			if (mPhone != null && !mPhone.isEmpty()) {
 				phoneET.setText(mPhone);
 			}
+			setLabels();
 		} else if (mType == 2) {
 			actionBar.setTitle("编辑联系人");
 			ContactItem item = mManager.queryContactById(mCid);
@@ -124,7 +126,7 @@ public class ContactEditor extends Activity {
 			} else {
 				photoImg.setImageBitmap(bitmap);
 			}
-			preLabel = mManager.queryTagsByContactId(mCid);
+			contactLabel = mManager.queryTagsByContactId(mCid);
 			setLabels();
 		}
 
@@ -143,6 +145,10 @@ public class ContactEditor extends Activity {
 				Intent intent = new Intent(ContactEditor.this,
 						ContactLabelEditor.class);
 				intent.putExtra("cid", mCid);
+				String[] aLabel = new String[contactLabel.size()];
+				contactLabel.toArray(aLabel);
+				intent.putExtra("addedLabel",aLabel);
+				intent.putExtra("labelSize", contactLabel.size());
 				startActivityForResult(intent, LABEL_EDIT_REQUEST_CODE);
 			}
 		});
@@ -182,8 +188,11 @@ public class ContactEditor extends Activity {
 			if (mType == 1) {
 				int last = mManager.addContact(getContactFromView());
 				Log.v(TAG, "insetid:" + last);
+				ContactItem item = getContactFromView();
+				item.setId(last);
+				mManager.updateContact(item);
 				ImageUtil.renameImage(Constants.ALBUM_PATH + "showpic.jpg",
-						Constants.ALBUM_PATH + "pic" + last + ".jpg");
+						Constants.ALBUM_PATH + "pic" + mCid + ".jpg");
 				setResult(RESULT_OK);
 				finish();
 			} else if (mType == 2) {
@@ -205,7 +214,6 @@ public class ContactEditor extends Activity {
 
 			@Override
 			public void onClick(DialogInterface arg0, int arg1) {
-				mManager.updateContactTags(mCid, preLabel);
 				finish();
 			}
 		})
@@ -228,6 +236,7 @@ public class ContactEditor extends Activity {
 		return super.onKeyDown(keyCode, event);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
@@ -280,6 +289,11 @@ public class ContactEditor extends Activity {
 				}
 				break;
 			case LABEL_EDIT_REQUEST_CODE:
+				Bundle bundle0 = data.getExtras();
+				String[] cLabel= new String[bundle0.getInt("labelSize")]; 
+				cLabel = bundle0.getStringArray("addedLabel");
+				contactLabel.removeAll(contactLabel);
+				contactLabel.addAll(Arrays.asList(cLabel));
 				setLabels();
 				Toast.makeText(this, "标签编辑成功", Toast.LENGTH_SHORT).show();
 				break;
@@ -318,15 +332,14 @@ public class ContactEditor extends Activity {
 		item.setPhoneNumber(phoneSet);
 		item.setAddress(addressET.getText().toString());
 		item.setNote(noteET.getText().toString());
-		Set<String> tagSet = mManager.queryTagsByContactId(mCid);
-		item.setLabels(tagSet);
+		item.setLabels(contactLabel);
 		return item;
 	}
 
 	private void setLabels() {		
 		labelLayout.removeAllViews();
-		Set<String> tagSet = mManager.queryTagsByContactId(mCid);
-		for(String str:tagSet){
+		Log.v(TAG, contactLabel.toString());
+		for(String str:contactLabel){
 			TextView tv = new TextView(this);
 			MarginLayoutParams lp = new MarginLayoutParams(
 					LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);

@@ -485,6 +485,7 @@ public class DatabaseManager {
 		Iterator<String> it = tagNames.iterator();
 		while (it.hasNext()) {
 			String tag = it.next();
+			
 			int tid = getTagId(db, tag);
 			values.clear();
 			values.put(Constants.SEARCH_COL_CID, cid);
