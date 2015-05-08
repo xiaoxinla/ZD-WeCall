@@ -691,58 +691,87 @@ public class DatabaseManager {
 	 * 全文搜索接口
 	 * 
 	 * @param text
-	 * @return List 返回的列表中L.get(0)是一个List<ContactItem>，保存搜索到的联系人的全部信息
-	 *         返回的列表中L.get
-	 *         (1)是一个List<Integer>表示在List<ContactItem>中对应位置的联系人与搜索内容匹配的项，
-	 *         用Constant.TYPE..来表示 e.g.
+	 * @return 
 	 */
-	public List<Object> ftsSearch(String text) {
-		List<Object> ret = new ArrayList<Object>();
+	public List< List<Object> > ftsSearch(String text) {
+		Log.i("fts", "begin");
+		List< List<Object> > ret = new ArrayList<List<Object>>();
 		SQLiteDatabase db = mHelper.getWritableDatabase();
-		List<ContactItem> contactList = new ArrayList<ContactItem>();
-		List<Integer> flagList = new ArrayList<Integer>();
-
+		Cursor cursor = null;
+		
 		if (isNumeric(text) ) {
-			Cursor cursor = db.rawQuery("SELECT " + Constants.SEARCH_COL_CID
+			
+			cursor = db.rawQuery("SELECT " + Constants.SEARCH_COL_CID
+					+ " , " + Constants.SEARCH_COL_TYPEID
 					+ " FROM " + Constants.TABLE_NAME_SEARCH + " WHERE "
 					+ Constants.SEARCH_COL_DATA1 + " MATCH '" + text + "*';",
 					null);
-
-			while (cursor.moveToNext()) {
-				ContactItem item = queryContactById(cursor.getInt(0));
-				contactList.add(item);
-				flagList.add(Constants.TYPE_PHONE);
-			}
-
-			cursor.close();
+			
 		} else if (isLetter(text)) {
 
-			Cursor cursor = db.rawQuery("SELECT " + Constants.SEARCH_COL_CID
+			cursor = db.rawQuery("SELECT " + Constants.SEARCH_COL_CID
+					+ " , " + Constants.SEARCH_COL_TYPEID
 					+ " FROM " + Constants.TABLE_NAME_SEARCH + " WHERE "
 					+ Constants.TABLE_NAME_SEARCH + " MATCH '" + text + "*';",
-					null);
-
-			while (cursor.moveToNext()) {
-				ContactItem item = queryContactById(cursor.getInt(0));
-				contactList.add(item);
-				flagList.add(Constants.TYPE_PHONE);
-			}
-
-			cursor.close();
+					null);			
 			
 		} else {
 			List<String> token = tokenizer(text);
 			String query = listToString(token);
-			Cursor cursor = db.rawQuery("SELECT " + Constants.SEARCH_COL_CID
+			cursor = db.rawQuery("SELECT " + Constants.SEARCH_COL_CID
 					+ " , " + Constants.SEARCH_COL_TYPEID + " FROM "
 					+ Constants.TABLE_NAME_SEARCH + " WHERE "
 					+ Constants.TABLE_NAME_SEARCH + " MATCH '" + query + "*';",
 					null);
-
+			
+		}	
+		
+		Log.i("fts", "half");
+		
+		if (cursor != null) {
 			while (cursor.moveToNext()) {
-				ContactItem item = queryContactById(cursor.getInt(0));
-				contactList.add(item);
-				flagList.add(cursor.getInt(1));
+				List<Object> item = new ArrayList<Object>();
+				
+				int id = cursor.getInt(0);
+				Cursor mainCursor = db.rawQuery("SELECT * "
+						+ " FROM " + Constants.TABLE_NAME_MAIN + " WHERE "
+						+ Constants.MAIN_COL_CID + " = " + id, null);
+				int nameIndex = mainCursor.getColumnIndex(Constants.MAIN_COL_NAME);
+				int phoneIndex = mainCursor.getColumnIndex(Constants.MAIN_COl_PHONE);
+				int addressIndex = mainCursor.getColumnIndex(Constants.MAIN_COL_ADDRESS);
+				int tagIndex = mainCursor.getColumnIndex(Constants.MAIN_COL_TAG);
+				int noteIndex = mainCursor.getColumnIndex(Constants.MAIN_COL_NOTE);
+
+				int typeId = cursor.getInt(1);
+				item.add(id);
+				item.add(mainCursor.getString(nameIndex));
+				item.add(typeId);
+				
+				if (typeId == Constants.TYPE_NAME){
+					item.add(mainCursor.getString(nameIndex));
+					
+				} else if (typeId == Constants.TYPE_NOTE) {
+					item.add(mainCursor.getString(noteIndex));
+					
+				} else if (typeId == Constants.TYPE_PHONE) {
+					String phone = mainCursor.getString(phoneIndex);
+					HashSet<String> phoneList = gson.fromJson( phone,
+							new TypeToken<HashSet<String>>() {
+							}.getType());
+					item.add(phoneList);
+					
+				} else if (typeId == Constants.TYPE_ADDRESS) {
+					item.add(mainCursor.getString(addressIndex));
+					
+				} else if (typeId == Constants.TYPE_TAG) {
+					String tag = mainCursor.getString(tagIndex);
+					HashSet<String> tagList = gson.fromJson( tag,
+							new TypeToken<HashSet<String>>() {
+							}.getType());
+					item.add(tagList);
+				} 
+				
+				ret.add(item);
 			}
 
 			cursor.close();
@@ -750,10 +779,7 @@ public class DatabaseManager {
 
 		db.close();
 
-		ret.add(contactList);
-		ret.add(flagList);
-		
-		toLog(ret);
+		Log.i("fts", "done");
 
 		return ret;
 	}
@@ -765,13 +791,7 @@ public class DatabaseManager {
 	 */
 	@SuppressWarnings("unchecked")
 	public void test() {
-		List<Object> list = ftsSearch("9");
-		List<ContactItem> contacts = (List<ContactItem>) list.get(0);
-		List<Integer> tagList = (List<Integer>) list.get(1);
-		for (int i = 0; i < contacts.size(); i++) {
-			Log.i(LOG_TAG, contacts.get(i).toString());
-			Log.i(LOG_TAG, tagList.get(i).toString());
-		}
+		
 	}
 
 	// 判断字符串是否纯数字
@@ -832,8 +852,7 @@ public class DatabaseManager {
 		}
 		
 		return strBuf.toString();
-	}
-	
+	}	
 
 	// ftsSearch的测试函数
 	private void toLog(List<Object> list) {
