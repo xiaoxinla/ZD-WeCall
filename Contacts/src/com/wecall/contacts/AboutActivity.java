@@ -5,7 +5,7 @@ import android.os.Bundle;
 import android.view.MenuItem;
 
 /**
- * 关于信息Activity
+ * 鍏充簬淇℃伅Activity
  * @author xiaoxin
  * 2015-4-5
  */

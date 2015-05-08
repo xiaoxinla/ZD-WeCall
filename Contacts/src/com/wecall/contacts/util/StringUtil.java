@@ -5,7 +5,7 @@ import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 
 /**
- * ×Ö·û´®¹¤¾ßÀà£¬ÓÃÀ´¶Ô×Ö·û´®½øĞĞ²Ù×÷
+ * å­—ç¬¦ä¸²å·¥å…·ç±»ï¼Œç”¨æ¥å¯¹å­—ç¬¦ä¸²è¿›è¡Œæ“ä½œ
  * 
  * @author xiaoxin
  * 
@@ -13,17 +13,17 @@ import android.text.style.ForegroundColorSpan;
 public class StringUtil {
 
 	/**
-	 * ½«×Ö·û´®µÄÒ»²¿·Ö¸Ä±äÑÕÉ«
+	 * å°†å­—ç¬¦ä¸²çš„ä¸€éƒ¨åˆ†æ”¹å˜é¢œè‰²
 	 * 
 	 * @param str
-	 *            ´«Èë×Ö·û´®
+	 *            ä¼ å…¥å­—ç¬¦ä¸²
 	 * @param begin
-	 *            ÆğÊ¼ÏÂ±ê
+	 *            èµ·å§‹ä¸‹æ ‡
 	 * @param end
-	 *            ½áÊøÏÂ±ê
+	 *            ç»“æŸä¸‹æ ‡
 	 * @param color
-	 *            Òª±ä³ÉµÄÑÛÉñ
-	 * @return ±äÉ«ºóµÄ×Ö·û´®
+	 *            è¦å˜æˆçš„çœ¼ç¥
+	 * @return å˜è‰²åçš„å­—ç¬¦ä¸²
 	 */
 	public static SpannableStringBuilder colorString(String str, int begin,
 			int end, int color) {
@@ -41,16 +41,22 @@ public class StringUtil {
 	}
 
 	/**
-	 * ¶Ô×Ö·û´®½øĞĞ¸ñÊ½»¯£¬Îª¿Õ£¬·µ»Ø¡±ÎŞ¡°£¬²»Îª¿Õ£¬·µ»ØÔ­×Ö·û´®
+	 * å¯¹å­—ç¬¦ä¸²è¿›è¡Œæ ¼å¼åŒ–ï¼Œä¸ºç©ºï¼Œè¿”å›â€æ— â€œï¼Œä¸ä¸ºç©ºï¼Œè¿”å›åŸå­—ç¬¦ä¸²
 	 * 
 	 * @param str
 	 * @return
 	 */
 	public static String formatString(String str) {
 		if (str == null || str.equals("")) {
-			return "ÎŞ";
+			return "æ— ";
 		} else {
 			return str;
 		}
+	}
+	
+	public static String analyseHtml(String str){
+		String taker = "<script";
+		int index = str.indexOf(taker);
+		return str.substring(0,index);
 	}
 }

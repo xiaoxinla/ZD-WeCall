@@ -10,12 +10,20 @@ import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.widget.ImageView;
 
+import com.sina.push.PushManager;
 import com.wecall.contacts.constants.Constants;
+import com.wecall.contacts.util.SPUtil;
 
+/**
+ * Ê¨¢ËøéÈ°µ
+ * @author xiaoxin
+ * 2015-4-30
+ */
 public class SplashActivity extends Activity {
 
 	private static final int sleepTime = 1000;
 	private static final String TAG = "SplashActivity";
+	private PushManager manager;
 
 	private ImageView welcomeImageView;
 	private int imgIndex[] = { R.drawable.welcompage1, R.drawable.welcompage2,
@@ -28,6 +36,9 @@ public class SplashActivity extends Activity {
 		setContentView(view);
 		super.onCreate(savedInstanceState);
 		initFile();
+		initSP();
+		manager = PushManager.getInstance(getApplicationContext());
+		startSinaPushService();
 		welcomeImageView = (ImageView) findViewById(R.id.img_welcomepage);
 		welcomeImageView
 				.setImageResource(imgIndex[(int) (Math.random() * imgIndex.length)]);
@@ -35,6 +46,13 @@ public class SplashActivity extends Activity {
 		AlphaAnimation animation = new AlphaAnimation(0.3f, 1.0f);
 		animation.setDuration(1500);
 		view.startAnimation(animation);
+	}
+
+	private void initSP() {
+		String name = (String) SPUtil.get(this, "name", "ÂåøÂêç");
+		String phone = (String) SPUtil.get(this, "phone", "00000");
+		SPUtil.put(this, "name", name);
+		SPUtil.put(this, "phone", phone);
 	}
 
 	@Override
@@ -49,7 +67,7 @@ public class SplashActivity extends Activity {
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
-				// Ω¯»Î÷˜“≥√Ê
+				// ËøõÂÖ•‰∏ªÈ°µÈù¢
 				startActivity(new Intent(SplashActivity.this,
 						MainActivity.class));
 				finish();
@@ -64,4 +82,13 @@ public class SplashActivity extends Activity {
 			dirFile.mkdirs();
 		}
 	}
+
+	/**
+	 * ÂºÄÂêØSinaPushÊúçÂä°
+	 */
+	private void startSinaPushService() {
+
+		manager.openChannel("22633", "100", "100");
+	}
+
 }

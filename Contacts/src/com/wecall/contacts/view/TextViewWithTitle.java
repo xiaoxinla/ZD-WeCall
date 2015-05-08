@@ -3,6 +3,7 @@ package com.wecall.contacts.view;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.text.TextUtils.TruncateAt;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.widget.LinearLayout;
@@ -11,7 +12,7 @@ import android.widget.TextView;
 import com.wecall.contacts.R;
 
 /**
- * ´ø±êÌâµÄÎÄ±¾¿ò
+ * å¸¦æ ‡é¢˜çš„æ–‡æœ¬æ¡†
  * @author xiaoxin
  * 2015-4-12
  */
@@ -74,6 +75,7 @@ public class TextViewWithTitle extends LinearLayout {
 		mTextView.setText(mText);
 		mTextView.setTextSize(mTextSize);
 		mTextView.setSingleLine(true);
+		mTextView.setEllipsize(TruncateAt.END);
 		mTextView.setBackgroundResource(R.drawable.jog_tab_bar_right_end_confirm_gray);
 		mTitleText.setText(mTitle);
 		mTitleText.setTextSize(mTitleSize);

@@ -4,11 +4,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import android.annotation.SuppressLint;
+import android.util.Log;
 
 import com.wecall.contacts.util.PinYin;
 
 /**
- * 简单的联系人实体类，只包含ContactItem中的有限元素
+ * 绠�鍗曠殑鑱旂郴浜哄疄浣撶被锛屽彧鍖呭惈ContactItem涓殑鏈夐檺鍏冪礌
  * @author kim
  *
  */
@@ -32,11 +33,12 @@ public class SimpleContact implements Comparable{
 	}
 	
 	/**
-	 * 通过citem来构造简化版的simplecontact
+	 * 閫氳繃citem鏉ユ瀯閫犵畝鍖栫増鐨剆implecontact
 	 * @param citem
 	 */
 	public SimpleContact(ContactItem citem)
 	{
+		Log.v("citem", citem.toString());
 		setId(citem.getId());
 		setName(citem.getName());
 	}
@@ -109,7 +111,7 @@ public class SimpleContact implements Comparable{
 			return;
 		}
 		String sortString = inputString.substring(0, 1).toUpperCase();
-		// 正则表达式，判断首字母是否是英文字母
+		// 姝ｅ垯琛ㄨ揪寮忥紝鍒ゆ柇棣栧瓧姣嶆槸鍚︽槸鑻辨枃瀛楁瘝
 		if (sortString.matches("[A-Z]")) {
 			this.sortLetter = sortString;
 		} else {

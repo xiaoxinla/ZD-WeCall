@@ -19,18 +19,18 @@ import com.wecall.contacts.MainActivity;
 import com.wecall.contacts.entity.ContactItem;
 
 /**
- * Í¨ÓÃ¹¤¾ßÀà£¬ÓÃÀ´ÓëÊÖ»ú½»»¥
+ * é€šç”¨å·¥å…·ç±»ï¼Œç”¨æ¥ä¸æ‰‹æœºäº¤äº’
  * 
  * @author xiaoxin 2015-4-11
  */
 public class CommonUtil {
 
 	/**
-	 * »ñÈ¡±¾»úµÄÁªÏµÈË
+	 * è·å–æœ¬æœºçš„è”ç³»äºº
 	 * 
 	 * @param context
-	 *            ËùÔÚÉÏÏÂÎÄ
-	 * @return ±¾»úµÄÁªÏµÈËĞÅÏ¢
+	 *            æ‰€åœ¨ä¸Šä¸‹æ–‡
+	 * @return æœ¬æœºçš„è”ç³»äººä¿¡æ¯
 	 */
 	public static List<ContactItem> getLocalContacts(Context context) {
 		List<ContactItem> list = new ArrayList<ContactItem>();
@@ -65,7 +65,7 @@ public class CommonUtil {
 	}
 
 	/**
-	 * Í¨ÖªÀ¸ÏûÏ¢ÌáĞÑ
+	 * é€šçŸ¥æ æ¶ˆæ¯æé†’
 	 * @param context
 	 * @param iconid
 	 * @param tickerText

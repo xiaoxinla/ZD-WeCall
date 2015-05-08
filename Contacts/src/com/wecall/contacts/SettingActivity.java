@@ -2,7 +2,13 @@ package com.wecall.contacts;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -29,30 +35,32 @@ import android.widget.Toast;
 import com.wecall.contacts.constants.Constants;
 import com.wecall.contacts.database.DatabaseManager;
 import com.wecall.contacts.entity.ContactItem;
+import com.wecall.contacts.util.AESUtil;
 import com.wecall.contacts.util.CommonUtil;
+import com.wecall.contacts.util.HttpConnectionUtils;
 import com.wecall.contacts.util.ImageUtil;
 import com.wecall.contacts.util.SPUtil;
 
 /**
- * ÉèÖÃÒ³Activity
+ * è®¾ç½®é¡µActivity
  * 
  * @author xiaoxin 2015-4-5
  */
-public class Setting extends Activity {
+public class SettingActivity extends Activity {
 
 	private static final String TAG = "Setting";
-	// ²»Í¬ÇëÇóµÄÇëÇóÂë
+	// ä¸åŒè¯·æ±‚çš„è¯·æ±‚ç 
 	private static final int ALBUM_REQUEST_CODE = 1;
 	private static final int CAMERA_REQUEST_CODE = 2;
 	private static final int CROP_REQUEST_CODE = 3;
 	private static final int LOCAL_CONTACTS_OBTAINED = 4;
 
-	// ActivityÉÏµÄ¿Ø¼şÃÇ
+	// Activityä¸Šçš„æ§ä»¶ä»¬
 	private EditText nameET, phoneET;
 	private LinearLayout aboutLayout, loadLayout;
 	private ImageButton pictureIBTN;
 
-	// ÓÃ»§ÃûºÍµç»°
+	// ç”¨æˆ·åå’Œç”µè¯
 	private String mName;
 	private String mPhone;
 	private List<ContactItem> contactList;
@@ -88,9 +96,9 @@ public class Setting extends Activity {
 		getActionBar().setDisplayShowHomeEnabled(false);
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 
-		// ³õÊ¼»¯¿Ø¼ş
+		// åˆå§‹åŒ–æ§ä»¶
 		initView();
-		// ³õÊ¼»¯Êı¾İ
+		// åˆå§‹åŒ–æ•°æ®
 		initData();
 	}
 
@@ -108,12 +116,13 @@ public class Setting extends Activity {
 			showReturnDialog();
 			break;
 		case R.id.action_save_label:
-			// ÏòÅäÖÃÎÄ¼şÖĞĞ´ÈëÅäÖÃĞÅÏ¢
-			SPUtil.put(Setting.this, "name", nameET.getText().toString());
-			SPUtil.put(Setting.this, "phone", phoneET.getText().toString());
+			// å‘é…ç½®æ–‡ä»¶ä¸­å†™å…¥é…ç½®ä¿¡æ¯
+			SPUtil.put(SettingActivity.this, "name", nameET.getText().toString());
+			SPUtil.put(SettingActivity.this, "phone", phoneET.getText().toString());
 			ImageUtil.renameImage(Constants.ALBUM_PATH + "showuser.jpg",
 					Constants.ALBUM_PATH + "user.jpg");
-			// ÉèÖÃ³É¹¦£¬²¢½áÊø
+			updateUserInfo();
+			// è®¾ç½®æˆåŠŸï¼Œå¹¶ç»“æŸ
 			setResult(RESULT_OK);
 			finish();
 			break;
@@ -123,7 +132,7 @@ public class Setting extends Activity {
 		return super.onOptionsItemSelected(item);
 	}
 
-	// ³õÊ¼»¯¿Ø¼ş
+	// åˆå§‹åŒ–æ§ä»¶
 	private void initView() {
 		nameET = (EditText) findViewById(R.id.et_setting_name);
 		phoneET = (EditText) findViewById(R.id.et_setting_phone);
@@ -131,16 +140,16 @@ public class Setting extends Activity {
 		pictureIBTN = (ImageButton) findViewById(R.id.ibtn_setting_photo);
 		loadLayout = (LinearLayout) findViewById(R.id.ll_setting_load);
 
-		// µã»÷¹ØÓÚ£¬Ìø×ªµ½¹ØÓÚ½çÃæ
+		// ç‚¹å‡»å…³äºï¼Œè·³è½¬åˆ°å…³äºç•Œé¢
 		aboutLayout.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View arg0) {
-				startActivity(new Intent(Setting.this, AboutActivity.class));
+				startActivity(new Intent(SettingActivity.this, AboutActivity.class));
 			}
 		});
 
-		// Èç¹ûÄÜÕÒµ½ÓÃ»§Éè¶¨µÄÍ·Ïñ£¬Ôò½«Í·ÏñÉèÖÃÎªÓÃ»§×Ô¶¨ÒåµÄÍ·Ïñ£¬·ñÔò£¬ÉèÖÃÎªÄ¬ÈÏÍ¼Æ¬
+		// å¦‚æœèƒ½æ‰¾åˆ°ç”¨æˆ·è®¾å®šçš„å¤´åƒï¼Œåˆ™å°†å¤´åƒè®¾ç½®ä¸ºç”¨æˆ·è‡ªå®šä¹‰çš„å¤´åƒï¼Œå¦åˆ™ï¼Œè®¾ç½®ä¸ºé»˜è®¤å›¾ç‰‡
 		Bitmap userPhoto = ImageUtil.getLocalBitmap(Constants.ALBUM_PATH,
 				"user.jpg");
 		if (userPhoto == null) {
@@ -149,12 +158,12 @@ public class Setting extends Activity {
 			pictureIBTN.setImageBitmap(userPhoto);
 		}
 
-		// Í·ÏñµÄµã»÷ÊÂ¼ş
+		// å¤´åƒçš„ç‚¹å‡»äº‹ä»¶
 		pictureIBTN.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View arg0) {
-				// ÏÔÊ¾Ñ¡ÔñÍ¼Æ¬À´Ô´µÄ¶Ô»°¿ò
+				// æ˜¾ç¤ºé€‰æ‹©å›¾ç‰‡æ¥æºçš„å¯¹è¯æ¡†
 				showPicDialog();
 			}
 		});
@@ -164,13 +173,13 @@ public class Setting extends Activity {
 			@SuppressLint("ShowToast")
 			@Override
 			public void onClick(View arg0) {
-				Toast.makeText(Setting.this, "ÁªÏµÈËÕıÔÚ¼ÓÔØÖĞ£¬ÇëÉÔºó...",
+				Toast.makeText(SettingActivity.this, "è”ç³»äººæ­£åœ¨åŠ è½½ä¸­ï¼Œè¯·ç¨å...",
 						Toast.LENGTH_LONG).show();
 				new Thread(new Runnable() {
 
 					@Override
 					public void run() {
-						contactList = CommonUtil.getLocalContacts(Setting.this);
+						contactList = CommonUtil.getLocalContacts(SettingActivity.this);
 						handler.sendEmptyMessage(LOCAL_CONTACTS_OBTAINED);
 					}
 				}).start();
@@ -179,34 +188,34 @@ public class Setting extends Activity {
 	}
 
 	private void updateContacts() {
-		mManager = new DatabaseManager(Setting.this);
+		mManager = new DatabaseManager(SettingActivity.this);
 		new Thread(new Runnable() {
 
 			@Override
 			public void run() {
 				mManager.addContacts(contactList);
-				CommonUtil.notifyMessage(Setting.this, R.drawable.icon, "¼ÓÔØÍê±Ï",
-						"ÁªÏµÈË¼ÓÔØÍê±Ï", "¹²¼ÓÔØ" + contactList.size() + "Î»ÁªÏµÈË");
+				CommonUtil.notifyMessage(SettingActivity.this, R.drawable.icon, "åŠ è½½å®Œæ¯•",
+						"è”ç³»äººåŠ è½½å®Œæ¯•", "å…±åŠ è½½" + contactList.size() + "ä½è”ç³»äºº");
 			}
 		}).start();
 	}
 
-	// ´¦Àí´ÓÆäËûActivity·µ»ØµÄÊı¾İ
+	// å¤„ç†ä»å…¶ä»–Activityè¿”å›çš„æ•°æ®
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		Log.v(TAG, "requestCode:" + requestCode);
 		if (resultCode == RESULT_OK) {
 			switch (requestCode) {
-			// ´ÓÏà²á·µ»Ø
+			// ä»ç›¸å†Œè¿”å›
 			case ALBUM_REQUEST_CODE:
 				startPhotoZoom(data.getData());
 				break;
-				// ´ÓÏà»ú·µ»Ø
+				// ä»ç›¸æœºè¿”å›
 			case CAMERA_REQUEST_CODE:
 				File tmp = new File(Constants.ALBUM_PATH + "tmpuser.jpg");
 				startPhotoZoom(Uri.fromFile(tmp));
 				break;
-				// ´Ó²Ã¼ôºó·µ»Ø
+				// ä»è£å‰ªåè¿”å›
 			case CROP_REQUEST_CODE:
 				if (data != null) {
 					setPicToView(data);
@@ -221,36 +230,36 @@ public class Setting extends Activity {
 	}
 
 	/**
-	 * ½«Í¼Æ¬²Ã¼ô
+	 * å°†å›¾ç‰‡è£å‰ª
 	 * 
 	 * @param uri
-	 *            Í¼Æ¬µÄuriµØÖ·
+	 *            å›¾ç‰‡çš„uriåœ°å€
 	 */
 	private void startPhotoZoom(Uri uri) {
 		Log.v(TAG, "Zoom:" + uri.toString());
 		/*
-		 * ÖÁÓÚÏÂÃæÕâ¸öIntentµÄACTIONÊÇÔõÃ´ÖªµÀµÄ£¬´ó¼Ò¿ÉÒÔ¿´ÏÂ×Ô¼ºÂ·¾¶ÏÂµÄÈçÏÂÍøÒ³
+		 * è‡³äºä¸‹é¢è¿™ä¸ªIntentçš„ACTIONæ˜¯æ€ä¹ˆçŸ¥é“çš„ï¼Œå¤§å®¶å¯ä»¥çœ‹ä¸‹è‡ªå·±è·¯å¾„ä¸‹çš„å¦‚ä¸‹ç½‘é¡µ
 		 * yourself_sdk_path/docs/reference/android/content/Intent.html
 		 */
 		Intent intent = new Intent("com.android.camera.action.CROP");
 		intent.setDataAndType(uri, "image/*");
-		// ÏÂÃæÕâ¸öcrop=trueÊÇÉèÖÃÔÚ¿ªÆôµÄIntentÖĞÉèÖÃÏÔÊ¾µÄVIEW¿É²Ã¼ô
+		// ä¸‹é¢è¿™ä¸ªcrop=trueæ˜¯è®¾ç½®åœ¨å¼€å¯çš„Intentä¸­è®¾ç½®æ˜¾ç¤ºçš„VIEWå¯è£å‰ª
 		intent.putExtra("crop", "true");
-		// aspectX aspectY ÊÇ¿í¸ßµÄ±ÈÀı
+		// aspectX aspectY æ˜¯å®½é«˜çš„æ¯”ä¾‹
 		intent.putExtra("aspectX", 1);
 		intent.putExtra("aspectY", 1);
-		// outputX outputY ÊÇ²Ã¼ôÍ¼Æ¬¿í¸ß
+		// outputX outputY æ˜¯è£å‰ªå›¾ç‰‡å®½é«˜
 		intent.putExtra("outputX", 150);
 		intent.putExtra("outputY", 150);
 		intent.putExtra("return-data", true);
 		startActivityForResult(intent, CROP_REQUEST_CODE);
 	}
 
-	// ½«È¡µÃµÄÍ¼Æ¬ÉèÖÃµ½¿Ø¼şÉÏ
+	// å°†å–å¾—çš„å›¾ç‰‡è®¾ç½®åˆ°æ§ä»¶ä¸Š
 	private void setPicToView(Intent data) {
-		// È¡µÃ·µ»ØµÄÊı¾İ
+		// å–å¾—è¿”å›çš„æ•°æ®
 		Bundle bundle = data.getExtras();
-		// ²»Îª¿ÕÔò±£´æÍ¼Æ¬µ½±¾µØ²¢ÉèÖÃµ½¿Ø¼şÉÏ
+		// ä¸ä¸ºç©ºåˆ™ä¿å­˜å›¾ç‰‡åˆ°æœ¬åœ°å¹¶è®¾ç½®åˆ°æ§ä»¶ä¸Š
 		if (bundle != null) {
 			Bitmap picture = bundle.getParcelable("data");
 			try {
@@ -270,7 +279,7 @@ public class Setting extends Activity {
 		super.onDestroy();
 	}
 
-	// ³õÊ¼»¯Êı¾İ
+	// åˆå§‹åŒ–æ•°æ®
 	private void initData() {
 		Bundle bundle = getIntent().getExtras();
 		mName = bundle.getString("name");
@@ -279,45 +288,45 @@ public class Setting extends Activity {
 		phoneET.setText(mPhone);
 	}
 
-	// ÏÔÊ¾¶Ô»°¿ò
+	// æ˜¾ç¤ºå¯¹è¯æ¡†
 	private void showPicDialog() {
 		new AlertDialog.Builder(this)
-		.setTitle("ÉèÖÃÍ·Ïñ")
-		.setNegativeButton("Ïà²á", new DialogInterface.OnClickListener() {
+		.setTitle("è®¾ç½®å¤´åƒ")
+		.setNegativeButton("ç›¸å†Œ", new DialogInterface.OnClickListener() {
 
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				// ÈÃ¶Ô»°¿òÏûÊ§
+				// è®©å¯¹è¯æ¡†æ¶ˆå¤±
 				dialog.dismiss();
-				// ACTION_PICK£¬´ÓÊı¾İ¼¯ºÏÖĞÑ¡ÔñÒ»¸ö·µ»Ø£¬¹Ù·½ÎÄµµ½âÊÍÈçÏÂ
+				// ACTION_PICKï¼Œä»æ•°æ®é›†åˆä¸­é€‰æ‹©ä¸€ä¸ªè¿”å›ï¼Œå®˜æ–¹æ–‡æ¡£è§£é‡Šå¦‚ä¸‹
 				// Activity Action:
 				// Pick an item from the data, returning what was
 				// selected.
 				Intent intent = new Intent(Intent.ACTION_PICK, null);
-				// ÉèÖÃÊı¾İÀ´Ô´ºÍÀàĞÍ
+				// è®¾ç½®æ•°æ®æ¥æºå’Œç±»å‹
 				intent.setDataAndType(
 						MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
 						"image/*");
 				startActivityForResult(intent, ALBUM_REQUEST_CODE);
 			}
 		})
-		.setPositiveButton("ÅÄÕÕ", new DialogInterface.OnClickListener() {
+		.setPositiveButton("æ‹ç…§", new DialogInterface.OnClickListener() {
 
 			@Override
 			public void onClick(DialogInterface dialog, int arg1) {
 				dialog.dismiss();
 				/**
-				 * ÏÂÃæÕâ¾ä»¹ÊÇÀÏÑù×Ó£¬µ÷ÓÃ¿ìËÙÅÄÕÕ¹¦ÄÜ£¬ÖÁÓÚÎªÊ²Ã´½Ğ¿ìËÙÅÄÕÕ£¬´ó¼Ò¿ÉÒÔ²Î¿¼ÈçÏÂ¹Ù·½
-				 * ÎÄµµ£¬you_sdk_path/docs/guide/topics/media/camera.html
+				 * ä¸‹é¢è¿™å¥è¿˜æ˜¯è€æ ·å­ï¼Œè°ƒç”¨å¿«é€Ÿæ‹ç…§åŠŸèƒ½ï¼Œè‡³äºä¸ºä»€ä¹ˆå«å¿«é€Ÿæ‹ç…§ï¼Œå¤§å®¶å¯ä»¥å‚è€ƒå¦‚ä¸‹å®˜æ–¹
+				 * æ–‡æ¡£ï¼Œyou_sdk_path/docs/guide/topics/media/camera.html
 				 */
 				Intent intent = new Intent(
 						MediaStore.ACTION_IMAGE_CAPTURE);
-				// ´ò¿ªÍ¼Æ¬ËùÔÚÄ¿Â¼£¬Èç¹û¸ÃÄ¿Â¼²»´æÔÚ£¬Ôò´´½¨¸ÃÄ¿Â¼
+				// æ‰“å¼€å›¾ç‰‡æ‰€åœ¨ç›®å½•ï¼Œå¦‚æœè¯¥ç›®å½•ä¸å­˜åœ¨ï¼Œåˆ™åˆ›å»ºè¯¥ç›®å½•
 				File dirFile = new File(Constants.ALBUM_PATH);
 				if (!dirFile.exists()) {
 					dirFile.mkdirs();
 				}
-				// ½«Í¼Æ¬±£´æµ½¸ÃÄ¿Â¼ÏÂ
+				// å°†å›¾ç‰‡ä¿å­˜åˆ°è¯¥ç›®å½•ä¸‹
 				intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri
 						.fromFile(new File(Constants.ALBUM_PATH,
 								"tmpuser.jpg")));
@@ -328,15 +337,15 @@ public class Setting extends Activity {
 
 	private void showReturnDialog(){
 		new AlertDialog.Builder(this)
-		.setTitle("ÍË³ö´Ë´Î±à¼­£¿")
-		.setPositiveButton("ÊÇ", new DialogInterface.OnClickListener() {
+		.setTitle("é€€å‡ºæ­¤æ¬¡ç¼–è¾‘ï¼Ÿ")
+		.setPositiveButton("æ˜¯", new DialogInterface.OnClickListener() {
 
 			@Override
 			public void onClick(DialogInterface arg0, int arg1) {
 				finish();
 			}
 		})
-		.setNegativeButton("·ñ", new DialogInterface.OnClickListener() {
+		.setNegativeButton("å¦", new DialogInterface.OnClickListener() {
 
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
@@ -353,6 +362,43 @@ public class Setting extends Activity {
 			showReturnDialog();
 		}
 		return super.onKeyDown(keyCode, event);
+	}
+	
+	@SuppressLint("HandlerLeak") private void updateUserInfo(){
+		int did = (Integer) SPUtil.get(this, "did", -1);
+		String url = Constants.SERVER_URL + "/updateinfo.php";
+		if(did==-1){
+			return ;
+		}
+		String aesKey = (String) SPUtil.get(this, "aid", "");
+		Handler handler = new Handler(){
+
+			@Override
+			public void handleMessage(Message msg) {
+				switch (msg.what) {
+				case HttpConnectionUtils.DID_SUCCEED:
+					Log.v(TAG, (String)msg.obj);
+					break;
+
+				default:
+					break;
+				}
+				super.handleMessage(msg);
+			}
+			
+		};
+		JSONObject jsonObject = new JSONObject();
+		try {
+			jsonObject.put("name", mName);
+			jsonObject.put("phone", mPhone);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		String data = AESUtil.encrypt(aesKey, jsonObject.toString());
+		List<NameValuePair> list = new ArrayList<NameValuePair>();
+		list.add(new BasicNameValuePair("did", ""+did));
+		list.add(new BasicNameValuePair("data", data));
+		new HttpConnectionUtils(handler).post(url, list);
 	}
 
 }

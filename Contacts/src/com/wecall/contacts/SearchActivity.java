@@ -8,9 +8,12 @@ import java.util.Map;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
@@ -20,17 +23,16 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 import android.widget.SearchView;
-import android.widget.Toast;
 import android.widget.SearchView.OnQueryTextListener;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.wecall.contacts.adapter.SearchAdapter;
 import com.wecall.contacts.database.DatabaseManager;
 import com.wecall.contacts.entity.ContactItem;
-import com.wecall.contacts.entity.SimpleContact;
 
 /**
- * ËÑË÷Ò³
+ * æœç´¢é¡µ
  * 
  * @author xiaoxin 2015-4-16
  */
@@ -39,15 +41,48 @@ public class SearchActivity extends Activity {
 	private static final String TAG = "SearchActivity";
 	private static final int INFO_REQUEST_CODE = 1;
 	private static final int EDIT_REQUEST_CODE = 2;
+	protected static final int SEARCH_FINISH = 0;
 
 	private SearchView mSearchView;
 	private TextView mResultText;
 	private ListView mContactListView;
 	private SearchAdapter adapter;
 	private DatabaseManager mManager;
+	private ProgressDialog progressDialog;
+	@SuppressLint("HandlerLeak")
+	private Handler handler = new Handler() {
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+			case SEARCH_FINISH:
+				if (progressDialog != null && progressDialog.isShowing()) {
+					progressDialog.dismiss();
+				}
+				String filterStr = mSearchView.getQuery().toString();
+				List<Map<String, Integer>> mapList = new ArrayList<Map<String, Integer>>();
+				if (!TextUtils.isEmpty(filterStr)) {
+					for (ContactItem contactItem : contactList) {
+						// String convertStr = filterStr.toLowerCase();
+						Map<String, Integer> map = contactItem
+								.contains(filterStr);
+						// Map<String, Integer> convertMap = contactItem
+						// .contains(convertStr);
+						if (map != null && map.size() != 0) {
+							mapList.add(map);
+						}
+					}
+				}
+				mResultText.setText("æœç´¢åˆ°" + contactList.size() + "ä½è”ç³»äºº");
+				adapter.updateListView(contactList, mapList, filterStr.length());
+				break;
 
-	// ÁªÏµÈËĞÅÏ¢
-	private List<SimpleContact> contactList = new ArrayList<SimpleContact>();
+			default:
+				break;
+			}
+		};
+	};
+
+	// è”ç³»äººä¿¡æ¯
+	private List<ContactItem> contactList = new ArrayList<ContactItem>();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -73,16 +108,14 @@ public class SearchActivity extends Activity {
 	}
 
 	/**
-	 * ³õÊ¼»¯Êı¾İºÍ¿Ø¼ş
+	 * åˆå§‹åŒ–æ•°æ®å’Œæ§ä»¶
 	 */
-	@SuppressWarnings("unchecked")
 	private void init() {
 		mSearchView = (SearchView) findViewById(R.id.sv_search);
 		mResultText = (TextView) findViewById(R.id.tv_result_search);
 		mContactListView = (ListView) findViewById(R.id.lv_search_contact_list);
 		mManager = new DatabaseManager(this);
-		contactList = mManager.queryAllContacts();
-		Collections.sort(contactList);
+		contactList = new ArrayList<ContactItem>();
 		adapter = new SearchAdapter(this, null, null);
 		mContactListView.setAdapter(adapter);
 
@@ -109,20 +142,19 @@ public class SearchActivity extends Activity {
 						return false;
 					}
 				});
+		int amount = getIntent().getIntExtra("amount", 0);
 
-		mSearchView.setQueryHint("¿ÉËÑË÷" + contactList.size() + "Î»ÁªÏµÈË");
+		mSearchView.setQueryHint("å¯æœç´¢" + amount + "ä½è”ç³»äºº");
 		mSearchView.setOnQueryTextListener(new OnQueryTextListener() {
 
 			@Override
 			public boolean onQueryTextSubmit(String arg0) {
-				Log.v(TAG, "onQueryTextSubmit" + arg0);
 				filterData(arg0);
 				return false;
 			}
 
 			@Override
 			public boolean onQueryTextChange(String arg0) {
-				Log.v(TAG, "onQueryTextChange" + arg0);
 				filterData(arg0);
 				return false;
 			}
@@ -141,37 +173,32 @@ public class SearchActivity extends Activity {
 	}
 
 	/**
-	 * ¸ù¾İÊäÈë¿òÖĞµÄÖµÀ´¹ıÂËÊı¾İ²¢¸üĞÂListView ¿É¸ù¾İÆ´Òô£¬ºº×Ö£¬ËõĞ´À´¹ıÂË
+	 * æ ¹æ®è¾“å…¥æ¡†ä¸­çš„å€¼æ¥è¿‡æ»¤æ•°æ®å¹¶æ›´æ–°ListView å¯æ ¹æ®æ‹¼éŸ³ï¼Œæ±‰å­—ï¼Œç¼©å†™æ¥è¿‡æ»¤
 	 * 
 	 * @param filterStr
 	 */
+	@SuppressWarnings("unchecked")
 	@SuppressLint("DefaultLocale")
-	private void filterData(String filterStr) {
-		List<SimpleContact> filterDateList = new ArrayList<SimpleContact>();
-		List<Map<String, Integer>> mapList = new ArrayList<Map<String, Integer>>();
-		if (!TextUtils.isEmpty(filterStr)) {
-			filterDateList.clear();
-			for (SimpleContact contactItem : contactList) {
-				String convertStr = filterStr.toLowerCase();
-				Map<String, Integer> originMap = contactItem
-						.contains(filterStr);
-				Map<String, Integer> convertMap = contactItem
-						.contains(convertStr);
-				if (originMap != null && convertMap != null
-						&& originMap.size() != 0 && convertMap.size() != 0) {
-					filterDateList.add(contactItem);
-					mapList.add(originMap);
-				}
+	private void filterData(final String filterStr) {
+		progressDialog = ProgressDialog.show(SearchActivity.this, "æŸ¥æ‰¾ä¸­...",
+				"æ­£åœ¨æŸ¥æ‰¾ä¸­...", false);
+		new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				contactList.clear();
+				contactList = (List<ContactItem>) mManager.ftsSearch(filterStr)
+						.get(0);
+				Log.v(TAG, "contactList:" + contactList.toString());
+				handler.sendEmptyMessage(SEARCH_FINISH);
 			}
-		}
-		mResultText.setText("ËÑË÷µ½" + filterDateList.size() + "Î»ÁªÏµÈË");
-		adapter.updateListView(filterDateList, mapList, filterStr.length());
+		}).start();
 	}
 
 	protected void showOperationDialog(final int position) {
 		new AlertDialog.Builder(this)
 				.setTitle(((ContactItem) adapter.getItem(position)).getName())
-				.setPositiveButton("±à¼­", new DialogInterface.OnClickListener() {
+				.setPositiveButton("ç¼–è¾‘", new DialogInterface.OnClickListener() {
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
@@ -188,7 +215,7 @@ public class SearchActivity extends Activity {
 					}
 
 				})
-				.setNegativeButton("É¾³ı", new DialogInterface.OnClickListener() {
+				.setNegativeButton("åˆ é™¤", new DialogInterface.OnClickListener() {
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
@@ -201,22 +228,22 @@ public class SearchActivity extends Activity {
 
 	private void showDeleteDialog(final int position) {
 		new AlertDialog.Builder(this)
-				.setTitle("ÊÇ·ñÈ·ÈÏÉ¾³ı£¿")
-				.setPositiveButton("ÊÇ", new DialogInterface.OnClickListener() {
+				.setTitle("æ˜¯å¦ç¡®è®¤åˆ é™¤ï¼Ÿ")
+				.setPositiveButton("æ˜¯", new DialogInterface.OnClickListener() {
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						dialog.dismiss();
-						// ´ÓÊı¾İ¿âÖĞÉ¾³ıÀ´¼ÇÂ¼
+						// ä»æ•°æ®åº“ä¸­åˆ é™¤æ¥è®°å½•
 						mManager.deleteContactById(((ContactItem) adapter
 								.getItem(position)).getId());
-						// É¾³ıÖ®ºó»ñÈ¡×îĞÂµÄÁªÏµÈËĞÅÏ¢
+						// åˆ é™¤ä¹‹åè·å–æœ€æ–°çš„è”ç³»äººä¿¡æ¯
 						updateContacts();
-						Toast.makeText(SearchActivity.this, "ÁªÏµÈËÉ¾³ı³É¹¦",
+						Toast.makeText(SearchActivity.this, "è”ç³»äººåˆ é™¤æˆåŠŸ",
 								Toast.LENGTH_SHORT).show();
 					}
 				})
-				.setNegativeButton("·ñ", new DialogInterface.OnClickListener() {
+				.setNegativeButton("å¦", new DialogInterface.OnClickListener() {
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
@@ -227,7 +254,8 @@ public class SearchActivity extends Activity {
 
 	@SuppressWarnings("unchecked")
 	private void updateContacts() {
-		contactList = mManager.queryAllContacts();
+		contactList = (List<ContactItem>) mManager.ftsSearch(
+				mSearchView.getQuery().toString()).get(0);
 		Collections.sort(contactList);
 		filterData(mSearchView.getQuery().toString());
 	}

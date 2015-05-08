@@ -9,7 +9,7 @@ import android.util.Log;
 import com.wecall.contacts.constants.*;
 
 /*
- * ¸¨Öú·ÃÎÊÊı¾İ¿â
+ * è¾…åŠ©è®¿é—®æ•°æ®åº“
  * 
  * @author KM
  * 
@@ -17,8 +17,8 @@ import com.wecall.contacts.constants.*;
 
 public class DatabaseHelper extends SQLiteOpenHelper{
 	    
-    /* main±í£¬´æ»ù±¾ĞÅÏ¢
-     * ÁĞÒÀ´ÎÎª£ºc_id, name, note, phone,	address, tag, other
+    /* mainè¡¨ï¼Œå­˜åŸºæœ¬ä¿¡æ¯
+     * åˆ—ä¾æ¬¡ä¸ºï¼šc_id, name, note, phone,	address, tag, other
      */    
     private final static 
     String MAIN_TABLE = "CREATE TABLE IF NOT EXISTS main( "
@@ -32,8 +32,8 @@ public class DatabaseHelper extends SQLiteOpenHelper{
     					+ ");";   
     
     /*
-     * tag±í£¬´æ±êÇ©¼°Æä±êºÅ
-     * ÁĞÒÀ´ÎÎª£ºt_id, tagName
+     * tagè¡¨ï¼Œå­˜æ ‡ç­¾åŠå…¶æ ‡å·
+     * åˆ—ä¾æ¬¡ä¸ºï¼št_id, tagName
      */
     private final static
     String TAG_TABLE = "CREATE TABLE IF NOT EXISTS tag( " +
@@ -42,16 +42,16 @@ public class DatabaseHelper extends SQLiteOpenHelper{
     				");";
     
     /*
-     * search±í£¬fts4Ğé±í£¬Ö÷ÒªÓÃÀ´²éÑ¯
-     * ÁĞÒÀ´ÎÎª£ºc_id, type_id, data1, data2, data3 £¨×Ô´ørowid£©
+     * searchè¡¨ï¼Œfts4è™šè¡¨ï¼Œä¸»è¦ç”¨æ¥æŸ¥è¯¢
+     * åˆ—ä¾æ¬¡ä¸ºï¼šc_id, type_id, data1, data2, data3 ï¼ˆè‡ªå¸¦rowidï¼‰
      */
     private final static
     String SEARCH_TABLE = "CREATE VIRTUAL TABLE search USING" +
     					" fts4(c_id, type_id, data1, data2, data3, data4);";
     
 //    /*
-//     * t2c±í£¬½¨Á¢tag±íÓëmain±íµÄÁªÏµ
-//     * ÁĞÒÀ´ÎÎª£ºc_id, t_id
+//     * t2cè¡¨ï¼Œå»ºç«‹tagè¡¨ä¸mainè¡¨çš„è”ç³»
+//     * åˆ—ä¾æ¬¡ä¸ºï¼šc_id, t_id
 //     */
 //    private final static 
 //    String T2C_TABLE = "CREATE TABLE IF NOT EXISTS t2c( " +
@@ -59,7 +59,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 //    				"t_id INTEGER REFERENCES tag(t_id) ON DELETE CASCADE, " +
 //    				"PRIMARY KEY (c_id, t_id) ); ";
     
-    // Ë÷Òı
+    // ç´¢å¼•
     private final static
     String CONTACT_ID_INDEX = "CREATE INDEX contact_cid_index on main(c_id);";
     private final static 
@@ -87,11 +87,11 @@ public class DatabaseHelper extends SQLiteOpenHelper{
     @Override
     public void onCreate(SQLiteDatabase db) {
     	try {
-			// ÒÀ´Î´´½¨±í
+			// ä¾æ¬¡åˆ›å»ºè¡¨
 			db.execSQL(MAIN_TABLE);
 			db.execSQL(SEARCH_TABLE);
 			db.execSQL(TAG_TABLE);
-			//½¨Á¢Ë÷Òı
+			//å»ºç«‹ç´¢å¼•
 			db.execSQL(CONTACT_ID_INDEX);
 			db.execSQL(TAG_NAME_INDEX);
 			db.execSQL(TAG_ID_INDEX);

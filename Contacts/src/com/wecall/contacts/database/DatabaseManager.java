@@ -25,7 +25,7 @@ import com.wecall.contacts.entity.SimpleContact;
 import com.wecall.contacts.util.PinYin;
 
 /**
- * ¹ÜÀíÊı¾İ¿âÀà£¬Òş²ØSQLÓï¾äÏ¸½Ú£¬Ìá¹©²åÈëÉ¾³ı²éÑ¯½Ó¿Ú
+ * ç®¡ç†æ•°æ®åº“ç±»ï¼Œéšè—SQLè¯­å¥ç»†èŠ‚ï¼Œæä¾›æ’å…¥åˆ é™¤æŸ¥è¯¢æ¥å£
  * 
  * @author KM
  */
@@ -34,20 +34,19 @@ public class DatabaseManager {
 
 	private static final String LOG_TAG = "DatabaseHelper Error";
 	private static Gson gson = new Gson();
-	private static Analyzer analyzer = new ComplexAnalyzer();
-	
+	private static Analyzer analyzer = null;
+
 	private DatabaseHelper mHelper;
 
 	public DatabaseManager(Context context) {
 		mHelper = new DatabaseHelper(context);
 		if (gson == null)
 			gson = new Gson();
-		if (analyzer == null)
-			analyzer = new ComplexAnalyzer();
+
 	}
 
 	/**
-	 * ÏòÊı¾İ¿â²åÈëĞÂµÄÒ»¸öÁªÏµÈË Èç¹û²åÈë³É¹¦»á·µ»ØÊı¾İ¿â¶ÔÓ¦µÄid.
+	 * å‘æ•°æ®åº“æ’å…¥æ–°çš„ä¸€ä¸ªè”ç³»äºº å¦‚æœæ’å…¥æˆåŠŸä¼šè¿”å›æ•°æ®åº“å¯¹åº”çš„id.
 	 */
 	public int addContact(ContactItem item) {
 		SQLiteDatabase db = mHelper.getWritableDatabase();
@@ -57,25 +56,26 @@ public class DatabaseManager {
 	}
 
 	/**
-	 * ÖØÔØ°æ±¾£¬¿ÉÒÔÖ¸¶¨dbµÄ²ÎÊı
+	 * é‡è½½ç‰ˆæœ¬ï¼Œå¯ä»¥æŒ‡å®šdbçš„å‚æ•°
 	 */
 	private int addContact(ContactItem item, SQLiteDatabase db) {
 		try {
-			// ²åÈëmain±í
+			// æ’å…¥mainè¡¨
 			ContentValues values = new ContentValues();
 			values.put(Constants.MAIN_COL_NAME, item.getName());
 			values.put(Constants.MAIN_COL_NOTE, item.getNote());
 			values.put(Constants.MAIN_COL_ADDRESS, item.getAddress());
-			// ÊÇÆäËûÀàĞÍµÄÓòÏÈ×ª»»Îªjson	
-			values.put(Constants.MAIN_COl_PHONE, gson.toJson(item.getPhoneNumber()));	
-			values.put(Constants.MAIN_COL_TAG, gson.toJson(item.getLabels()));	
-			// Î´À´Ê¹ÓÃ,ÏÈÁô¿Õ
+			// æ˜¯å…¶ä»–ç±»å‹çš„åŸŸå…ˆè½¬æ¢ä¸ºjson
+			values.put(Constants.MAIN_COl_PHONE,
+					gson.toJson(item.getPhoneNumber()));
+			values.put(Constants.MAIN_COL_TAG, gson.toJson(item.getLabels()));
+			// æœªæ¥ä½¿ç”¨,å…ˆç•™ç©º
 			values.put(Constants.MAIN_COL_OTHER, "");
-			// µÃµ½²åÈëµ½µÄÊı¾İ¿âÁĞÊı£¬¼´id
+			// å¾—åˆ°æ’å…¥åˆ°çš„æ•°æ®åº“åˆ—æ•°ï¼Œå³id
 			int id = (int) db.insert(Constants.TABLE_NAME_MAIN, null, values);
 			item.setId(id);
 
-			// ²åÈësearch±í
+			// æ’å…¥searchè¡¨
 			addContactToSearch(db, item);
 
 			values = null;
@@ -88,7 +88,7 @@ public class DatabaseManager {
 	}
 
 	/**
-	 * ÅúÁ¿µ¼ÈëÁªÏµÈË
+	 * æ‰¹é‡å¯¼å…¥è”ç³»äºº
 	 * 
 	 * @param list
 	 */
@@ -103,15 +103,14 @@ public class DatabaseManager {
 		} finally {
 			db.endTransaction();
 		}
-		// ÓÅ»¯bÊ÷µÄÖ¸Áî
-		db.execSQL("INSERT INTO " + Constants.TABLE_NAME_SEARCH + 
-				"(" + Constants.TABLE_NAME_SEARCH + ")" + 
-				" VALUES('optimize');");
+		// ä¼˜åŒ–bæ ‘çš„æŒ‡ä»¤
+		db.execSQL("INSERT INTO " + Constants.TABLE_NAME_SEARCH + "("
+				+ Constants.TABLE_NAME_SEARCH + ")" + " VALUES('optimize');");
 		db.close();
 	}
 
 	/**
-	 * Í¨¹ıÁªÏµÈË±êÊ¶ºÅÉ¾³ıÒ»ÌõÁªÏµÈË¼ÇÂ¼
+	 * é€šè¿‡è”ç³»äººæ ‡è¯†å·åˆ é™¤ä¸€æ¡è”ç³»äººè®°å½•
 	 */
 	public void deleteContactById(int id) {
 		if (!isId(id))
@@ -130,7 +129,7 @@ public class DatabaseManager {
 	}
 
 	/**
-	 * È¡Êı¾İ¿âÈ«²¿ĞĞµÄÃû×ÖºÍidÁĞ
+	 * å–æ•°æ®åº“å…¨éƒ¨è¡Œçš„åå­—å’Œidåˆ—
 	 * 
 	 * @return
 	 */
@@ -140,7 +139,7 @@ public class DatabaseManager {
 		Cursor cursor = null;
 
 		try {
-			// ÏÈÔÚmain±íËÑ²»Í¬idµÄËùÓĞÁĞ
+			// å…ˆåœ¨mainè¡¨æœä¸åŒidçš„æ‰€æœ‰åˆ—
 			cursor = db.query(Constants.TABLE_NAME_MAIN, new String[] {
 					Constants.MAIN_COL_CID, Constants.MAIN_COL_NAME }, null,
 					null, null, null, null);
@@ -164,7 +163,7 @@ public class DatabaseManager {
 	}
 
 	/**
-	 * Í¨¹ıidËÑµ¥¸öÁªÏµÈË£¬²»´æÔÚ·µ»Ønull
+	 * é€šè¿‡idæœå•ä¸ªè”ç³»äººï¼Œä¸å­˜åœ¨è¿”å›null
 	 * 
 	 * @param id
 	 * @return
@@ -182,12 +181,13 @@ public class DatabaseManager {
 			int nameIndex = cursor.getColumnIndex(Constants.MAIN_COL_NAME);
 			int noteIndex = cursor.getColumnIndex(Constants.MAIN_COL_NOTE);
 			int phoneIndex = cursor.getColumnIndex(Constants.MAIN_COl_PHONE);
-			int addressIndex = cursor.getColumnIndex(Constants.MAIN_COL_ADDRESS);
+			int addressIndex = cursor
+					.getColumnIndex(Constants.MAIN_COL_ADDRESS);
 			int tagIndex = cursor.getColumnIndex(Constants.MAIN_COL_TAG);
-			// Î´À´Ê¹ÓÃ,Áô¿Õ
+			// æœªæ¥ä½¿ç”¨,ç•™ç©º
 			// int otherIndex = cursor.getColumnIndex(Constants.MAIN_COL_OTHER);
 
-			// Èç¹ûÕÒµ½£¬È¡³öÄÚÈİ£¬·ñÔò·µ»Ønull
+			// å¦‚æœæ‰¾åˆ°ï¼Œå–å‡ºå†…å®¹ï¼Œå¦åˆ™è¿”å›null
 			if (cursor.moveToFirst()) {
 				item.setId(id);
 				item.setName(cursor.getString(nameIndex));
@@ -220,7 +220,7 @@ public class DatabaseManager {
 	}
 
 	/**
-	 * ·µ»ØËùÓĞÏÖ´æ±êÇ©
+	 * è¿”å›æ‰€æœ‰ç°å­˜æ ‡ç­¾
 	 * 
 	 * @return
 	 */
@@ -247,7 +247,7 @@ public class DatabaseManager {
 	}
 
 	/**
-	 * Ôö¼ÓÒ»¸ö²»¶ÔÓ¦ÈÎºÎÈËµÄĞÂ±êÇ©
+	 * å¢åŠ ä¸€ä¸ªä¸å¯¹åº”ä»»ä½•äººçš„æ–°æ ‡ç­¾
 	 * 
 	 * @param tagName
 	 */
@@ -258,28 +258,27 @@ public class DatabaseManager {
 	}
 
 	/**
-	 * Í¨¹ıtagÃû³ÆËÑÁªÏµÈË
+	 * é€šè¿‡tagåç§°æœè”ç³»äºº
 	 * 
 	 * @param String
-	 *            ±êÇ©Ãû
+	 *            æ ‡ç­¾å
 	 * @return
 	 */
 	public List<SimpleContact> queryContactByTag(String tagName) {
 		List<SimpleContact> list = new ArrayList<SimpleContact>();
 		SQLiteDatabase db = mHelper.getReadableDatabase();
-		
+
 		int tid = getTagId(db, tagName);
 
-		// ÓÃÁËMATCH×÷È«ÎÄËÑË÷
+		// ç”¨äº†MATCHä½œå…¨æ–‡æœç´¢
 		Cursor cursor = db.query(true, Constants.TABLE_NAME_SEARCH,
 				new String[] { Constants.SEARCH_COL_CID },
-				Constants.SEARCH_COL_DATA2 + " MATCH ?", 
-				new String[] { tid + "" }, 
-				null, null, null, null);
+				Constants.SEARCH_COL_DATA2 + " MATCH ?", new String[] { tid
+						+ "" }, null, null, null, null);
 
 		while (cursor.moveToNext()) {
 			int id = cursor.getInt(0);
-			// FIXME ÓÃContactItem¹¹ÔìSimpleContact
+			// FIXME ç”¨ContactItemæ„é€ SimpleContact
 			ContactItem citem = queryContactById(id);
 			SimpleContact sitem = new SimpleContact(citem);
 			list.add(sitem);
@@ -291,7 +290,7 @@ public class DatabaseManager {
 	}
 
 	/**
-	 * Í¨¹ıid²éÊôÓÚÁªÏµÈËµÄËùÓĞ±êÇ©
+	 * é€šè¿‡idæŸ¥å±äºè”ç³»äººçš„æ‰€æœ‰æ ‡ç­¾
 	 * 
 	 * @param cid
 	 * @return
@@ -323,7 +322,7 @@ public class DatabaseManager {
 	}
 
 	/**
-	 * ¸üĞÂÁªÏµÈËĞÅÏ¢£¬Í¨¹ıContactItemÖĞµÄidÖ¸¶¨ÌØ¶¨ÁªÏµÈË
+	 * æ›´æ–°è”ç³»äººä¿¡æ¯ï¼Œé€šè¿‡ContactItemä¸­çš„idæŒ‡å®šç‰¹å®šè”ç³»äºº
 	 * 
 	 * @param item
 	 */
@@ -331,29 +330,28 @@ public class DatabaseManager {
 		SQLiteDatabase db = mHelper.getWritableDatabase();
 		int id = item.getId();
 
-		// ¸üĞÂmain±í
+		// æ›´æ–°mainè¡¨
 		ContentValues values = new ContentValues();
 		values.put(Constants.MAIN_COL_NAME, item.getName());
 		values.put(Constants.MAIN_COL_NOTE, item.getNote());
 		values.put(Constants.MAIN_COL_ADDRESS, item.getAddress());
 
-		// ÊÇÆäËûÀàĞÍµÄÓòÏÈ×ª»»Îªjson
+		// æ˜¯å…¶ä»–ç±»å‹çš„åŸŸå…ˆè½¬æ¢ä¸ºjson
 		values.put(Constants.MAIN_COl_PHONE, gson.toJson(item.getPhoneNumber()));
 		values.put(Constants.MAIN_COL_TAG, gson.toJson(item.getLabels()));
-		// Î´À´Ê¹ÓÃ,ÏÈÁô¿Õ
+		// æœªæ¥ä½¿ç”¨,å…ˆç•™ç©º
 		values.put(Constants.MAIN_COL_OTHER, "");
-		// ¸üĞÂcid=item.idµÄÁĞ
-		db.update(Constants.TABLE_NAME_MAIN, values, 
-				Constants.MAIN_COL_CID + " = ?", 
-				new String[] { id + "" });
+		// æ›´æ–°cid=item.idçš„åˆ—
+		db.update(Constants.TABLE_NAME_MAIN, values, Constants.MAIN_COL_CID
+				+ " = ?", new String[] { id + "" });
 
-		// ¸üĞÂsearch±í
+		// æ›´æ–°searchè¡¨
 
-		// FIXME ÏÈÉ¾³ıÔ­ÓĞ±íÄÚÈİ
-		db.delete(Constants.TABLE_NAME_SEARCH, 
-				Constants.SEARCH_COL_CID + " = " + id, null);
+		// FIXME å…ˆåˆ é™¤åŸæœ‰è¡¨å†…å®¹
+		db.delete(Constants.TABLE_NAME_SEARCH, Constants.SEARCH_COL_CID + " = "
+				+ id, null);
 
-		// ²åÈëĞÂÄÚÈİ
+		// æ’å…¥æ–°å†…å®¹
 		addContactToSearch(db, item);
 
 		values = null;
@@ -362,12 +360,12 @@ public class DatabaseManager {
 	}
 
 	/**
-	 * ÎªÁªÏµÈËÅúÁ¿¼Ó±êÇ©
+	 * ä¸ºè”ç³»äººæ‰¹é‡åŠ æ ‡ç­¾
 	 * 
 	 * @param tagName
-	 *            Òª¼ÓµÄ±êÇ©Ãû
+	 *            è¦åŠ çš„æ ‡ç­¾å
 	 * @param cids
-	 *            ´æidµÄÊı×é
+	 *            å­˜idçš„æ•°ç»„
 	 */
 	public void addTagToIds(String tagName, Set<Integer> cids) {
 		SQLiteDatabase db = mHelper.getWritableDatabase();
@@ -383,10 +381,11 @@ public class DatabaseManager {
 
 				if (cursor.moveToFirst()) {
 					HashSet<String> tags = gson.fromJson(cursor.getString(0),
-							new TypeToken<HashSet<String>>(){}.getType());
-					// Èç¹û²»´æÔÚ£¬ĞèÒª¸üĞÂ
+							new TypeToken<HashSet<String>>() {
+							}.getType());
+					// å¦‚æœä¸å­˜åœ¨ï¼Œéœ€è¦æ›´æ–°
 					if (tags != null && !tags.contains(tagName)) {
-						// ¸üĞÂmain±í
+						// æ›´æ–°mainè¡¨
 						tags.add(tagName);
 						ContentValues values = new ContentValues();
 						values.put(Constants.MAIN_COL_TAG, gson.toJson(tags));
@@ -395,7 +394,7 @@ public class DatabaseManager {
 								Constants.MAIN_COL_CID + " = ?",
 								new String[] { id + "" });
 
-						// ¸üĞÂsearch±í
+						// æ›´æ–°searchè¡¨
 						values.clear();
 						values.put(Constants.SEARCH_COL_CID, id);
 						values.put(Constants.SEARCH_COL_TYPEID,
@@ -416,7 +415,7 @@ public class DatabaseManager {
 	}
 
 	/**
-	 * ¸üĞÂ±êÇ©¶ÔÓ¦µÄÁªÏµÈË
+	 * æ›´æ–°æ ‡ç­¾å¯¹åº”çš„è”ç³»äºº
 	 * 
 	 * @param tagName
 	 * @param cids
@@ -426,7 +425,7 @@ public class DatabaseManager {
 
 		int tid = getTagId(db, tagName);
 
-		// ËÑÄ¿Ç°´øtagNameµÄËùÓĞid
+		// æœç›®å‰å¸¦tagNameçš„æ‰€æœ‰id
 		Cursor cursor = db.query(true, Constants.TABLE_NAME_SEARCH,
 				new String[] { Constants.SEARCH_COL_CID },
 				Constants.SEARCH_COL_DATA2 + " = " + tid, null, null, null,
@@ -434,18 +433,18 @@ public class DatabaseManager {
 
 		while (cursor.moveToNext()) {
 			int cid = cursor.getInt(0);
-			// Èç¹ûÔÚlistÖĞ£¬²»±Ø´¦Àí£¬´ÓlistÖĞÉ¾³ı
+			// å¦‚æœåœ¨listä¸­ï¼Œä¸å¿…å¤„ç†ï¼Œä»listä¸­åˆ é™¤
 			if (cids.contains(cid)) {
 				cids.remove(cid);
 			}
-			// ²»ÔÚÁĞ±íÖĞÔòĞèÒªÎªÕâ¸öÁªÏµÈËÉ¾È¥Õâ¸ö±êÇ©
+			// ä¸åœ¨åˆ—è¡¨ä¸­åˆ™éœ€è¦ä¸ºè¿™ä¸ªè”ç³»äººåˆ å»è¿™ä¸ªæ ‡ç­¾
 			else {
-				// ´Ósearch±íÉ¾
+				// ä»searchè¡¨åˆ 
 				db.delete(Constants.TABLE_NAME_SEARCH, Constants.SEARCH_COL_CID
 						+ " = " + cid + " AND " + Constants.SEARCH_COL_DATA2
 						+ " = " + tid, null);
-				// ´Ómain±íÉ¾
-				// ËÑÕâ¸öÈËÏÖÓĞtag
+				// ä»mainè¡¨åˆ 
+				// æœè¿™ä¸ªäººç°æœ‰tag
 				Cursor searchCursor = db.query(Constants.TABLE_NAME_MAIN,
 						new String[] { Constants.MAIN_COL_TAG },
 						Constants.SEARCH_COL_CID + " = " + cid, null, null,
@@ -464,7 +463,7 @@ public class DatabaseManager {
 			}
 		}
 
-		// Îª»¹Î´´¦ÀíµÄids¼ÓÉÏÕâ¸ö±êÇ©
+		// ä¸ºè¿˜æœªå¤„ç†çš„idsåŠ ä¸Šè¿™ä¸ªæ ‡ç­¾
 		addTagToIds(tagName, cids);
 
 		cursor.close();
@@ -472,7 +471,7 @@ public class DatabaseManager {
 	}
 
 	/**
-	 * ¸üĞÂÒ»¸öÁªÏµÈËµÄËùÊô±êÇ©
+	 * æ›´æ–°ä¸€ä¸ªè”ç³»äººçš„æ‰€å±æ ‡ç­¾
 	 * 
 	 * @param cid
 	 * @param tagNames
@@ -486,7 +485,7 @@ public class DatabaseManager {
 		db.update(Constants.TABLE_NAME_MAIN, values, Constants.MAIN_COL_CID
 				+ " = ?", new String[] { cid + "" });
 
-		// FIXME É¾µôÔ­ÓĞµÄÔÙÖØĞÂ²åÈë
+		// FIXME åˆ æ‰åŸæœ‰çš„å†é‡æ–°æ’å…¥
 		db.delete(Constants.TABLE_NAME_SEARCH, Constants.SEARCH_COL_CID + " = "
 				+ cid + " AND " + Constants.SEARCH_COL_TYPEID + " = "
 				+ Constants.TYPE_TAG, null);
@@ -507,7 +506,7 @@ public class DatabaseManager {
 	}
 
 	/**
-	 * É¾³ıÒ»¸ö±êÇ©£¬Í¬Ê±ÎªËùÓĞÁªÏµÈËÉ¾³ıÕâ¸ö±êÇ©
+	 * åˆ é™¤ä¸€ä¸ªæ ‡ç­¾ï¼ŒåŒæ—¶ä¸ºæ‰€æœ‰è”ç³»äººåˆ é™¤è¿™ä¸ªæ ‡ç­¾
 	 * 
 	 * @param tagName
 	 */
@@ -518,14 +517,14 @@ public class DatabaseManager {
 				Constants.TAG_COL_TAG_NAME + " = ?", new String[] { tagName });
 
 		try {
-			// ËÑº¬ÓĞÕâ¸ötagµÄËùÓĞid
+			// æœå«æœ‰è¿™ä¸ªtagçš„æ‰€æœ‰id
 			Cursor cursor = db.query(Constants.TABLE_NAME_SEARCH,
 					new String[] { Constants.SEARCH_COL_CID },
 					Constants.SEARCH_COL_TYPEID + " = " + Constants.TYPE_TAG
 							+ " AND " + Constants.SEARCH_COL_DATA1 + " = "
 							+ "'" + tagName + "'", null, null, null, null);
 
-			// Îªmain±íËùÓĞÁªÏµÈËÉ¾È¥Õâ¸ötag
+			// ä¸ºmainè¡¨æ‰€æœ‰è”ç³»äººåˆ å»è¿™ä¸ªtag
 			while (cursor.moveToNext()) {
 				int id = cursor.getInt(0);
 				Cursor mainCursor = db.query(Constants.TABLE_NAME_MAIN,
@@ -533,7 +532,7 @@ public class DatabaseManager {
 						Constants.MAIN_COL_CID + " = " + id, null, null, null,
 						null);
 				if (mainCursor.moveToFirst()) {
-					// È¡tagµÄ¼¯ºÏ£¬³ıÈ¥tagName£¬ÔÙ¸üĞÂ±í
+					// å–tagçš„é›†åˆï¼Œé™¤å»tagNameï¼Œå†æ›´æ–°è¡¨
 					HashSet<String> tags = gson.fromJson(
 							mainCursor.getString(0),
 							new TypeToken<HashSet<String>>() {
@@ -549,7 +548,7 @@ public class DatabaseManager {
 
 			cursor.close();
 
-			// ´Ósearch±íÖĞÉ¾ÓĞÕâ¸ötagµÄÏî
+			// ä»searchè¡¨ä¸­åˆ æœ‰è¿™ä¸ªtagçš„é¡¹
 			db.delete(Constants.TABLE_NAME_SEARCH, Constants.SEARCH_COL_DATA1
 					+ " = '" + tagName + "' AND " + Constants.SEARCH_COL_TYPEID
 					+ " = " + Constants.TYPE_TAG, null);
@@ -563,7 +562,7 @@ public class DatabaseManager {
 	}
 
 	/**
-	 * ÅĞ¶ÏÊÇ·ñºÏ·¨µÄid
+	 * åˆ¤æ–­æ˜¯å¦åˆæ³•çš„id
 	 */
 	private boolean isId(int id) {
 		if (id <= 0) {
@@ -574,7 +573,7 @@ public class DatabaseManager {
 	}
 
 	/**
-	 * »ñµÃtagµÄtid£¬Èç¹û²»ÔÚ±íÖĞÔò²åÈë
+	 * è·å¾—tagçš„tidï¼Œå¦‚æœä¸åœ¨è¡¨ä¸­åˆ™æ’å…¥
 	 * 
 	 * @param db
 	 * @param tag
@@ -591,10 +590,11 @@ public class DatabaseManager {
 				tid = cursor.getInt(0);
 				Log.i(LOG_TAG, "tag exist: " + tag);
 			} else {
-				// ²åÈëtag±í
+				// æ’å…¥tagè¡¨
 				ContentValues tagValues = new ContentValues();
 				tagValues.put(Constants.TAG_COL_TAG_NAME, tag);
-				tid = (int) db.insert(Constants.TABLE_NAME_TAG, null, tagValues);
+				tid = (int) db
+						.insert(Constants.TABLE_NAME_TAG, null, tagValues);
 			}
 			cursor.close();
 		} catch (SQLException e) {
@@ -606,7 +606,7 @@ public class DatabaseManager {
 	}
 
 	/**
-	 * Ïòsearch±í²åÈëÁªÏµÈËĞÅÏ¢
+	 * å‘searchè¡¨æ’å…¥è”ç³»äººä¿¡æ¯
 	 * 
 	 * @param db
 	 * @param item
@@ -616,21 +616,23 @@ public class DatabaseManager {
 		ContentValues values = new ContentValues();
 		String input;
 		List<String> token;
-		// ²åÈësearch±í
+		// æ’å…¥searchè¡¨
 		// name
-		if ( (input = item.getName()) != null) {
+		if ((input = item.getName()) != null) {
 			token = tokenizer(input);
-			values.clear();			
+			values.clear();
 			values.put(Constants.SEARCH_COL_CID, id);
 			values.put(Constants.SEARCH_COL_TYPEID, Constants.TYPE_NAME);
 			values.put(Constants.SEARCH_COL_DATA1, listToString(token));
-			values.put(Constants.SEARCH_COL_DATA2, listToString(toPinyin(token)));
-			values.put(Constants.SEARCH_COL_DATA3, PinYin.getSimplePinYin(input));
+			values.put(Constants.SEARCH_COL_DATA2,
+					listToString(toPinyin(token)));
+			values.put(Constants.SEARCH_COL_DATA3,
+					PinYin.getSimplePinYin(input));
 			db.insert(Constants.TABLE_NAME_SEARCH, null, values);
 		}
 
 		// note
-		if ( (input = item.getNote()) != null) {
+		if ((input = item.getNote()) != null) {
 			token = tokenizer(input);
 			values.clear();
 			values.put(Constants.SEARCH_COL_CID, id);
@@ -640,18 +642,18 @@ public class DatabaseManager {
 		}
 
 		// address
-		if ( (input = item.getAddress()) != null) {
+		if ((input = item.getAddress()) != null) {
 			token = tokenizer(input);
 			values.clear();
 			values.put(Constants.SEARCH_COL_CID, id);
 			values.put(Constants.SEARCH_COL_TYPEID, Constants.TYPE_ADDRESS);
 			values.put(Constants.SEARCH_COL_DATA1, listToString(token));
-			db.insert(Constants.TABLE_NAME_SEARCH, null, values);			
+			db.insert(Constants.TABLE_NAME_SEARCH, null, values);
 		}
 
 		// phone
 		Set<String> phoneSet = item.getPhoneNumber();
-		if ( !phoneSet.isEmpty() ) {
+		if (!phoneSet.isEmpty()) {
 			Iterator<String> phoneIt = phoneSet.iterator();
 			while (phoneIt.hasNext()) {
 				input = phoneIt.next();
@@ -666,10 +668,10 @@ public class DatabaseManager {
 
 		// tag
 		Set<String> tagSet = item.getLabels();
-		if ( !tagSet.isEmpty() ) {
+		if (!tagSet.isEmpty()) {
 			Iterator<String> tagIt = tagSet.iterator();
 			while (tagIt.hasNext()) {
-				input = tagIt.next();				
+				input = tagIt.next();
 				int tid = getTagId(db, input);
 				token = tokenizer(input);
 				values.clear();
@@ -684,67 +686,67 @@ public class DatabaseManager {
 		values = null;
 		token = null;
 	}
-	
+
 	/**
-	 * È«ÎÄËÑË÷½Ó¿Ú
+	 * å…¨æ–‡æœç´¢æ¥å£
+	 * 
 	 * @param text
-	 * @return List
-	 * 			·µ»ØµÄÁĞ±íÖĞL.get(0)ÊÇÒ»¸öList<ContactItem>£¬±£´æËÑË÷µ½µÄÁªÏµÈËµÄÈ«²¿ĞÅÏ¢
-	 * 			·µ»ØµÄÁĞ±íÖĞL.get(1)ÊÇÒ»¸öList<Integer>±íÊ¾ÔÚList<ContactItem>ÖĞ¶ÔÓ¦Î»ÖÃµÄÁªÏµÈËÓëËÑË÷ÄÚÈİÆ¥ÅäµÄÏî£¬
-	 * 				ÓÃConstant.TYPE..À´±íÊ¾
-	 * 			e.g. 
+	 * @return List è¿”å›çš„åˆ—è¡¨ä¸­L.get(0)æ˜¯ä¸€ä¸ªList<ContactItem>ï¼Œä¿å­˜æœç´¢åˆ°çš„è”ç³»äººçš„å…¨éƒ¨ä¿¡æ¯
+	 *         è¿”å›çš„åˆ—è¡¨ä¸­L.get
+	 *         (1)æ˜¯ä¸€ä¸ªList<Integer>è¡¨ç¤ºåœ¨List<ContactItem>ä¸­å¯¹åº”ä½ç½®çš„è”ç³»äººä¸æœç´¢å†…å®¹åŒ¹é…çš„é¡¹ï¼Œ
+	 *         ç”¨Constant.TYPE..æ¥è¡¨ç¤º e.g.
 	 */
-	public List<Object> ftsSearch(String text)
-	{
+	public List<Object> ftsSearch(String text) {
 		List<Object> ret = new ArrayList<Object>();
 		SQLiteDatabase db = mHelper.getWritableDatabase();
 		List<ContactItem> contactList = new ArrayList<ContactItem>();
 		List<Integer> flagList = new ArrayList<Integer>();
-		
-		if (isNumeric(text) || isLetter(text) ) {
-			Cursor cursor = db.rawQuery("SELECT " + Constants.SEARCH_COL_CID +
-					" FROM " + Constants.TABLE_NAME_SEARCH +
-					" WHERE " + Constants.TABLE_NAME_SEARCH +
-					" MATCH '" + text + "*';", null);
-			
-			while(cursor.moveToNext()) {
-				ContactItem item = queryContactById(cursor.getInt(0));		
+
+		if (isNumeric(text) || isLetter(text)) {
+			Cursor cursor = db.rawQuery("SELECT " + Constants.SEARCH_COL_CID
+					+ " FROM " + Constants.TABLE_NAME_SEARCH + " WHERE "
+					+ Constants.TABLE_NAME_SEARCH + " MATCH '" + text + "*';",
+					null);
+
+			while (cursor.moveToNext()) {
+				ContactItem item = queryContactById(cursor.getInt(0));
 				contactList.add(item);
 				flagList.add(Constants.TYPE_PHONE);
 			}
-			
-			cursor.close();	
+
+			cursor.close();
 		} else {
 			List<String> token = tokenizer(text);
 			String query = listToString(token);
-			Cursor cursor = db.rawQuery("SELECT " + Constants.SEARCH_COL_CID +
-					" , " + Constants.SEARCH_COL_TYPEID + 
-					" FROM " + Constants.TABLE_NAME_SEARCH +
-					" WHERE " + Constants.TABLE_NAME_SEARCH +
-					" MATCH '" + query + "*';", null);			
+			Cursor cursor = db.rawQuery("SELECT " + Constants.SEARCH_COL_CID
+					+ " , " + Constants.SEARCH_COL_TYPEID + " FROM "
+					+ Constants.TABLE_NAME_SEARCH + " WHERE "
+					+ Constants.TABLE_NAME_SEARCH + " MATCH '" + query + "*';",
+					null);
 
-			while(cursor.moveToNext()) {
-				ContactItem item = queryContactById(cursor.getInt(0));		
+			while (cursor.moveToNext()) {
+				ContactItem item = queryContactById(cursor.getInt(0));
 				contactList.add(item);
 				flagList.add(cursor.getInt(1));
 			}
-			
+
 			cursor.close();
 		}
-		
+
 		db.close();
-		
+
 		ret.add(contactList);
 		ret.add(flagList);
-		
+
 		return ret;
 	}
 
 	/**
-	 * ²âÊÔ½Ó¿Ú
+	 * æµ‹è¯•æ¥å£
 	 * 
 	 * @deprecated
 	 */
+	@SuppressWarnings("unchecked")
 	public void test() {
 		List<Object> list = ftsSearch("9");
 		List<ContactItem> contacts = (List<ContactItem>) list.get(0);
@@ -754,62 +756,55 @@ public class DatabaseManager {
 			Log.i(LOG_TAG, tagList.get(i).toString());
 		}
 	}
-	
-	// ÅĞ¶Ï×Ö·û´®ÊÇ·ñ´¿Êı×Ö
+
+	// åˆ¤æ–­å­—ç¬¦ä¸²æ˜¯å¦çº¯æ•°å­—
 	private static boolean isNumeric(String str) {
 		for (int i = 0; i < str.length(); i++) {
-			System.out.println(str.charAt(i));
+			// System.out.println(str.charAt(i));
+			Log.v(LOG_TAG, "isNumeric:" + str.charAt(i));
 			if (!Character.isDigit(str.charAt(i))) {
 				return false;
 			}
 		}
 		return true;
 	}
-	
-	// ÅĞ¶Ï×Ö·û´®ÊÇ·ñ´¿Ó¢ÎÄ×ÖÄ¸
+
+	// åˆ¤æ–­å­—ç¬¦ä¸²æ˜¯å¦çº¯è‹±æ–‡å­—æ¯
 	private static boolean isLetter(String str) {
 
 		for (int i = 0; i < str.length(); i++) {
-			System.out.println(str.charAt(i));
+			// System.out.println(str.charAt(i));
+			Log.v(LOG_TAG, "isLetter:" + str.charAt(i));
 			char ch = str.charAt(i);
-			if ( !((ch >= 'a' && ch <= 'z' ) || (ch >= 'A' && ch <= 'Z')) ) {
+			if (!((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z'))) {
 				return false;
 			}
 		}
 		return true;
 	}
-    
-	// ·Ö´ÊÆ÷£¬ÒÔÁĞ±í·µ»Ø·Ö´ÊºóµÄ½á¹û
+
+	// åˆ†è¯å™¨ï¼Œä»¥åˆ—è¡¨è¿”å›åˆ†è¯åçš„ç»“æœ
 	private List<String> tokenizer(String str) {
+		if (analyzer == null) {
+			analyzer = new ComplexAnalyzer();
+		}
 		WeCallAnalyzer wca = new WeCallAnalyzer(analyzer);
 		List<String> tokenList = wca.getTokenList(str);
 		return tokenList;
 	}
-	
-	// ½«listÖĞµÄÃ»Ò»Ïî×ªÎªÆ´Òô
+
+	// å°†listä¸­çš„æ²¡ä¸€é¡¹è½¬ä¸ºæ‹¼éŸ³
 	private List<String> toPinyin(List<String> list) {
 		List<String> newList = new ArrayList<String>();
-		
-		for (String term: list) {
+
+		for (String term : list) {
 			newList.add(PinYin.getPinYin(term));
 		}
-		
-		return newList;
-	}
-	
-	// ½«listÖĞµÄÃ¿Ò»Ïî×ªÎª¼òÆ´
-	private List<String> toSimplePinyin(List<String> list) {
 
-		List<String> newList = new ArrayList<String>();
-		
-		for (String term: list) {
-			newList.add(PinYin.getSimplePinYin(term));
-		}
-		
 		return newList;
 	}
-	
-	// ½«list×ªÎª¿Õ¸ñ·Ö¸îµÄ×Ö·û´®
+
+	// å°†listè½¬ä¸ºç©ºæ ¼åˆ†å‰²çš„å­—ç¬¦ä¸²
 	private String listToString(List<String> list) {
 		StringBuffer strBuf = new StringBuffer();
 		

@@ -11,7 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 /**
- * ×Ô¶¨ÒåÁ÷Ê½²¼¾Ö
+ * è‡ªå®šä¹‰æµå¼å¸ƒå±€
  * 
  * @author xiaoxin 2015-4-9
  */
@@ -42,42 +42,42 @@ public class FlowLayout extends ViewGroup {
 		// wrap_content mode AT_MOST
 		int height = 0;
 		int width = 0;
-		// ¼ÇÂ¼Ã¿Ò»ĞĞµÄ¿í¶ÈºÍ¸ß¶È
+		// è®°å½•æ¯ä¸€è¡Œçš„å®½åº¦å’Œé«˜åº¦
 		int lineWidth = 0;
 		int lineHeight = 0;
-		// µÃµ½ÄÚ²¿ÔªËØµÄ¸öÊı
+		// å¾—åˆ°å†…éƒ¨å…ƒç´ çš„ä¸ªæ•°
 		int cCount = getChildCount();
 
 		for (int i = 0; i < cCount; i++) {
 			View child = getChildAt(i);
-			// ²âÁ¿×ÓViewµÄ¿í¶ÈºÍ¸ß¶È
+			// æµ‹é‡å­Viewçš„å®½åº¦å’Œé«˜åº¦
 			measureChild(child, widthMeasureSpec, heightMeasureSpec);
-			// µÃµ½LayoutParams
+			// å¾—åˆ°LayoutParams
 			MarginLayoutParams lp = (MarginLayoutParams) child
 					.getLayoutParams();
-			// ×ÓviewÕ¼¾İµÄ¿í¶È
+			// å­viewå æ®çš„å®½åº¦
 			int childWidth = child.getMeasuredWidth() + lp.leftMargin
 					+ lp.rightMargin;
-			// ×ÓviewÕ¼¾İµÄ¸ß¶È
+			// å­viewå æ®çš„é«˜åº¦
 			int childHeight = child.getMeasuredHeight() + lp.topMargin
 					+ lp.bottomMargin;
-			// »»ĞĞ
+			// æ¢è¡Œ
 			if (lineWidth + childWidth > sizeWidth - getPaddingLeft() - getPaddingRight()) {
-				// ¶Ô±ÈµÃµ½×î´óµÄ¿í¶È
+				// å¯¹æ¯”å¾—åˆ°æœ€å¤§çš„å®½åº¦
 				width = Math.max(width, lineWidth);
-				// ÖØÖÃlineWidth
+				// é‡ç½®lineWidth
 				lineWidth = childWidth;
-				// ¼ÇÂ¼ĞĞ¸ß
+				// è®°å½•è¡Œé«˜
 				height += lineHeight;
 				lineHeight = childHeight;
-			} else { // Î´»»ĞĞ
-				// µş¼ÓĞĞ¿í
+			} else { // æœªæ¢è¡Œ
+				// å åŠ è¡Œå®½
 				lineWidth += childWidth;
-				// È¡µÃ×î´óĞĞ¸ß
+				// å–å¾—æœ€å¤§è¡Œé«˜
 				lineHeight = Math.max(lineHeight, childHeight);
 			}
 
-			// ×îºóÒ»¸ö¿Ø¼ş
+			// æœ€åä¸€ä¸ªæ§ä»¶
 			if (i == cCount - 1) {
 				width = Math.max(lineWidth, width);
 				height += lineHeight;
@@ -95,7 +95,7 @@ public class FlowLayout extends ViewGroup {
 //		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 	}
 
-	// ´æ´¢ËùÓĞµÄView£¬°´ĞĞ´æ´¢
+	// å­˜å‚¨æ‰€æœ‰çš„Viewï¼ŒæŒ‰è¡Œå­˜å‚¨
 	private List<List<View>> mAllViews = new ArrayList<List<View>>();
 	private List<Integer> mLineHeight = new ArrayList<Integer>();
 
@@ -103,7 +103,7 @@ public class FlowLayout extends ViewGroup {
 	protected void onLayout(boolean arg0, int arg1, int arg2, int arg3, int arg4) {
 		mAllViews.clear();
 		mLineHeight.clear();
-		// µ±Ç°ViewGroupµÄ¿í¶È
+		// å½“å‰ViewGroupçš„å®½åº¦
 		int width = getWidth();
 		int lineWidth = 0;
 		int lineHeight = 0;
@@ -119,18 +119,18 @@ public class FlowLayout extends ViewGroup {
 			int childWidth = child.getMeasuredWidth();
 			int childHeight = child.getMeasuredHeight();
 
-			// Èç¹ûĞèÒª»»ĞĞ
+			// å¦‚æœéœ€è¦æ¢è¡Œ
 			if (childWidth + lineWidth + lp.leftMargin + lp.rightMargin > width
 					- getPaddingLeft() - getPaddingRight()) {
-				// ¼ÇÂ¼LineHeight
+				// è®°å½•LineHeight
 				mLineHeight.add(lineHeight);
-				// ¼ÇÂ¼µ±Ç°ĞĞµÄViews
+				// è®°å½•å½“å‰è¡Œçš„Views
 				mAllViews.add(lineViews);
 
-				// ÖØÖÃÎÒÃÇµÄĞĞ¿íºÍĞĞ¸ß
+				// é‡ç½®æˆ‘ä»¬çš„è¡Œå®½å’Œè¡Œé«˜
 				lineWidth = 0;
 				lineHeight = childHeight + lp.topMargin + lp.bottomMargin;
-				// ÖØÖÃÎÒÃÇµÄView¼¯ºÏ
+				// é‡ç½®æˆ‘ä»¬çš„Viewé›†åˆ
 				lineViews = new ArrayList<View>();
 			}
 			lineWidth += childWidth + lp.leftMargin + lp.rightMargin;
@@ -139,28 +139,28 @@ public class FlowLayout extends ViewGroup {
 			lineViews.add(child);
 			
 		}
-		// ´¦Àí×îºóÒ»ĞĞ
+		// å¤„ç†æœ€åä¸€è¡Œ
 		mLineHeight.add(lineHeight);
 		mAllViews.add(lineViews);
 
-		// ÉèÖÃ×ÓViewµÄÎ»ÖÃ
+		// è®¾ç½®å­Viewçš„ä½ç½®
 
 		int left = getPaddingLeft();
 		int top = getPaddingTop();
 
-		// ĞĞÊı
+		// è¡Œæ•°
 		int lineNum = mAllViews.size();
 
 		for (int i = 0; i < lineNum; i++)
 		{
-			// µ±Ç°ĞĞµÄËùÓĞµÄView
+			// å½“å‰è¡Œçš„æ‰€æœ‰çš„View
 			lineViews = mAllViews.get(i);
 			lineHeight = mLineHeight.get(i);
 
 			for (int j = 0; j < lineViews.size(); j++)
 			{
 				View child = lineViews.get(j);
-				// ÅĞ¶ÏchildµÄ×´Ì¬
+				// åˆ¤æ–­childçš„çŠ¶æ€
 				if (child.getVisibility() == View.GONE)
 				{
 					continue;
@@ -174,7 +174,7 @@ public class FlowLayout extends ViewGroup {
 				int rc = lc + child.getMeasuredWidth();
 				int bc = tc + child.getMeasuredHeight();
 
-				// Îª×ÓView½øĞĞ²¼¾Ö
+				// ä¸ºå­Viewè¿›è¡Œå¸ƒå±€
 				child.layout(lc, tc, rc, bc);
 
 				left += child.getMeasuredWidth() + lp.leftMargin
@@ -185,7 +185,7 @@ public class FlowLayout extends ViewGroup {
 		}
 	}
 
-	// Óëµ±Ç°ViewGroup¶ÔÓ¦µÄLayoutParams
+	// ä¸å½“å‰ViewGroupå¯¹åº”çš„LayoutParams
 	@Override
 	public LayoutParams generateLayoutParams(AttributeSet attrs) {
 		return new MarginLayoutParams(getContext(), attrs);

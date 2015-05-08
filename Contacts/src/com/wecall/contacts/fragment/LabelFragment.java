@@ -29,7 +29,7 @@ import com.wecall.contacts.SelectLabelMember;
 import com.wecall.contacts.database.DatabaseManager;
 
 /**
- * ±êÇ©Ò³fragment
+ * æ ‡ç­¾é¡µfragment
  * 
  * @author xiaoxin 2015-4-11
  */
@@ -38,13 +38,13 @@ public class LabelFragment extends Fragment {
 	private static final String TAG = "LabelFragment";
 	private static final int EDIT_REQUEST_CODE = 1;
 	protected static final int INFO_REQUEST_CODE = 0;
-	// ±êÇ©ÁĞ±í
+	// æ ‡ç­¾åˆ—è¡¨
 	private ListView lableListView;
-	// Ìí¼Ó±êÇ©°´Å¥
+	// æ·»åŠ æ ‡ç­¾æŒ‰é’®
 	private ImageButton addImageButton;
-	// ÊÊÅäÆ÷
+	// é€‚é…å™¨
 	private ArrayAdapter<String> adapter;
-	// Êı¾İ
+	// æ•°æ®
 	private List<String> list = new ArrayList<String>();
 	private DatabaseManager mManager;
 
@@ -66,7 +66,7 @@ public class LabelFragment extends Fragment {
 		super.onActivityCreated(savedInstanceState);
 	}
 
-	// ³õÊ¼»¯Êı¾İ
+	// åˆå§‹åŒ–æ•°æ®
 	public void initData() {
 		Set<String> tagSet = mManager.queryAllTags();
 		Log.v(TAG, tagSet.toString());
@@ -81,7 +81,7 @@ public class LabelFragment extends Fragment {
 	}
 
 
-	// ³õÊ¼»¯¿Ø¼ş
+	// åˆå§‹åŒ–æ§ä»¶
 	private void findView(View view) {
 		lableListView = (ListView) view.findViewById(R.id.lv_label);
 		addImageButton = (ImageButton) view.findViewById(R.id.ibtn_label_add);
@@ -141,7 +141,7 @@ public class LabelFragment extends Fragment {
 	protected void showOperationDialog(final int position) {
 		new AlertDialog.Builder(getActivity())
 		.setTitle(list.get(position))
-		.setPositiveButton("±à¼­", new DialogInterface.OnClickListener() {
+		.setPositiveButton("ç¼–è¾‘", new DialogInterface.OnClickListener() {
 
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
@@ -157,7 +157,7 @@ public class LabelFragment extends Fragment {
 			}
 
 		})
-		.setNegativeButton("É¾³ı", new DialogInterface.OnClickListener() {
+		.setNegativeButton("åˆ é™¤", new DialogInterface.OnClickListener() {
 
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
@@ -170,8 +170,8 @@ public class LabelFragment extends Fragment {
 
 	private void showDeleteDialog(final int position) {
 		new AlertDialog.Builder(getActivity())
-		.setTitle("ÊÇ·ñÈ·ÈÏÉ¾³ı£¿")
-		.setPositiveButton("ÊÇ", new DialogInterface.OnClickListener() {
+		.setTitle("æ˜¯å¦ç¡®è®¤åˆ é™¤ï¼Ÿ")
+		.setPositiveButton("æ˜¯", new DialogInterface.OnClickListener() {
 
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
@@ -179,11 +179,11 @@ public class LabelFragment extends Fragment {
 				mManager.deleteTagByName(list.get(position));
 				list.remove(position);
 				adapter.notifyDataSetChanged();
-				Toast.makeText(getActivity(), "±êÇ©É¾³ı³É¹¦",
+				Toast.makeText(getActivity(), "æ ‡ç­¾åˆ é™¤æˆåŠŸ",
 						Toast.LENGTH_SHORT).show();
 			}
 		})
-		.setNegativeButton("·ñ", new DialogInterface.OnClickListener() {
+		.setNegativeButton("å¦", new DialogInterface.OnClickListener() {
 
 			@Override
 			public void onClick(DialogInterface dialog, int which) {

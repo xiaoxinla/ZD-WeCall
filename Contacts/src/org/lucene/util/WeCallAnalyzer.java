@@ -10,10 +10,8 @@ import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
 
-import com.chenlb.mmseg4j.analysis.ComplexAnalyzer;
-
 /**
- * ·Ö´ÊÆ÷ÊµÏÖ
+ * åˆ†è¯å™¨å®ç°
  * @author XF
  * 2014-5-3
  */
@@ -24,10 +22,10 @@ public class WeCallAnalyzer {
 		analyzer=a;
 	}
 	/*
-	 * getAnalyzeString·½·¨ÓÃÓÚÊäÈëÒ»¸ö×Ö·û´®£¬·Ö´ÊÆ÷°´ÕÕÒ»¶¨·½·¨·ÖºÃ´Ê£¬È»ºóÔÚ×Ö·û´®Ö®¼ä²å¿Õ¸ñ£¬È»ºó·µ»ØÒ»¸ö²åºÃ¿Õ¸ñµÄ×Ö·û´®
-	 * ÀıÈçstr="¹ãÖİÊĞÖĞÉ½´óÑ§ÖÁÉÆÔ°2ºÅ612"
-	 * ·Ö´Êºó£ºstr="ÖĞÉ½ÊĞ   ÖĞÉ½´óÑ§   ÖÁÉÆ    Ô°   2   ºÅ    612"
-	 * Õâ¸ö·½·¨ÓÃÓÚINSERT¡¢UPDATEÊ±ºòµÄ·Ö´Ê
+	 * getAnalyzeStringæ–¹æ³•ç”¨äºè¾“å…¥ä¸€ä¸ªå­—ç¬¦ä¸²ï¼Œåˆ†è¯å™¨æŒ‰ç…§ä¸€å®šæ–¹æ³•åˆ†å¥½è¯ï¼Œç„¶ååœ¨å­—ç¬¦ä¸²ä¹‹é—´æ’ç©ºæ ¼ï¼Œç„¶åè¿”å›ä¸€ä¸ªæ’å¥½ç©ºæ ¼çš„å­—ç¬¦ä¸²
+	 * ä¾‹å¦‚str="å¹¿å·å¸‚ä¸­å±±å¤§å­¦è‡³å–„å›­2å·612"
+	 * åˆ†è¯åï¼šstr="ä¸­å±±å¸‚   ä¸­å±±å¤§å­¦   è‡³å–„    å›­   2   å·    612"
+	 * è¿™ä¸ªæ–¹æ³•ç”¨äºINSERTã€UPDATEæ—¶å€™çš„åˆ†è¯
 	 */
 	public String getAnalyzedString(String str)
 	{
@@ -50,17 +48,18 @@ public class WeCallAnalyzer {
 	}
 	
 	/*
-	 * getTokenList·½·¨»á·µ»ØÒ»¸öTokenÀàµÄÁĞ±í£¬ÆäÖĞTokenÓÃÓÚ¼ÇÂ¼Ã¿¸ö·Ö´ÊµÄvalueÒÔ¼°ËüÔÚÔ­×Ö·û´®ÖĞµÄÆ«ÒÆÁ¿
+	 * getTokenListæ–¹æ³•ä¼šè¿”å›ä¸€ä¸ªTokenç±»çš„åˆ—è¡¨ï¼Œå…¶ä¸­Tokenç”¨äºè®°å½•æ¯ä¸ªåˆ†è¯çš„valueä»¥åŠå®ƒåœ¨åŸå­—ç¬¦ä¸²ä¸­çš„åç§»é‡
 	 * */
+	@SuppressWarnings("unused")
 	public List<String> getTokenList(String str)
 	{
 		List<String> list=new ArrayList<String>();
 		try 
 		{
 			TokenStream stream=analyzer.tokenStream("content", new StringReader(str));
-			//CharTermAttribute ×Ö·ûÖµ
+			//CharTermAttribute å­—ç¬¦å€¼
 			CharTermAttribute cta=stream.addAttribute(CharTermAttribute.class);
-			//OffsetAttributeÓÃÓÚ¼ÇÂ¼×Ö·ûÖµµÄÆğÊ¼Î»ÖÃºÍÖÕÖ¹Î»ÖÃ
+			//OffsetAttributeç”¨äºè®°å½•å­—ç¬¦å€¼çš„èµ·å§‹ä½ç½®å’Œç»ˆæ­¢ä½ç½®
 			OffsetAttribute oa=stream.addAttribute(OffsetAttribute.class);
 			while(stream.incrementToken())
 			{

@@ -27,13 +27,12 @@ import com.wecall.contacts.ContactInfo;
 import com.wecall.contacts.R;
 import com.wecall.contacts.adapter.SortAdapter;
 import com.wecall.contacts.database.DatabaseManager;
-import com.wecall.contacts.entity.ContactItem;
 import com.wecall.contacts.entity.SimpleContact;
 import com.wecall.contacts.view.SideBar;
 import com.wecall.contacts.view.SideBar.onTouchLetterChangeListener;
 
 /**
- * Ö÷Fragment£¬ÏÔÊ¾ÁªÏµÈËÁĞ±í
+ * ä¸»Fragmentï¼Œæ˜¾ç¤ºè”ç³»äººåˆ—è¡¨
  * 
  * @author xiaoxin 2015-4-10
  */
@@ -44,13 +43,13 @@ public class MainFragment extends Fragment {
 	private static final int EDIT_REQUEST_CODE = 2;
 	private ListView contactListView;
 	private TextView letterTextView;
-	// ²à±ßÀ¸Ë÷Òı¿Ø¼ş
+	// ä¾§è¾¹æ ç´¢å¼•æ§ä»¶
 	private SideBar sideBar;
-	// ÅÅĞòµÄÊÊÅäÆ÷
+	// æ’åºçš„é€‚é…å™¨
 	private SortAdapter adapter;
-	// ÁªÏµÈËĞÅÏ¢
+	// è”ç³»äººä¿¡æ¯
 	private List<SimpleContact> contactList = new ArrayList<SimpleContact>();
-	// Êı¾İ¿â¹ÜÀíÊµÀı
+	// æ•°æ®åº“ç®¡ç†å®ä¾‹
 	private DatabaseManager mManager;
 
 	@Override
@@ -63,7 +62,7 @@ public class MainFragment extends Fragment {
 	}
 
 	/**
-	 * ³õÊ¼»¯¿Ø¼ş
+	 * åˆå§‹åŒ–æ§ä»¶
 	 * 
 	 * @param view
 	 */
@@ -85,7 +84,7 @@ public class MainFragment extends Fragment {
 
 		contactListView.setAdapter(adapter);
 
-		// »ñÈ¡ÁªÏµÈËĞÅÏ¢
+		// è·å–è”ç³»äººä¿¡æ¯
 		updateContacts();
 
 	}
@@ -97,7 +96,7 @@ public class MainFragment extends Fragment {
 			contactList = mManager.queryAllContacts();
 		} catch (Exception e) {
 			e.printStackTrace();
-			Toast.makeText(getActivity(), "»ñÈ¡ÁªÏµÈËÁĞ±íÊ§°Ü", Toast.LENGTH_SHORT)
+			Toast.makeText(getActivity(), "è·å–è”ç³»äººåˆ—è¡¨å¤±è´¥", Toast.LENGTH_SHORT)
 			.show();
 		}
 		Collections.sort(contactList);
@@ -105,7 +104,7 @@ public class MainFragment extends Fragment {
 	}
 
 	/**
-	 * ÉèÖÃ¼àÌıÊÂ¼ş
+	 * è®¾ç½®ç›‘å¬äº‹ä»¶
 	 */
 	private void setListener() {
 		sideBar.setTouchLetterChangeListener(new onTouchLetterChangeListener() {
@@ -147,8 +146,8 @@ public class MainFragment extends Fragment {
 
 	protected void showOperationDialog(final int position) {
 		new AlertDialog.Builder(getActivity())
-		.setTitle(((ContactItem) adapter.getItem(position)).getName())
-		.setPositiveButton("±à¼­", new DialogInterface.OnClickListener() {
+		.setTitle(((SimpleContact) adapter.getItem(position)).getName())
+		.setPositiveButton("ç¼–è¾‘", new DialogInterface.OnClickListener() {
 
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
@@ -157,7 +156,7 @@ public class MainFragment extends Fragment {
 				Intent intent = new Intent(getActivity(),
 						ContactEditor.class);
 				Bundle bundle = new Bundle();
-				bundle.putInt("cid", ((ContactItem) adapter
+				bundle.putInt("cid", ((SimpleContact) adapter
 						.getItem(position)).getId());
 				bundle.putInt("type", 2);
 				intent.putExtras(bundle);
@@ -165,7 +164,7 @@ public class MainFragment extends Fragment {
 			}
 
 		})
-		.setNegativeButton("É¾³ı", new DialogInterface.OnClickListener() {
+		.setNegativeButton("åˆ é™¤", new DialogInterface.OnClickListener() {
 
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
@@ -178,20 +177,20 @@ public class MainFragment extends Fragment {
 
 	private void showDeleteDialog(final int position) {
 		new AlertDialog.Builder(getActivity())
-		.setTitle("ÊÇ·ñÈ·ÈÏÉ¾³ı£¿")
-		.setPositiveButton("ÊÇ", new DialogInterface.OnClickListener() {
+		.setTitle("æ˜¯å¦ç¡®è®¤åˆ é™¤ï¼Ÿ")
+		.setPositiveButton("æ˜¯", new DialogInterface.OnClickListener() {
 
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				dialog.dismiss();
-				mManager.deleteContactById(((ContactItem) adapter
+				mManager.deleteContactById(((SimpleContact) adapter
 						.getItem(position)).getId());
 				updateContacts();
-				Toast.makeText(getActivity(), "ÁªÏµÈËÉ¾³ı³É¹¦",
+				Toast.makeText(getActivity(), "è”ç³»äººåˆ é™¤æˆåŠŸ",
 						Toast.LENGTH_SHORT).show();
 			}
 		})
-		.setNegativeButton("·ñ", new DialogInterface.OnClickListener() {
+		.setNegativeButton("å¦", new DialogInterface.OnClickListener() {
 
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
@@ -201,50 +200,16 @@ public class MainFragment extends Fragment {
 	}
 
 	/**
-	 * È¡µÃÁªÏµÈËµÄÊıÄ¿
+	 * å–å¾—è”ç³»äººçš„æ•°ç›®
 	 * 
 	 * @return
 	 */
 	public int getContactAmount() {
+		if(contactList==null){
+			return 0;
+		}
 		return contactList.size();
 	}
-
-	// /**
-	// * ¸ù¾İÊäÈë¿òÖĞµÄÖµÀ´¹ıÂËÊı¾İ²¢¸üĞÂListView ¿É¸ù¾İÆ´Òô£¬ºº×Ö£¬ËõĞ´À´¹ıÂË
-	// *
-	// * @param filterStr
-	// */
-	// @SuppressLint("DefaultLocale")
-	// public void filterData(String filterStr) {
-	// List<ContactItem> filterDateList = new ArrayList<ContactItem>();
-	//
-	// if (TextUtils.isEmpty(filterStr)) {
-	// filterDateList = contactList;
-	// } else {
-	// filterDateList.clear();
-	// for (ContactItem contactItem : contactList) {
-	// // String filterStrInPinyin = PinYin.getPinYin(filterStr);
-	// // String name = contactItem.getName();
-	// // String fullPinyin = contactItem.getFullPinyin();
-	// // String simplePinyin = contactItem.getSimplePinyin();
-	// // if (name.contains(filterStr)
-	// // || fullPinyin.contains(filterStrInPinyin)
-	// // || simplePinyin.contains(filterStrInPinyin)) {
-	// // filterDateList.add(contactItem);
-	// // }
-	// String convertStr = filterStr.toLowerCase();
-	// Map<String, Integer> originMap = contactItem
-	// .contains(filterStr);
-	// Map<String, Integer> convertMap = contactItem
-	// .contains(convertStr);
-	// if (originMap != null && convertMap != null
-	// && originMap.size() != 0 && convertMap.size() != 0) {
-	// filterDateList.add(contactItem);
-	// }
-	// }
-	// }
-	// adapter.updateListView(filterDateList);
-	// }
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {

@@ -10,10 +10,8 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.text.SpannableStringBuilder;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -30,14 +28,15 @@ import com.google.zxing.WriterException;
 import com.wecall.contacts.constants.Constants;
 import com.wecall.contacts.database.DatabaseManager;
 import com.wecall.contacts.entity.ContactItem;
-import com.wecall.contacts.util.EncodeUtil;
+import com.wecall.contacts.util.AESUtil;
 import com.wecall.contacts.util.ImageUtil;
+import com.wecall.contacts.util.SPUtil;
 import com.wecall.contacts.util.StringUtil;
 import com.wecall.contacts.view.FlowLayout;
 import com.wecall.contacts.view.TextViewWithTitle;
 
 /**
- * ÁªÏµÈËÏêÇé
+ * è”ç³»äººè¯¦æƒ…
  * 
  * @author xiaoxin 2014-3-30
  */
@@ -45,17 +44,17 @@ public class ContactInfo extends Activity {
 
 	private static final int REQUEST_CODE = 3;
 
-	// ¸÷ÖÖĞÅÏ¢µÄÏÔÊ¾±êÇ©
+	// å„ç§ä¿¡æ¯çš„æ˜¾ç¤ºæ ‡ç­¾
 	private TextView nameTV;
 	private ImageButton callImageButton, msgImageButton;
 	private TextViewWithTitle addressTVT, noteTVT;
 	private TextView phoneTV;
-	// ÁªÏµÈËÍ·Ïñ
+	// è”ç³»äººå¤´åƒ
 	private ImageView photoImg;
-	// ±êÇ©À¸
+	// æ ‡ç­¾æ 
 	private FlowLayout labelLayout;
 	private ImageButton showQRCode;
-	// Êı¾İ¿â¹ÜÀí¶ÔÏó
+	// æ•°æ®åº“ç®¡ç†å¯¹è±¡
 	private DatabaseManager mManager;
 
 	private int cid;
@@ -69,7 +68,7 @@ public class ContactInfo extends Activity {
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 		getActionBar().setDisplayShowHomeEnabled(false);
 
-		// ³õÊ¼»¯¿Ø¼ş
+		// åˆå§‹åŒ–æ§ä»¶
 		initView();
 	}
 
@@ -102,7 +101,7 @@ public class ContactInfo extends Activity {
 		return super.onOptionsItemSelected(item);
 	}
 
-	// ³õÊ¼»¯¿Ø¼ş
+	// åˆå§‹åŒ–æ§ä»¶
 	private void initView() {
 		nameTV = (TextView) findViewById(R.id.tv_contact_name);
 		addressTVT = (TextViewWithTitle) findViewById(R.id.tvt_address);
@@ -127,8 +126,8 @@ public class ContactInfo extends Activity {
 
 			@Override
 			public void onClick(View arg0) {
-				if (phoneNumber.equals("ÎŞ")) {
-					Toast.makeText(ContactInfo.this, "ºÅÂëÎª¿Õ£¬ÎŞ·¨²¦´òµç»°",
+				if (phoneNumber.equals("æ— ")) {
+					Toast.makeText(ContactInfo.this, "å·ç ä¸ºç©ºï¼Œæ— æ³•æ‹¨æ‰“ç”µè¯",
 							Toast.LENGTH_SHORT).show();
 				} else {
 					Intent intent = new Intent(Intent.ACTION_CALL, Uri
@@ -142,8 +141,8 @@ public class ContactInfo extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				if (phoneNumber.equals("ÎŞ")) {
-					Toast.makeText(ContactInfo.this, "µç»°Îª¿Õ£¬ÎŞ·¨·¢ËÍ¶ÌĞÅ",
+				if (phoneNumber.equals("æ— ")) {
+					Toast.makeText(ContactInfo.this, "ç”µè¯ä¸ºç©ºï¼Œæ— æ³•å‘é€çŸ­ä¿¡",
 							Toast.LENGTH_SHORT).show();
 				} else {
 					Intent intent = new Intent(Intent.ACTION_SENDTO, Uri
@@ -169,17 +168,14 @@ public class ContactInfo extends Activity {
 		if (requestCode == REQUEST_CODE) {
 			if (resultCode == RESULT_OK) {
 				updateView(cid);
-				Toast.makeText(this, "±à¼­³É¹¦", Toast.LENGTH_SHORT).show();
+				Toast.makeText(this, "ç¼–è¾‘æˆåŠŸ", Toast.LENGTH_SHORT).show();
 			}
 		}
 	}
 
 	private void updateView(int cid) {
 		contact = mManager.queryContactById(cid);
-
-		SpannableStringBuilder styled = StringUtil.colorString(
-				contact.getName(), 0, 1, Color.RED);
-		nameTV.setText(styled);
+		nameTV.setText(contact.getName());
 		// nameTV.setText(bundle.getString("cname"));
 		if(StringUtil.formatString(contact.getAddress()).length()>14){
 			addressTVT.setText(StringUtil.formatString(contact.getAddress()).substring(0, 13)+"...");
@@ -202,7 +198,7 @@ public class ContactInfo extends Activity {
 	}
 
 	private void showContactPhoto() {
-		// Èç¹ûÄÜÕÒµ½ÓÃ»§Éè¶¨µÄÍ·Ïñ£¬Ôò½«Í·ÏñÉèÖÃÎªÓÃ»§×Ô¶¨ÒåµÄÍ·Ïñ£¬·ñÔò£¬ÉèÖÃÎªÄ¬ÈÏÍ¼Æ¬
+		// å¦‚æœèƒ½æ‰¾åˆ°ç”¨æˆ·è®¾å®šçš„å¤´åƒï¼Œåˆ™å°†å¤´åƒè®¾ç½®ä¸ºç”¨æˆ·è‡ªå®šä¹‰çš„å¤´åƒï¼Œå¦åˆ™ï¼Œè®¾ç½®ä¸ºé»˜è®¤å›¾ç‰‡
 		Bitmap userPhoto = ImageUtil.getLocalBitmap(Constants.ALBUM_PATH, "pic"
 				+ cid + ".jpg");
 		if (userPhoto == null) {
@@ -213,7 +209,7 @@ public class ContactInfo extends Activity {
 	}
 
 	/**
-	 * ÉèÖÃÁªÏµÈËµÄ±êÇ©
+	 * è®¾ç½®è”ç³»äººçš„æ ‡ç­¾
 	 */
 	private void setLabels() {
 
@@ -235,46 +231,50 @@ public class ContactInfo extends Activity {
 	}
 
 	private Bitmap getQRCode() {
+		int did = (Integer) SPUtil.get(this, "did", -1);
+		String aesKey = (String) SPUtil.get(this, "aid",
+				Constants.DEFAULT_AESKEY);
 		Bitmap bitmap = null;
 		String name = contact.getName();
 		String phone = "";
 		//TODO Multi Case
 		Set<String> phoneSet = contact.getPhoneNumber();
 		for(String str:phoneSet){
-
 			phone = str;
 		}
+		JSONObject jsonObject = new JSONObject();
+		String codedJson = "";
 		try {
-			JSONObject jsonObject = new JSONObject();
-			String codedJson;
+			jsonObject.put("did", did);
+			JSONObject jsonObject2 = new JSONObject();
+			jsonObject2.put("name", name);
+			jsonObject2.put("phone", phone);
+			String data = "";
 			try {
-				jsonObject.put("name", name);
-				jsonObject.put("phone", phone);
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
-			Log.v("TAG", jsonObject.toString());
-			try {
-				codedJson = EncodeUtil.encrypt(Constants.AESKEY,
-						jsonObject.toString());
+				data=AESUtil.encrypt(aesKey, jsonObject2.toString());
 			} catch (Exception e) {
-				codedJson = jsonObject.toString();
 				e.printStackTrace();
 			}
-			bitmap = ImageUtil.CreateQRCode(codedJson, 300);
-		} catch (WriterException e) {
+			jsonObject.put("data", data);
+			codedJson = jsonObject.toString();
+			try {
+				bitmap = ImageUtil.CreateQRCode(codedJson, 300);
+			} catch (WriterException e) {
+				e.printStackTrace();
+			}
+		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 		return bitmap;
 	}
 
 	/**
-	 * ÏÔÊ¾É¾³ı¶Ô»°¿ò
+	 * æ˜¾ç¤ºåˆ é™¤å¯¹è¯æ¡†
 	 */
 	private void showDeleteDialog() {
 		new AlertDialog.Builder(this)
-		.setTitle("ÊÇ·ñÈ·ÈÏÉ¾³ı£¿")
-		.setPositiveButton("ÊÇ", new DialogInterface.OnClickListener() {
+		.setTitle("æ˜¯å¦ç¡®è®¤åˆ é™¤ï¼Ÿ")
+		.setPositiveButton("æ˜¯", new DialogInterface.OnClickListener() {
 
 			@Override
 			public void onClick(DialogInterface arg0, int arg1) {
@@ -286,7 +286,7 @@ public class ContactInfo extends Activity {
 				finish();
 			}
 		})
-		.setNegativeButton("·ñ", new DialogInterface.OnClickListener() {
+		.setNegativeButton("å¦", new DialogInterface.OnClickListener() {
 
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
@@ -296,14 +296,14 @@ public class ContactInfo extends Activity {
 	}
 
 	/**
-	 * ÏÔÊ¾¶şÎ¬Âë¶Ô»°¿ò
+	 * æ˜¾ç¤ºäºŒç»´ç å¯¹è¯æ¡†
 	 */
 	protected void showQRDialog() {
 		ImageView tempImageView = new ImageView(this);
 		tempImageView.setImageBitmap(getQRCode());
 		new AlertDialog.Builder(this).setTitle(contact.getName())
 		.setView(tempImageView)
-		.setPositiveButton("È·¶¨", new DialogInterface.OnClickListener() {
+		.setPositiveButton("ç¡®å®š", new DialogInterface.OnClickListener() {
 
 			@Override
 			public void onClick(DialogInterface arg0, int arg1) {

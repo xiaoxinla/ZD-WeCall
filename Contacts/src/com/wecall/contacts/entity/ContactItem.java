@@ -1,7 +1,8 @@
 package com.wecall.contacts.entity;
 
-
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import android.annotation.SuppressLint;
@@ -9,7 +10,7 @@ import android.annotation.SuppressLint;
 import com.wecall.contacts.util.PinYin;
 
 /**
- * ÁªÏµÈËµÄÊµÌåÀà
+ * è”ç³»äººçš„å®ä½“ç±»
  * 
  * @author xiaoxin
  * 
@@ -17,29 +18,28 @@ import com.wecall.contacts.util.PinYin;
 @SuppressWarnings("rawtypes")
 public class ContactItem implements Comparable {
 
-	// ÁªÏµÈËid
+	// è”ç³»äººid
 	private int id;
-	// ÁªÏµÈËĞÕÃû
+	// è”ç³»äººå§“å
 	private String name;
-	// Ê××ÖÄ¸
+	// é¦–å­—æ¯
 	private String sortLetter;
-	// µç»°ºÅÂë
+	// ç”µè¯å·ç 
 	private Set<String> phoneNumber;
-	// ±¸×¢
+	// å¤‡æ³¨
 	private String note;
-	// µØÖ·
+	// åœ°å€
 	private String address;
-	// ±êÇ©
-	// Ã»±ØÒª±£´ælabelµÄÆ´Òô
+	// æ ‡ç­¾
+	// æ²¡å¿…è¦ä¿å­˜labelçš„æ‹¼éŸ³
 	// private List<Label> labels;
 	private Set<String> labels;
-	
-	// FIXME: ÆäÊµÖ»ĞèÒªÔÚÊı¾İ¿âÖĞ´æÔÚ,Ã»±ØÒª´æÔÚÀàÀïÃæ
-	// ĞÕÃûÈ«Æ´
+
+	// FIXME: å…¶å®åªéœ€è¦åœ¨æ•°æ®åº“ä¸­å­˜åœ¨,æ²¡å¿…è¦å­˜åœ¨ç±»é‡Œé¢
+	// å§“åå…¨æ‹¼
 	private String fullPinyin;
-	// ĞÕÃûÊ××ÖÄ¸×éºÏ
+	// å§“åé¦–å­—æ¯ç»„åˆ
 	private String simplePinyin;
-	
 
 	public ContactItem() {
 		phoneNumber = new HashSet<String>();
@@ -63,12 +63,11 @@ public class ContactItem implements Comparable {
 	public void setName(String name) {
 		if (name == null)
 			this.name = null;
-		else
-		{
+		else {
 			this.name = new String(name);
 			fullPinyin = PinYin.getPinYin(this.name);
 			simplePinyin = PinYin.getSimplePinYin(this.name);
-			setSortLetter(fullPinyin);		
+			setSortLetter(fullPinyin);
 		}
 	}
 
@@ -89,7 +88,7 @@ public class ContactItem implements Comparable {
 	}
 
 	public void setPhoneNumber(Set<String> phoneNumber) {
-		if(phoneNumber != null)
+		if (phoneNumber != null)
 			this.phoneNumber = new HashSet<String>(phoneNumber);
 	}
 
@@ -118,38 +117,38 @@ public class ContactItem implements Comparable {
 	public Set<String> getLabels() {
 		return labels;
 	}
-	
-//	/**
-//	 * Ö»·µ»Ø±êÇ©µÄÃû×Ö£¬²»·µ»Ø±êÇ©Àà
-//	 * @return ArrayList<String>
-//	 */
-//	public ArrayList<String> getLabelNames() {
-//		ArrayList<String> list = new ArrayList<String>();
-//		for(Label l: this.labels)
-//		{
-//			list.add(l.getLname());
-//		}
-//		return list;
-//	}
+
+	// /**
+	// * åªè¿”å›æ ‡ç­¾çš„åå­—ï¼Œä¸è¿”å›æ ‡ç­¾ç±»
+	// * @return ArrayList<String>
+	// */
+	// public ArrayList<String> getLabelNames() {
+	// ArrayList<String> list = new ArrayList<String>();
+	// for(Label l: this.labels)
+	// {
+	// list.add(l.getLname());
+	// }
+	// return list;
+	// }
 
 	public void setLabels(Set<String> labels) {
 		if (labels != null)
 			this.labels = new HashSet<String>(labels);
 	}
-	
-//	/**
-//	 * Ö»ÓÃ±êÇ©Ãû×Ö×÷²ÎÊı³õÊ¼»¯£¬²»ÓÃ±êÇ©Àà
-//	 * @param labelsName
-//	 */
-//	public void setLabelNames(ArrayList<String> labelsName)
-//	{
-//		Label l = new Label();
-//		for (String s: labelsName)
-//		{
-//			l.setLname(s);
-//			this.labels.add(l);
-//		}
-//	}
+
+	// /**
+	// * åªç”¨æ ‡ç­¾åå­—ä½œå‚æ•°åˆå§‹åŒ–ï¼Œä¸ç”¨æ ‡ç­¾ç±»
+	// * @param labelsName
+	// */
+	// public void setLabelNames(ArrayList<String> labelsName)
+	// {
+	// Label l = new Label();
+	// for (String s: labelsName)
+	// {
+	// l.setLname(s);
+	// this.labels.add(l);
+	// }
+	// }
 
 	public int getId() {
 		return id;
@@ -179,15 +178,15 @@ public class ContactItem implements Comparable {
 		}
 		return getFullPinyin().compareTo(tmpItem.getFullPinyin());
 	}
-	
-	@SuppressLint("DefaultLocale") 
-	private void setSortLetter(String inputString){
-		if(inputString.isEmpty()){
+
+	@SuppressLint("DefaultLocale")
+	private void setSortLetter(String inputString) {
+		if (inputString.isEmpty()) {
 			this.sortLetter = "#";
 			return;
 		}
 		String sortString = inputString.substring(0, 1).toUpperCase();
-		// ÕıÔò±í´ïÊ½£¬ÅĞ¶ÏÊ××ÖÄ¸ÊÇ·ñÊÇÓ¢ÎÄ×ÖÄ¸
+		// æ­£åˆ™è¡¨è¾¾å¼ï¼Œåˆ¤æ–­é¦–å­—æ¯æ˜¯å¦æ˜¯è‹±æ–‡å­—æ¯
 		if (sortString.matches("[A-Z]")) {
 			this.sortLetter = sortString;
 		} else {
@@ -195,26 +194,40 @@ public class ContactItem implements Comparable {
 		}
 	}
 
-//	public Map<String, Integer> contains(String str){
-//		Map<String, Integer> map = new HashMap<String, Integer>();
-//		if(name!=null&&name.indexOf(str)!=-1){
-//			map.put("name",name.indexOf(str));
-//		}
-//		if(phoneNumber!=null&&phoneNumber.indexOf(str)!=-1){
-//			map.put("phone",phoneNumber.indexOf(str));
-//		}
-//		if(address!=null&&address.indexOf(str)!=-1){
-//			map.put("address",address.indexOf(str));
-//		}
-//		if(note!=null&&note.indexOf(str)!=-1){
-//			map.put("note",note.indexOf(str));
-//		}
-//		if(fullPinyin!=null&&fullPinyin.indexOf(str)!=-1){
-//			map.put("fullpinyin",fullPinyin.indexOf(str));
-//		}
-//		if(simplePinyin!=null&&simplePinyin.indexOf(str)!=-1){
-//			map.put("simplepinyin",simplePinyin.indexOf(str));
-//		}
-//		return map;
-//	}
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof ContactItem) {
+			ContactItem item = (ContactItem) o;
+			return id == item.id;
+		}
+		return super.equals(o);
+	}
+
+	public Map<String, Integer> contains(String str) {
+		Map<String, Integer> map = new HashMap<String, Integer>();
+		if (name != null && name.indexOf(str) != -1) {
+			map.put("name", name.indexOf(str));
+		}
+		if (phoneNumber != null) {
+			for (String phone : phoneNumber) {
+				if (phone != null && phone.indexOf(str) != -1) {
+					map.put("phone", phone.indexOf(str));
+					break;
+				}
+			}
+		}
+		if (address != null && address.indexOf(str) != -1) {
+			map.put("address", address.indexOf(str));
+		}
+		if (note != null && note.indexOf(str) != -1) {
+			map.put("note", note.indexOf(str));
+		}
+		if (fullPinyin != null && fullPinyin.indexOf(str) != -1) {
+			map.put("fullpinyin", fullPinyin.indexOf(str));
+		}
+		if (simplePinyin != null && simplePinyin.indexOf(str) != -1) {
+			map.put("simplepinyin", simplePinyin.indexOf(str));
+		}
+		return map;
+	}
 }

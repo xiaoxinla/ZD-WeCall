@@ -14,27 +14,27 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 
 /**
- * Í¼Æ¬´¦Àí¹¤¾ßÀà
+ * å›¾ç‰‡å¤„ç†å·¥å…·ç±»
  * 
  * @author xiaoxin
  */
 public class ImageUtil {
 
 	/**
-	 * ½«ÎÄ±¾×ª»¯Îª¶şÎ¬Âë
+	 * å°†æ–‡æœ¬è½¬åŒ–ä¸ºäºŒç»´ç 
 	 * 
 	 * @param content
-	 *            ´«ÈëµÄ×Ö·û´®
-	 * @return Éú³ÉµÄ¶şÎ¬Âë
+	 *            ä¼ å…¥çš„å­—ç¬¦ä¸²
+	 * @return ç”Ÿæˆçš„äºŒç»´ç 
 	 * @throws WriterException
 	 */
 	public static Bitmap CreateQRCode(String content,int size) throws WriterException {
-		// Éú³É¶şÎ¬¾ØÕó,±àÂëÊ±Ö¸¶¨´óĞ¡,²»ÒªÉú³ÉÁËÍ¼Æ¬ÒÔºóÔÙ½øĞĞËõ·Å,ÕâÑù»áÄ£ºıµ¼ÖÂÊ¶±ğÊ§°Ü
+		// ç”ŸæˆäºŒç»´çŸ©é˜µ,ç¼–ç æ—¶æŒ‡å®šå¤§å°,ä¸è¦ç”Ÿæˆäº†å›¾ç‰‡ä»¥åå†è¿›è¡Œç¼©æ”¾,è¿™æ ·ä¼šæ¨¡ç³Šå¯¼è‡´è¯†åˆ«å¤±è´¥
 		BitMatrix matrix = new MultiFormatWriter().encode(content,
 				BarcodeFormat.QR_CODE, size, size);
 		int width = matrix.getWidth();
 		int height = matrix.getHeight();
-		// ¶şÎ¬¾ØÕó×ªÎªÒ»Î¬ÏñËØÊı×é,Ò²¾ÍÊÇÒ»Ö±ºá×ÅÅÅÁË
+		// äºŒç»´çŸ©é˜µè½¬ä¸ºä¸€ç»´åƒç´ æ•°ç»„,ä¹Ÿå°±æ˜¯ä¸€ç›´æ¨ªç€æ’äº†
 		int[] pixels = new int[width * height];
 		for (int y = 0; y < height; y++) {
 			for (int x = 0; x < width; x++) {
@@ -46,16 +46,16 @@ public class ImageUtil {
 
 		Bitmap bitmap = Bitmap.createBitmap(width, height,
 				Bitmap.Config.ARGB_8888);
-		// Í¨¹ıÏñËØÊı×éÉú³Ébitmap,¾ßÌå²Î¿¼api
+		// é€šè¿‡åƒç´ æ•°ç»„ç”Ÿæˆbitmap,å…·ä½“å‚è€ƒapi
 		bitmap.setPixels(pixels, 0, width, 0, 0, width, height);
 		return bitmap;
 	}
 	
 	/**
-	 * »ñÈ¡±¾µØµÄÍ¼Æ¬
-	 * @param path Í¼Æ¬ËùÔÚÂ·¾¶
-	 * @param filename Í¼Æ¬Ãû
-	 * @return Í¼Æ¬µÄbitmap¶ÔÏó
+	 * è·å–æœ¬åœ°çš„å›¾ç‰‡
+	 * @param path å›¾ç‰‡æ‰€åœ¨è·¯å¾„
+	 * @param filename å›¾ç‰‡å
+	 * @return å›¾ç‰‡çš„bitmapå¯¹è±¡
 	 */
 	public static Bitmap getLocalBitmap(String path,String filename){
 		Bitmap bitmap = null;  
@@ -75,10 +75,10 @@ public class ImageUtil {
 	}
 
 	/**
-	 * ±£´æÍ¼Æ¬
-	 * @param bitmap Òª±£´æµÄbitmapÍ¼Æ¬
-	 * @param path Â·¾¶
-	 * @param fileName ÎÄ¼şÃû
+	 * ä¿å­˜å›¾ç‰‡
+	 * @param bitmap è¦ä¿å­˜çš„bitmapå›¾ç‰‡
+	 * @param path è·¯å¾„
+	 * @param fileName æ–‡ä»¶å
 	 * @throws IOException
 	 */
 	public static void saveImage(Bitmap bitmap, String path, String fileName)
@@ -96,11 +96,11 @@ public class ImageUtil {
 	}
 
 	/**
-	 * ±£´æÍ¼Æ¬
-	 * @param bitmap Òª±£´æµÄbitmapÍ¼Æ¬
-	 * @param path Â·¾¶
-	 * @param fileName ÎÄ¼şÃû
-	 * @param ratio Í¼Æ¬Ñ¹Ëõ±ÈÂÊ
+	 * ä¿å­˜å›¾ç‰‡
+	 * @param bitmap è¦ä¿å­˜çš„bitmapå›¾ç‰‡
+	 * @param path è·¯å¾„
+	 * @param fileName æ–‡ä»¶å
+	 * @param ratio å›¾ç‰‡å‹ç¼©æ¯”ç‡
 	 * @throws IOException
 	 */
 	public static void saveImage(Bitmap bitmap, String path, String fileName,
@@ -118,9 +118,9 @@ public class ImageUtil {
 	}
 	
 	/**
-	 * É¾³ıÍ¼Æ¬
-	 * @param path ËùÔÚÂ·¾¶
-	 * @param fileName Í¼Æ¬Ãû
+	 * åˆ é™¤å›¾ç‰‡
+	 * @param path æ‰€åœ¨è·¯å¾„
+	 * @param fileName å›¾ç‰‡å
 	 */
 	public static void deleteImage(String path,String fileName){
 		File file = new File(path+fileName);
@@ -132,9 +132,9 @@ public class ImageUtil {
 	}
 	
 	/**
-	 * ÖØÃüÃûÍ¼Æ¬
-	 * @param oldpath ¾ÍÂ·¾¶
-	 * @param newpath ĞÂÂ·¾¶
+	 * é‡å‘½åå›¾ç‰‡
+	 * @param oldpath å°±è·¯å¾„
+	 * @param newpath æ–°è·¯å¾„
 	 */
 	public static void renameImage(String oldpath,String newpath){
 		File file = new File(oldpath);
