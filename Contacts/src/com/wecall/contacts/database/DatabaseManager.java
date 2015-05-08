@@ -813,9 +813,10 @@ public class DatabaseManager {
 	private String listToString(List<String> list) {
 		StringBuffer strBuf = new StringBuffer();
 		
-		for (String term: list) {
-			strBuf.append(term);
-			strBuf.append(' ');
+		for (int i = 0; i < list.size(); i++) {
+			strBuf.append(list.get(i));
+			if (i < list.size() - 1)
+				strBuf.append(' ');
 		}
 		
 		return strBuf.toString();
