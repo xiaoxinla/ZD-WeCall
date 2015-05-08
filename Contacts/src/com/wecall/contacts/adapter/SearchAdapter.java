@@ -2,6 +2,7 @@ package com.wecall.contacts.adapter;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Map.Entry;
 
 import android.annotation.SuppressLint;
@@ -31,23 +32,13 @@ public class SearchAdapter extends BaseAdapter {
 
 	// private static final String TAG = "SearchAdapter";
 	private Context mContext;
-	private List<ContactItem> mList;
-	private List<Map<String, Integer>> mIndex;
+	private List<List<Object>> mList;
 	private int strlen = 0;
+	private String queryStr = "";
 
-	public SearchAdapter(Context context, List<ContactItem> list,
-			List<Map<String, Integer>> index) {
+	public SearchAdapter(Context context, List<List<Object>> list) {
 		this.mContext = context;
 		this.mList = list;
-		this.mIndex = index;
-	}
-
-	public SearchAdapter(Context context, List<ContactItem> list,
-			List<Map<String, Integer>> index, int strlen) {
-		this.mContext = context;
-		this.mList = list;
-		this.mIndex = index;
-		this.strlen = strlen;
 	}
 
 	@Override
@@ -71,8 +62,7 @@ public class SearchAdapter extends BaseAdapter {
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		ViewHolder holder = null;
-		ContactItem item = mList.get(position);
-		Map<String, Integer> map = mIndex.get(position);
+		List<Object> item = mList.get(position);
 		// Log.v(TAG, "item:" + item.toString() + "map:" + map.toString());
 		if (convertView == null) {
 			convertView = LayoutInflater.from(mContext).inflate(
@@ -89,7 +79,7 @@ public class SearchAdapter extends BaseAdapter {
 			holder = (ViewHolder) convertView.getTag();
 		}
 		Bitmap bitmap = ImageUtil.getLocalBitmap(Constants.ALBUM_PATH, "pic"
-				+ item.getId() + ".jpg");
+				+ (Integer)item.get(0) + ".jpg");
 		if (bitmap != null) {
 			holder.ivHeader.setImageBitmap(bitmap);
 		} else {
@@ -97,38 +87,50 @@ public class SearchAdapter extends BaseAdapter {
 		}
 
 		SpannableStringBuilder ssbName = new SpannableStringBuilder(
-				item.getName());
+				(String)item.get(1));
 		SpannableStringBuilder ssbOther = new SpannableStringBuilder();
-		for (Entry<String, Integer> entity : map.entrySet()) {
-			// Log.v(TAG, entity.toString());
-			if (entity.getKey().equals("name")) {
-				int index = entity.getValue();
-				ssbName = StringUtil.colorString(ssbName, index, strlen,
-						Color.RED);
+		int type = (Integer) item.get(2);
+		int index = -1;
+		String str = "";
+		switch (type) {
+		case Constants.TYPE_NAME:
+			str = (String) item.get(3);
+			index = str.indexOf(queryStr);
+			if(index>=0){
+				ssbName = StringUtil.colorString(ssbName, index, strlen, Color.RED);
 			}
+			break;
+		case Constants.TYPE_PHONE:
+			Set<String> phones = (Set<String>) item.get(3);
+			for(String s:phones){
+				str = s;
+				break;
+			}
+			index = str.indexOf(queryStr);
+			if(index>=0){
+				ssbOther = StringUtil.colorString(str, index, index
+						+ strlen, Color.RED);
+			}
+			break;
+		case Constants.TYPE_ADDRESS:
+			str = (String) item.get(3);
+			index = str.indexOf(queryStr);
+			if(index>=0){
+				ssbOther = StringUtil.colorString(str, index, index
+						+ strlen, Color.RED);
+			}
+			break;
+		case Constants.TYPE_NOTE:
+			str = (String) item.get(3);
+			index = str.indexOf(queryStr);
+			if(index>=0){
+				ssbOther = StringUtil.colorString(str, index, index
+						+ strlen, Color.RED);
+			}
+			break;
 
-			if (entity.getKey().equals("phone")) {
-				int index = entity.getValue();
-				for (String str : item.getPhoneNumber()) {
-					ssbOther = StringUtil.colorString(str, index, index
-							+ strlen, Color.RED);
-					break;
-				}
-			}
-			if (entity.getKey().equals("address")) {
-				SpannableStringBuilder tmp = new SpannableStringBuilder();
-				int index = entity.getValue();
-				tmp = StringUtil.colorString(item.getAddress(), index, index
-						+ strlen, Color.RED);
-				ssbOther.append(tmp);
-			}
-			if (entity.getKey().equals("note")) {
-				SpannableStringBuilder tmp = new SpannableStringBuilder();
-				int index = entity.getValue();
-				tmp = StringUtil.colorString(item.getNote(), index, index
-						+ strlen, Color.RED);
-				ssbOther.append(tmp);
-			}
+		default:
+			break;
 		}
 		holder.tvName.setText(ssbName);
 		if (ssbOther == null || ssbOther.length() == 0) {
@@ -140,11 +142,10 @@ public class SearchAdapter extends BaseAdapter {
 		return convertView;
 	}
 
-	public void updateListView(List<ContactItem> list,
-			List<Map<String, Integer>> index, int strlen) {
-		this.mList = list;
-		this.mIndex = index;
+	public void updateListView(List<List<Object>> contactList, int strlen,String str) {
+		this.mList = contactList;
 		this.strlen = strlen;
+		this.queryStr = str;
 		notifyDataSetChanged();
 	}
 
