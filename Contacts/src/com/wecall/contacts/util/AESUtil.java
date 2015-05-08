@@ -10,7 +10,7 @@ import org.apache.commons.codec.binary.Base64;
 
 
 /**
- * ¼ÓÃÜ¹¤¾ßÀà
+ * åŠ å¯†å·¥å…·ç±»
  * 
  * @author xiaoxin 2015-4-7
  */

@@ -28,20 +28,25 @@ import com.wecall.contacts.entity.SimpleContact;
 import com.wecall.contacts.view.SideBar;
 import com.wecall.contacts.view.SideBar.onTouchLetterChangeListener;
 
+/**
+ * ä¸ºæ ‡ç­¾é€‰æ‹©æˆå‘˜
+ * @author xiaoxin
+ *	2015-5-3
+ */
 public class SelectLabelMember extends Activity {
 
 	private static final String TAG = "SelectLabelMember";
 	private ListView contactListView;
 	private TextView letterTextView;
 	private EditText inputText;
-	// ²à±ßÀ¸Ë÷Òı¿Ø¼ş
+	// ä¾§è¾¹æ ç´¢å¼•æ§ä»¶
 	private SideBar sideBar;
-	// ÅÅĞòµÄÊÊÅäÆ÷
+	// æ’åºçš„é€‚é…å™¨
 	private SortAdapter adapter;
-	// ÁªÏµÈËĞÅÏ¢
+	// è”ç³»äººä¿¡æ¯
 	private List<SimpleContact> contactList = new ArrayList<SimpleContact>();
 	private List<Boolean> checkList = new ArrayList<Boolean>();
-	// Êı¾İ¿â¹ÜÀíÊµÀı
+	// æ•°æ®åº“ç®¡ç†å®ä¾‹
 	private DatabaseManager mManager;
 	private String tagName = "";
 
@@ -59,7 +64,7 @@ public class SelectLabelMember extends Activity {
 	}
 
 	/**
-	 * ³õÊ¼»¯¿Ø¼ş
+	 * åˆå§‹åŒ–æ§ä»¶
 	 * 
 	 * @param view
 	 */
@@ -130,7 +135,7 @@ public class SelectLabelMember extends Activity {
 			break;
 		case R.id.action_save_label:
 			if (inputText.getText().toString().equals("")) {
-				Toast.makeText(SelectLabelMember.this, "ÇëÊäÈë±êÇ©Ãû",
+				Toast.makeText(SelectLabelMember.this, "è¯·è¾“å…¥æ ‡ç­¾å",
 						Toast.LENGTH_SHORT).show();
 			} else {
 				addTag();
@@ -152,20 +157,20 @@ public class SelectLabelMember extends Activity {
 		String tagName = inputText.getText().toString();
 		mManager.addTagToIds(tagName, tagSet);
 		setResult(RESULT_OK);
-		Toast.makeText(this, "±à¼­³É¹¦", Toast.LENGTH_SHORT).show();
+		Toast.makeText(this, "ç¼–è¾‘æˆåŠŸ", Toast.LENGTH_SHORT).show();
 	}
 	
 	private void showReturnDialog(){
 		new AlertDialog.Builder(this)
-		.setTitle("ÍË³ö´Ë´Î±à¼­£¿")
-		.setPositiveButton("ÊÇ", new DialogInterface.OnClickListener() {
+		.setTitle("é€€å‡ºæ­¤æ¬¡ç¼–è¾‘ï¼Ÿ")
+		.setPositiveButton("æ˜¯", new DialogInterface.OnClickListener() {
 
 			@Override
 			public void onClick(DialogInterface arg0, int arg1) {
 				finish();
 			}
 		})
-		.setNegativeButton("·ñ", new DialogInterface.OnClickListener() {
+		.setNegativeButton("å¦", new DialogInterface.OnClickListener() {
 
 			@Override
 			public void onClick(DialogInterface dialog, int which) {

@@ -50,7 +50,7 @@ import com.wecall.contacts.util.SPUtil;
 import com.wecall.contacts.view.FlowLayout;
 
 /**
- * ÁªÏµÈË±à¼­Àà£¬´¦ÀíÁªÏµÈËĞÂ½¨»òÕßĞŞ¸ÄÊÂ¼ş
+ * è”ç³»äººç¼–è¾‘ç±»ï¼Œå¤„ç†è”ç³»äººæ–°å»ºæˆ–è€…ä¿®æ”¹äº‹ä»¶
  * 
  * @author xiaoxin 2015-4-3
  */
@@ -58,22 +58,22 @@ public class ContactEditor extends Activity {
 
 	private static final String TAG = "ContactEditor";
 
-	// ¸÷ÖÖ±à¼­¿ò
+	// å„ç§ç¼–è¾‘æ¡†
 	private EditText nameET, phoneET, addressET, noteET;
 	private ImageView photoImg;
 	private FlowLayout labelLayout;
 	private ActionBar actionBar;
 	private ImageButton addLabelButton;
-	// Êı¾İ¿â¹ÜÀí¶ÔÏó
+	// æ•°æ®åº“ç®¡ç†å¯¹è±¡
 	private DatabaseManager mManager;
 
-	// ±ê¼Ç²Ù×÷ÀàĞÍ£¬1ÎªĞÂ½¨£¬2ÎªĞŞ¸Ä
+	// æ ‡è®°æ“ä½œç±»å‹ï¼Œ1ä¸ºæ–°å»ºï¼Œ2ä¸ºä¿®æ”¹
 	private int mType = 1;
-	// ÁªÏµÈËid
+	// è”ç³»äººid
 	private int mCid = -1;
 	private String mName;
 	private String mPhone;
-	// »º´æ³õÊ¼±êÇ©ĞÅÏ¢
+	// ç¼“å­˜åˆå§‹æ ‡ç­¾ä¿¡æ¯
 	private Set<String> preLabel = new HashSet<String>();
 	private Set<String> curLabel = new HashSet<String>();
 
@@ -91,13 +91,13 @@ public class ContactEditor extends Activity {
 		actionBar = getActionBar();
 		actionBar.setDisplayHomeAsUpEnabled(true);
 		actionBar.setDisplayShowHomeEnabled(false);
-		// ÅĞ¶ÏÊÇĞÂ½¨»¹ÊÇĞŞ¸ÄÁªÏµÈË
+		// åˆ¤æ–­æ˜¯æ–°å»ºè¿˜æ˜¯ä¿®æ”¹è”ç³»äºº
 		confireType();
-		// ³õÊ¼»¯¿Ø¼ş
+		// åˆå§‹åŒ–æ§ä»¶
 		initView();
 	}
 
-	// ³õÊ¼»¯¿Ø¼ş
+	// åˆå§‹åŒ–æ§ä»¶
 	private void initView() {
 		nameET = (EditText) findViewById(R.id.et_name_add);
 		phoneET = (EditText) findViewById(R.id.et_phone_add);
@@ -109,9 +109,9 @@ public class ContactEditor extends Activity {
 
 		mManager = new DatabaseManager(this);
 
-		// ·ÖĞÂ½¨ºÍĞŞ¸Ä½øĞĞ²»Í¬µÄ³õÊ¼»¯
+		// åˆ†æ–°å»ºå’Œä¿®æ”¹è¿›è¡Œä¸åŒçš„åˆå§‹åŒ–
 		if (mType == 1) {
-			actionBar.setTitle("ĞÂ½¨ÁªÏµÈË");
+			actionBar.setTitle("æ–°å»ºè”ç³»äºº");
 			if (mName != null && !mName.isEmpty()) {
 				nameET.setText(mName);
 			}
@@ -119,7 +119,7 @@ public class ContactEditor extends Activity {
 				phoneET.setText(mPhone);
 			}
 		} else if (mType == 2) {
-			actionBar.setTitle("±à¼­ÁªÏµÈË");
+			actionBar.setTitle("ç¼–è¾‘è”ç³»äºº");
 			ContactItem item = mManager.queryContactById(mCid);
 			nameET.setText(item.getName());
 			Set<String> phoneSet = item.getPhoneNumber();
@@ -189,7 +189,7 @@ public class ContactEditor extends Activity {
 	private void saveContact() {
 		String name = nameET.getText().toString();
 		if (name.isEmpty()) {
-			Toast.makeText(ContactEditor.this, "ÇëÌîĞ´ĞÕÃû", Toast.LENGTH_SHORT)
+			Toast.makeText(ContactEditor.this, "è¯·å¡«å†™å§“å", Toast.LENGTH_SHORT)
 					.show();
 		} else {
 			if (mType == 1) {
@@ -212,8 +212,8 @@ public class ContactEditor extends Activity {
 	}
 
 	private void showReturnDialog() {
-		new AlertDialog.Builder(this).setTitle("ÍË³ö´Ë´Î±à¼­£¿")
-				.setPositiveButton("ÊÇ", new DialogInterface.OnClickListener() {
+		new AlertDialog.Builder(this).setTitle("é€€å‡ºæ­¤æ¬¡ç¼–è¾‘ï¼Ÿ")
+				.setPositiveButton("æ˜¯", new DialogInterface.OnClickListener() {
 
 					@Override
 					public void onClick(DialogInterface arg0, int arg1) {
@@ -223,7 +223,7 @@ public class ContactEditor extends Activity {
 						finish();
 					}
 				})
-				.setNegativeButton("·ñ", new DialogInterface.OnClickListener() {
+				.setNegativeButton("å¦", new DialogInterface.OnClickListener() {
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
@@ -251,16 +251,16 @@ public class ContactEditor extends Activity {
 				Bundle bundle = data.getExtras();
 				dealScanResult(bundle);
 				break;
-			// ´ÓÏà²á·µ»Ø
+			// ä»ç›¸å†Œè¿”å›
 			case ALBUM_REQUEST_CODE:
 				startPhotoZoom(data.getData());
 				break;
-			// ´ÓÏà»ú·µ»Ø
+			// ä»ç›¸æœºè¿”å›
 			case CAMERA_REQUEST_CODE:
 				File tmp = new File(Constants.ALBUM_PATH + "tmppic.jpg");
 				startPhotoZoom(Uri.fromFile(tmp));
 				break;
-			// ´Ó²Ã¼ôºó·µ»Ø
+			// ä»è£å‰ªåè¿”å›
 			case CROP_REQUEST_CODE:
 				if (data != null) {
 					setPicToView(data);
@@ -272,7 +272,7 @@ public class ContactEditor extends Activity {
 				curLabel.clear();
 				curLabel.addAll(Arrays.asList(labels));
 				setLabels();
-				Toast.makeText(this, "±êÇ©±à¼­³É¹¦", Toast.LENGTH_SHORT).show();
+				Toast.makeText(this, "æ ‡ç­¾ç¼–è¾‘æˆåŠŸ", Toast.LENGTH_SHORT).show();
 				break;
 			default:
 				break;
@@ -333,7 +333,7 @@ public class ContactEditor extends Activity {
 	}
 
 	/**
-	 * ´¦ÀíÉ¨Âë½á¹û
+	 * å¤„ç†æ‰«ç ç»“æœ
 	 * 
 	 * @param bundle
 	 */
@@ -373,11 +373,11 @@ public class ContactEditor extends Activity {
 				phoneET.setText(phone);
 			} catch (JSONException e1) {
 				e1.printStackTrace();
-				Toast.makeText(this, "ÎŞĞ§ÁªÏµÈË£º" + bundle.getString("result"),
+				Toast.makeText(this, "æ— æ•ˆè”ç³»äººï¼š" + bundle.getString("result"),
 						Toast.LENGTH_LONG).show();
 			} catch (Exception e1) {
 				e1.printStackTrace();
-				Toast.makeText(this, "ÎŞĞ§ÁªÏµÈË£º" + bundle.getString("result"),
+				Toast.makeText(this, "æ— æ•ˆè”ç³»äººï¼š" + bundle.getString("result"),
 						Toast.LENGTH_LONG).show();
 			}
 		}
@@ -409,7 +409,7 @@ public class ContactEditor extends Activity {
 	}
 
 	protected void success(JSONObject jObject) {
-		// 200±íÊ¾³É¹¦£¬400±íÊ¾Ê§°Ü
+		// 200è¡¨ç¤ºæˆåŠŸï¼Œ400è¡¨ç¤ºå¤±è´¥
 		int state = 400;
 		String keyStr = (String) SPUtil.get(this, "aid",
 				Constants.DEFAULT_AESKEY);
@@ -444,8 +444,8 @@ public class ContactEditor extends Activity {
 				Constants.DEFAULT_AESKEY);
 		final String url = Constants.SERVER_URL + "/notifybyid.php";
 		new AlertDialog.Builder(this)
-				.setTitle("ÊÇ·ñÍ¨Öª¶Ô·½Ìí¼Ó×Ô¼ºÎªÁªÏµÈË?")
-				.setPositiveButton("ÊÇ", new DialogInterface.OnClickListener() {
+				.setTitle("æ˜¯å¦é€šçŸ¥å¯¹æ–¹æ·»åŠ è‡ªå·±ä¸ºè”ç³»äºº?")
+				.setPositiveButton("æ˜¯", new DialogInterface.OnClickListener() {
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
@@ -470,7 +470,7 @@ public class ContactEditor extends Activity {
 								switch (msg.what) {
 								case HttpConnectionUtils.DID_SUCCEED:
 									Log.v(TAG, (String) msg.obj);
-									Toast.makeText(ContactEditor.this, "ÒÑÍ¨Öª¶Ô·½",
+									Toast.makeText(ContactEditor.this, "å·²é€šçŸ¥å¯¹æ–¹",
 											Toast.LENGTH_SHORT).show();
 									break;
 
@@ -485,7 +485,7 @@ public class ContactEditor extends Activity {
 					}
 
 				})
-				.setNegativeButton("·ñ", new DialogInterface.OnClickListener() {
+				.setNegativeButton("å¦", new DialogInterface.OnClickListener() {
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
@@ -494,46 +494,46 @@ public class ContactEditor extends Activity {
 				}).show();
 	}
 
-	// ÏÔÊ¾¶Ô»°¿ò
-	// TODO: ½«¸Ãº¯Êı¸´ÓÃ
+	// æ˜¾ç¤ºå¯¹è¯æ¡†
+	// TODO: å°†è¯¥å‡½æ•°å¤ç”¨
 	private void showPicDialog() {
 		new AlertDialog.Builder(this)
-				.setTitle("ÉèÖÃÍ·Ïñ")
-				.setNegativeButton("Ïà²á", new DialogInterface.OnClickListener() {
+				.setTitle("è®¾ç½®å¤´åƒ")
+				.setNegativeButton("ç›¸å†Œ", new DialogInterface.OnClickListener() {
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						// ÈÃ¶Ô»°¿òÏûÊ§
+						// è®©å¯¹è¯æ¡†æ¶ˆå¤±
 						dialog.dismiss();
-						// ACTION_PICK£¬´ÓÊı¾İ¼¯ºÏÖĞÑ¡ÔñÒ»¸ö·µ»Ø£¬¹Ù·½ÎÄµµ½âÊÍÈçÏÂ
+						// ACTION_PICKï¼Œä»æ•°æ®é›†åˆä¸­é€‰æ‹©ä¸€ä¸ªè¿”å›ï¼Œå®˜æ–¹æ–‡æ¡£è§£é‡Šå¦‚ä¸‹
 						// Activity Action:
 						// Pick an item from the data, returning what was
 						// selected.
 						Intent intent = new Intent(Intent.ACTION_PICK, null);
-						// ÉèÖÃÊı¾İÀ´Ô´ºÍÀàĞÍ
+						// è®¾ç½®æ•°æ®æ¥æºå’Œç±»å‹
 						intent.setDataAndType(
 								MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
 								"image/*");
 						startActivityForResult(intent, ALBUM_REQUEST_CODE);
 					}
 				})
-				.setPositiveButton("ÅÄÕÕ", new DialogInterface.OnClickListener() {
+				.setPositiveButton("æ‹ç…§", new DialogInterface.OnClickListener() {
 
 					@Override
 					public void onClick(DialogInterface dialog, int arg1) {
 						dialog.dismiss();
 						/**
-						 * ÏÂÃæÕâ¾ä»¹ÊÇÀÏÑù×Ó£¬µ÷ÓÃ¿ìËÙÅÄÕÕ¹¦ÄÜ£¬ÖÁÓÚÎªÊ²Ã´½Ğ¿ìËÙÅÄÕÕ£¬´ó¼Ò¿ÉÒÔ²Î¿¼ÈçÏÂ¹Ù·½
-						 * ÎÄµµ£¬you_sdk_path/docs/guide/topics/media/camera.html
+						 * ä¸‹é¢è¿™å¥è¿˜æ˜¯è€æ ·å­ï¼Œè°ƒç”¨å¿«é€Ÿæ‹ç…§åŠŸèƒ½ï¼Œè‡³äºä¸ºä»€ä¹ˆå«å¿«é€Ÿæ‹ç…§ï¼Œå¤§å®¶å¯ä»¥å‚è€ƒå¦‚ä¸‹å®˜æ–¹
+						 * æ–‡æ¡£ï¼Œyou_sdk_path/docs/guide/topics/media/camera.html
 						 */
 						Intent intent = new Intent(
 								MediaStore.ACTION_IMAGE_CAPTURE);
-						// ´ò¿ªÍ¼Æ¬ËùÔÚÄ¿Â¼£¬Èç¹û¸ÃÄ¿Â¼²»´æÔÚ£¬Ôò´´½¨¸ÃÄ¿Â¼
+						// æ‰“å¼€å›¾ç‰‡æ‰€åœ¨ç›®å½•ï¼Œå¦‚æœè¯¥ç›®å½•ä¸å­˜åœ¨ï¼Œåˆ™åˆ›å»ºè¯¥ç›®å½•
 						File dirFile = new File(Constants.ALBUM_PATH);
 						if (!dirFile.exists()) {
 							dirFile.mkdirs();
 						}
-						// ½«Í¼Æ¬±£´æµ½¸ÃÄ¿Â¼ÏÂ
+						// å°†å›¾ç‰‡ä¿å­˜åˆ°è¯¥ç›®å½•ä¸‹
 						intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri
 								.fromFile(new File(Constants.ALBUM_PATH,
 										"tmppic.jpg")));
@@ -542,12 +542,12 @@ public class ContactEditor extends Activity {
 				}).show();
 	}
 
-	// ½«È¡µÃµÄÍ¼Æ¬ÉèÖÃµ½¿Ø¼şÉÏ
-	// TODO£ºÊµÏÖ¸´ÓÃ
+	// å°†å–å¾—çš„å›¾ç‰‡è®¾ç½®åˆ°æ§ä»¶ä¸Š
+	// TODOï¼šå®ç°å¤ç”¨
 	private void setPicToView(Intent data) {
-		// È¡µÃ·µ»ØµÄÊı¾İ
+		// å–å¾—è¿”å›çš„æ•°æ®
 		Bundle bundle = data.getExtras();
-		// ²»Îª¿ÕÔò±£´æÍ¼Æ¬µ½±¾µØ²¢ÉèÖÃµ½¿Ø¼şÉÏ
+		// ä¸ä¸ºç©ºåˆ™ä¿å­˜å›¾ç‰‡åˆ°æœ¬åœ°å¹¶è®¾ç½®åˆ°æ§ä»¶ä¸Š
 		if (bundle != null) {
 			Bitmap picture = bundle.getParcelable("data");
 			try {
@@ -561,26 +561,26 @@ public class ContactEditor extends Activity {
 	}
 
 	/**
-	 * ½«Í¼Æ¬²Ã¼ô
+	 * å°†å›¾ç‰‡è£å‰ª
 	 * 
 	 * @param uri
-	 *            Í¼Æ¬µÄuriµØÖ·
+	 *            å›¾ç‰‡çš„uriåœ°å€
 	 */
-	// TODO: ÊµÏÖ¸´ÓÃ
+	// TODO: å®ç°å¤ç”¨
 	private void startPhotoZoom(Uri uri) {
 		Log.v(TAG, "Zoom:" + uri.toString());
 		/*
-		 * ÖÁÓÚÏÂÃæÕâ¸öIntentµÄACTIONÊÇÔõÃ´ÖªµÀµÄ£¬´ó¼Ò¿ÉÒÔ¿´ÏÂ×Ô¼ºÂ·¾¶ÏÂµÄÈçÏÂÍøÒ³
+		 * è‡³äºä¸‹é¢è¿™ä¸ªIntentçš„ACTIONæ˜¯æ€ä¹ˆçŸ¥é“çš„ï¼Œå¤§å®¶å¯ä»¥çœ‹ä¸‹è‡ªå·±è·¯å¾„ä¸‹çš„å¦‚ä¸‹ç½‘é¡µ
 		 * yourself_sdk_path/docs/reference/android/content/Intent.html
 		 */
 		Intent intent = new Intent("com.android.camera.action.CROP");
 		intent.setDataAndType(uri, "image/*");
-		// ÏÂÃæÕâ¸öcrop=trueÊÇÉèÖÃÔÚ¿ªÆôµÄIntentÖĞÉèÖÃÏÔÊ¾µÄVIEW¿É²Ã¼ô
+		// ä¸‹é¢è¿™ä¸ªcrop=trueæ˜¯è®¾ç½®åœ¨å¼€å¯çš„Intentä¸­è®¾ç½®æ˜¾ç¤ºçš„VIEWå¯è£å‰ª
 		intent.putExtra("crop", "true");
-		// aspectX aspectY ÊÇ¿í¸ßµÄ±ÈÀı
+		// aspectX aspectY æ˜¯å®½é«˜çš„æ¯”ä¾‹
 		intent.putExtra("aspectX", 1);
 		intent.putExtra("aspectY", 1);
-		// outputX outputY ÊÇ²Ã¼ôÍ¼Æ¬¿í¸ß
+		// outputX outputY æ˜¯è£å‰ªå›¾ç‰‡å®½é«˜
 		intent.putExtra("outputX", 150);
 		intent.putExtra("outputY", 150);
 		intent.putExtra("return-data", true);

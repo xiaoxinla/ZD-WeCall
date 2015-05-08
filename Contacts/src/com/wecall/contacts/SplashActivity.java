@@ -14,6 +14,11 @@ import com.sina.push.PushManager;
 import com.wecall.contacts.constants.Constants;
 import com.wecall.contacts.util.SPUtil;
 
+/**
+ * æ¬¢è¿é¡µ
+ * @author xiaoxin
+ * 2015-4-30
+ */
 public class SplashActivity extends Activity {
 
 	private static final int sleepTime = 1000;
@@ -44,7 +49,7 @@ public class SplashActivity extends Activity {
 	}
 
 	private void initSP() {
-		String name = (String) SPUtil.get(this, "name", "ÄäÃû");
+		String name = (String) SPUtil.get(this, "name", "åŒ¿å");
 		String phone = (String) SPUtil.get(this, "phone", "00000");
 		SPUtil.put(this, "name", name);
 		SPUtil.put(this, "phone", phone);
@@ -62,7 +67,7 @@ public class SplashActivity extends Activity {
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
-				// ½øÈëÖ÷Ò³Ãæ
+				// è¿›å…¥ä¸»é¡µé¢
 				startActivity(new Intent(SplashActivity.this,
 						MainActivity.class));
 				finish();
@@ -79,39 +84,11 @@ public class SplashActivity extends Activity {
 	}
 
 	/**
-	 * ¿ªÆôSinaPush·şÎñ
+	 * å¼€å¯SinaPushæœåŠ¡
 	 */
 	private void startSinaPushService() {
 
 		manager.openChannel("22633", "100", "100");
-//		getDid();
 	}
 
-//	@SuppressLint("HandlerLeak") private void getDid() {
-//		int did = (Integer) SPUtil.get(this, "did", -1);
-//		Log.v(TAG, "did:" + did);
-//		if (did == -1) {
-//			String url = Constants.SERVER_URL + "/getdid.php";
-//			Handler handler = new Handler() {
-//
-//				@Override
-//				public void handleMessage(Message msg) {
-//					switch (msg.what) {
-//					case HttpConnectionUtils.DID_SUCCEED:
-//						String response = (String) msg.obj;
-//						Log.v(TAG, response);
-//						int did = Integer.parseInt(response);
-//						SPUtil.put(getApplicationContext(), "did", did);
-//						break;
-//
-//					default:
-//						break;
-//					}
-//					super.handleMessage(msg);
-//				}
-//
-//			};
-//			new HttpConnectionUtils(handler).get(url);
-//		}
-//	}
 }

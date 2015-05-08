@@ -21,7 +21,7 @@ public class RSAUtil {
 	private static final String ALGORITHM = "RSA";  
 	   
     /** 
-     * µÃµ½¹«Ô¿ 
+     * å¾—åˆ°å…¬é’¥ 
      * @param algorithm 
      * @param bysKey 
      * @return 
@@ -36,7 +36,7 @@ public class RSAUtil {
     }  
    
     /** 
-     * Ê¹ÓÃ¹«Ô¿¼ÓÃÜ 
+     * ä½¿ç”¨å…¬é’¥åŠ å¯† 
      * @param content 
      * @param key 
      * @return 
@@ -61,10 +61,10 @@ public class RSAUtil {
     }  
    
     /** 
-    * Ê¹ÓÃ¹«Ô¿½âÃÜ 
-    * @param content ÃÜÎÄ 
-    * @param key ÉÌ»§Ë½Ô¿ 
-    * @return ½âÃÜºóµÄ×Ö·û´® 
+    * ä½¿ç”¨å…¬é’¥è§£å¯† 
+    * @param content å¯†æ–‡ 
+    * @param key å•†æˆ·ç§é’¥ 
+    * @return è§£å¯†åçš„å­—ç¬¦ä¸² 
     */  
     public static String decryptByPublic(String content) {  
         try {  

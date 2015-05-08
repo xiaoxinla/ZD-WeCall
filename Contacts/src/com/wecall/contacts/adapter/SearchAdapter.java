@@ -22,6 +22,11 @@ import com.wecall.contacts.entity.ContactItem;
 import com.wecall.contacts.util.ImageUtil;
 import com.wecall.contacts.util.StringUtil;
 
+/**
+ * 搜索ListView适配器
+ * @author xiaoxin
+ * 2015-4-28
+ */
 public class SearchAdapter extends BaseAdapter {
 
 	// private static final String TAG = "SearchAdapter";

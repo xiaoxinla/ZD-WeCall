@@ -16,6 +16,11 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.protocol.HTTP;
 
+/**
+ * 网络连接工具类
+ * @author xiaoxin
+ * 2015-5-3
+ */
 public class NetUtil {
 
 	public static final int GET = 0;

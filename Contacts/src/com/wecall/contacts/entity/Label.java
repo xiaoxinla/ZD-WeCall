@@ -3,7 +3,7 @@ package com.wecall.contacts.entity;
 import com.wecall.contacts.util.PinYin;
 
 /**
- *	±êÇ©ÊµÌåÀà
+ *	æ ‡ç­¾å®ä½“ç±»
  * @author xiaoxin
  * 2015-4-17
  */

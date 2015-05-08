@@ -23,6 +23,11 @@ import android.widget.Toast;
 import com.wecall.contacts.database.DatabaseManager;
 import com.wecall.contacts.view.FlowLayout;
 
+/**
+ * è”ç³»äººæ ‡ç­¾ç¼–è¾‘
+ * @author xiaoxin
+ * 2015-5-3
+ */
 public class ContactLabelEditor extends Activity {
 
 	private static final String TAG = "ContactLabelEditor";
@@ -74,14 +79,14 @@ public class ContactLabelEditor extends Activity {
 		setAddedLabel();
 		setOtherLabel();
 
-		/* Ìí¼ÓÁªÏµÈË±êÇ© ¼àÌıÊÂ¼ş */
+		/* æ·»åŠ è”ç³»äººæ ‡ç­¾ ç›‘å¬äº‹ä»¶ */
 		addBtn.setOnClickListener(new View.OnClickListener() {
 
 			@Override
 			public void onClick(View arg0) {
 				String str = input.getEditableText().toString();
 				if (str.equals("")) {
-					Toast.makeText(ContactLabelEditor.this, "ÇëÊäÈë±êÇ©Ãû",
+					Toast.makeText(ContactLabelEditor.this, "è¯·è¾“å…¥æ ‡ç­¾å",
 							Toast.LENGTH_SHORT).show();
 				} else {
 					addedList.add(str);
@@ -99,7 +104,7 @@ public class ContactLabelEditor extends Activity {
 		return super.onCreateOptionsMenu(menu);
 	}
 
-	/* ÏÔÊ¾ÒÑÌí¼ÓµÄ±êÇ© */
+	/* æ˜¾ç¤ºå·²æ·»åŠ çš„æ ‡ç­¾ */
 	protected void setAddedLabel() {
 		for (final String str : addedList) {
 			final TextView tv = new TextView(this);
@@ -127,7 +132,7 @@ public class ContactLabelEditor extends Activity {
 		}
 	}
 
-	/* ÖØ»æÃ»ÓĞÌí¼ÓµÄ±êÇ© */
+	/* é‡ç»˜æ²¡æœ‰æ·»åŠ çš„æ ‡ç­¾ */
 	protected void setOtherLabel() {
 		for (final String str : otherList) {
 			final TextView tv = new TextView(this);
@@ -179,8 +184,8 @@ public class ContactLabelEditor extends Activity {
 	}
 
 	private void showReturnDialog() {
-		new AlertDialog.Builder(this).setTitle("ÍË³ö´Ë´Î±à¼­£¿")
-				.setPositiveButton("ÊÇ", new DialogInterface.OnClickListener() {
+		new AlertDialog.Builder(this).setTitle("é€€å‡ºæ­¤æ¬¡ç¼–è¾‘ï¼Ÿ")
+				.setPositiveButton("æ˜¯", new DialogInterface.OnClickListener() {
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
@@ -188,7 +193,7 @@ public class ContactLabelEditor extends Activity {
 						finish();
 					}
 				})
-				.setNegativeButton("·ñ", new DialogInterface.OnClickListener() {
+				.setNegativeButton("å¦", new DialogInterface.OnClickListener() {
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {

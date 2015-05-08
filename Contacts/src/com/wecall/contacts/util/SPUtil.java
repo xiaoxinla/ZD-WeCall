@@ -8,25 +8,25 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 /**
- * SharedPreference ·â×°¹¤¾ßÀà
- * ÀïÃæËùÓĞµÄcommit²Ù×÷Ê¹ÓÃÁËSharedPreferencesCompat.apply½øĞĞÁËÌæ´ú
- * Ä¿µÄÊÇ¾¡¿ÉÄÜµÄÊ¹ÓÃapply´úÌæcommit
- * ÒòÎªcommit·½·¨ÊÇÍ¬²½µÄ£¬²¢ÇÒÎÒÃÇºÜ¶àÊ±ºòµÄcommit²Ù×÷¶¼ÊÇUIÏß³ÌÖĞ£¬±Ï¾¹ÊÇIO²Ù×÷£¬¾¡¿ÉÄÜÒì²½£»
- * ËùÒÔÎÒÃÇÊ¹ÓÃapply½øĞĞÌæ´ú£¬applyÒì²½µÄ½øĞĞĞ´Èë£»
+ * SharedPreference å°è£…å·¥å…·ç±»
+ * é‡Œé¢æ‰€æœ‰çš„commitæ“ä½œä½¿ç”¨äº†SharedPreferencesCompat.applyè¿›è¡Œäº†æ›¿ä»£
+ * ç›®çš„æ˜¯å°½å¯èƒ½çš„ä½¿ç”¨applyä»£æ›¿commit
+ * å› ä¸ºcommitæ–¹æ³•æ˜¯åŒæ­¥çš„ï¼Œå¹¶ä¸”æˆ‘ä»¬å¾ˆå¤šæ—¶å€™çš„commitæ“ä½œéƒ½æ˜¯UIçº¿ç¨‹ä¸­ï¼Œæ¯•ç«Ÿæ˜¯IOæ“ä½œï¼Œå°½å¯èƒ½å¼‚æ­¥ï¼›
+ * æ‰€ä»¥æˆ‘ä»¬ä½¿ç”¨applyè¿›è¡Œæ›¿ä»£ï¼Œapplyå¼‚æ­¥çš„è¿›è¡Œå†™å…¥ï¼›
  * 
  * @author xiaoxin 2015-4-5
  */
 public class SPUtil {
 
-	// ±£´æÔÚÊÖ»úÖĞµÄÎÄ¼şÃû
+	// ä¿å­˜åœ¨æ‰‹æœºä¸­çš„æ–‡ä»¶å
 	public static final String FILE_NAME = "configuration";
 
 	/** 
-     * ±£´æÊı¾İµÄ·½·¨£¬ÎÒÃÇĞèÒªÄÃµ½±£´æÊı¾İµÄ¾ßÌåÀàĞÍ£¬È»ºó¸ù¾İÀàĞÍµ÷ÓÃ²»Í¬µÄ±£´æ·½·¨ 
-     *  ±£´æÊ±¼üÃûÏàÍ¬»á¸²¸Ç
-     * @param context ËùÔÚÉÏÏÂÎÄ
-     * @param key ¼üÃû
-     * @param object ¶ÔÓ¦µÄÖµ
+     * ä¿å­˜æ•°æ®çš„æ–¹æ³•ï¼Œæˆ‘ä»¬éœ€è¦æ‹¿åˆ°ä¿å­˜æ•°æ®çš„å…·ä½“ç±»å‹ï¼Œç„¶åæ ¹æ®ç±»å‹è°ƒç”¨ä¸åŒçš„ä¿å­˜æ–¹æ³• 
+     *  ä¿å­˜æ—¶é”®åç›¸åŒä¼šè¦†ç›–
+     * @param context æ‰€åœ¨ä¸Šä¸‹æ–‡
+     * @param key é”®å
+     * @param object å¯¹åº”çš„å€¼
      */ 
 	public static void put(Context context, String key, Object object) {
 		SharedPreferences sp = context.getSharedPreferences(FILE_NAME,
@@ -50,12 +50,12 @@ public class SPUtil {
 	}
 	
 	/** 
-     * »ñÈ¡Êı¾İµÄ·½·¨£¬ÎÒÃÇ¸ù¾İÄ¬ÈÏÖµµÃµ½±£´æµÄÊı¾İµÄ¾ßÌåÀàĞÍ£¬È»ºóµ÷ÓÃÏà¶ÔÓÚµÄ·½·¨»ñÈ¡Öµ 
+     * è·å–æ•°æ®çš„æ–¹æ³•ï¼Œæˆ‘ä»¬æ ¹æ®é»˜è®¤å€¼å¾—åˆ°ä¿å­˜çš„æ•°æ®çš„å…·ä½“ç±»å‹ï¼Œç„¶åè°ƒç”¨ç›¸å¯¹äºçš„æ–¹æ³•è·å–å€¼ 
      *  
-     * @param context ËùÔÚÉÏÏÂÎÄ
-     * @param key ¼üÃû
-     * @param defaultObject Ä¬ÈÏÖµ£¨ÎŞ·¨ÕÒµ½¸Ã¼ü¶ÔÓ¦µÄÖµµÄÊ±ºòµÄÖµ£©
-     * @return µÃµ½µÄÊı¾İ
+     * @param context æ‰€åœ¨ä¸Šä¸‹æ–‡
+     * @param key é”®å
+     * @param defaultObject é»˜è®¤å€¼ï¼ˆæ— æ³•æ‰¾åˆ°è¯¥é”®å¯¹åº”çš„å€¼çš„æ—¶å€™çš„å€¼ï¼‰
+     * @return å¾—åˆ°çš„æ•°æ®
      */ 
     public static Object get(Context context, String key, Object defaultObject)  
     {  
@@ -83,9 +83,9 @@ public class SPUtil {
     }  
    
     /** 
-     * ÒÆ³ıÄ³¸ökeyÖµÒÑ¾­¶ÔÓ¦µÄÖµ 
-     * @param context ËùÔÚÉÏÏÂÎÄ
-     * @param key ¼üÃû
+     * ç§»é™¤æŸä¸ªkeyå€¼å·²ç»å¯¹åº”çš„å€¼ 
+     * @param context æ‰€åœ¨ä¸Šä¸‹æ–‡
+     * @param key é”®å
      */ 
     public static void remove(Context context, String key)  
     {  
@@ -97,8 +97,8 @@ public class SPUtil {
     }  
    
     /** 
-     * Çå³ıËùÓĞÊı¾İ 
-     * @param context ËùÔÚÉÏÏÂÎÄ
+     * æ¸…é™¤æ‰€æœ‰æ•°æ® 
+     * @param context æ‰€åœ¨ä¸Šä¸‹æ–‡
      */ 
     public static void clear(Context context)  
     {  
@@ -110,10 +110,10 @@ public class SPUtil {
     }  
    
     /** 
-     * ²éÑ¯Ä³¸ökeyÊÇ·ñÒÑ¾­´æÔÚ 
-     * @param context ËùÔÚÉÏÏÂÎÄ
-     * @param key ¼üÃû
-     * @return ´æÔÚ·µ»Øtrue£¬²»´æÔÚ·µ»Øfalse
+     * æŸ¥è¯¢æŸä¸ªkeyæ˜¯å¦å·²ç»å­˜åœ¨ 
+     * @param context æ‰€åœ¨ä¸Šä¸‹æ–‡
+     * @param key é”®å
+     * @return å­˜åœ¨è¿”å›trueï¼Œä¸å­˜åœ¨è¿”å›false
      */ 
     public static boolean contains(Context context, String key)  
     {  
@@ -123,10 +123,10 @@ public class SPUtil {
     }  
    
     /** 
-     * ·µ»ØËùÓĞµÄ¼üÖµ¶Ô 
+     * è¿”å›æ‰€æœ‰çš„é”®å€¼å¯¹ 
      *  
-     * @param context ËùÔÚÉÏÏÂÎÄ
-     * @return ´æ´¢ËùÓĞ¼üÖµ¶ÔµÄMap
+     * @param context æ‰€åœ¨ä¸Šä¸‹æ–‡
+     * @return å­˜å‚¨æ‰€æœ‰é”®å€¼å¯¹çš„Map
      */ 
     public static Map<String, ?> getAll(Context context)  
     {  
@@ -136,16 +136,16 @@ public class SPUtil {
     }  
 
 	/**
-	 * ´´½¨Ò»¸ö½â¾öSharedPreferencesCompat.apply·½·¨µÄÒ»¸ö¼æÈİÀà
+	 * åˆ›å»ºä¸€ä¸ªè§£å†³SharedPreferencesCompat.applyæ–¹æ³•çš„ä¸€ä¸ªå…¼å®¹ç±»
 	 * @author xiaoxin
 	 * 2015-4-5
 	 */
 	private static class SharedPreferencesCompat {
-		//·´Éä»úÖÆ
+		//åå°„æœºåˆ¶
 		private static final Method sApplyMethod = findApplyMethod();
 
 		/**
-		 * ·´Éä²éÕÒapplyµÄ·½·¨
+		 * åå°„æŸ¥æ‰¾applyçš„æ–¹æ³•
 		 * 
 		 * @return
 		 */
@@ -162,7 +162,7 @@ public class SPUtil {
 		}
 
 		/**
-		 * Èç¹ûÕÒµ½ÔòÊ¹ÓÃapplyÖ´ĞĞ£¬·ñÔòÊ¹ÓÃcommit
+		 * å¦‚æœæ‰¾åˆ°åˆ™ä½¿ç”¨applyæ‰§è¡Œï¼Œå¦åˆ™ä½¿ç”¨commit
 		 * 
 		 * @param editor
 		 */

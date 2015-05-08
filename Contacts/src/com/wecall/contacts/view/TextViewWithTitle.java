@@ -12,7 +12,7 @@ import android.widget.TextView;
 import com.wecall.contacts.R;
 
 /**
- * ´ø±êÌâµÄÎÄ±¾¿ò
+ * å¸¦æ ‡é¢˜çš„æ–‡æœ¬æ¡†
  * @author xiaoxin
  * 2015-4-12
  */

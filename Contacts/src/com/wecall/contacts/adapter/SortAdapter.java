@@ -19,7 +19,7 @@ import com.wecall.contacts.entity.SimpleContact;
 import com.wecall.contacts.util.ImageUtil;
 
 /**
- * ½«ÁªÏµÈË½øĞĞÅÅĞòµÄÊÊÅäÆ÷
+ * å°†è”ç³»äººè¿›è¡Œæ’åºçš„é€‚é…å™¨
  * 
  * @author xiaoxin
  * 
@@ -27,11 +27,11 @@ import com.wecall.contacts.util.ImageUtil;
 public class SortAdapter extends BaseAdapter implements SectionIndexer {
 
 	// private static final String TAG = "SortAdapter";
-	// ÒªÏÔÊ¾µÄÊı¾İĞÅÏ¢
+	// è¦æ˜¾ç¤ºçš„æ•°æ®ä¿¡æ¯
 	private List<SimpleContact> mContacts = null;
 	private List<Boolean> mChecks = null;
 	private boolean isVisiable = false;
-	// ¿Ø¼şËùÔÚÉÏÏÂÎÄ
+	// æ§ä»¶æ‰€åœ¨ä¸Šä¸‹æ–‡
 	private Context mContext;
 
 	public SortAdapter(List<SimpleContact> mContacts, Context mContext,
@@ -143,10 +143,10 @@ public class SortAdapter extends BaseAdapter implements SectionIndexer {
 	}
 
 	/**
-	 * ¸üĞÂListView
+	 * æ›´æ–°ListView
 	 * 
 	 * @param list
-	 *            ´«ÈëµÄÁªÏµÈËÁĞ±í
+	 *            ä¼ å…¥çš„è”ç³»äººåˆ—è¡¨
 	 */
 	public void updateListView(List<SimpleContact> list) {
 		this.mContacts = list;

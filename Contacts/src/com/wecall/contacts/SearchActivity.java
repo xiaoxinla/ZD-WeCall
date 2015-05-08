@@ -29,7 +29,7 @@ import com.wecall.contacts.database.DatabaseManager;
 import com.wecall.contacts.entity.ContactItem;
 
 /**
- * ËÑË÷Ò³
+ * æœç´¢é¡µ
  * 
  * @author xiaoxin 2015-4-16
  */
@@ -45,7 +45,7 @@ public class SearchActivity extends Activity {
 	private SearchAdapter adapter;
 	private DatabaseManager mManager;
 
-	// ÁªÏµÈËĞÅÏ¢
+	// è”ç³»äººä¿¡æ¯
 	private List<ContactItem> contactList = new ArrayList<ContactItem>();
 
 	@Override
@@ -72,7 +72,7 @@ public class SearchActivity extends Activity {
 	}
 
 	/**
-	 * ³õÊ¼»¯Êı¾İºÍ¿Ø¼ş
+	 * åˆå§‹åŒ–æ•°æ®å’Œæ§ä»¶
 	 */
 	@SuppressWarnings("unchecked")
 	private void init() {
@@ -109,7 +109,7 @@ public class SearchActivity extends Activity {
 					}
 				});
 
-		mSearchView.setQueryHint("¿ÉËÑË÷" + contactList.size() + "Î»ÁªÏµÈË");
+		mSearchView.setQueryHint("å¯æœç´¢" + contactList.size() + "ä½è”ç³»äºº");
 		mSearchView.setOnQueryTextListener(new OnQueryTextListener() {
 
 			@Override
@@ -138,7 +138,7 @@ public class SearchActivity extends Activity {
 	}
 
 	/**
-	 * ¸ù¾İÊäÈë¿òÖĞµÄÖµÀ´¹ıÂËÊı¾İ²¢¸üĞÂListView ¿É¸ù¾İÆ´Òô£¬ºº×Ö£¬ËõĞ´À´¹ıÂË
+	 * æ ¹æ®è¾“å…¥æ¡†ä¸­çš„å€¼æ¥è¿‡æ»¤æ•°æ®å¹¶æ›´æ–°ListView å¯æ ¹æ®æ‹¼éŸ³ï¼Œæ±‰å­—ï¼Œç¼©å†™æ¥è¿‡æ»¤
 	 * 
 	 * @param filterStr
 	 */
@@ -160,14 +160,14 @@ public class SearchActivity extends Activity {
 				}
 			}
 		}
-		mResultText.setText("ËÑË÷µ½" + contactList.size() + "Î»ÁªÏµÈË");
+		mResultText.setText("æœç´¢åˆ°" + contactList.size() + "ä½è”ç³»äºº");
 		adapter.updateListView(contactList, mapList, filterStr.length());
 	}
 
 	protected void showOperationDialog(final int position) {
 		new AlertDialog.Builder(this)
 				.setTitle(((ContactItem) adapter.getItem(position)).getName())
-				.setPositiveButton("±à¼­", new DialogInterface.OnClickListener() {
+				.setPositiveButton("ç¼–è¾‘", new DialogInterface.OnClickListener() {
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
@@ -184,7 +184,7 @@ public class SearchActivity extends Activity {
 					}
 
 				})
-				.setNegativeButton("É¾³ı", new DialogInterface.OnClickListener() {
+				.setNegativeButton("åˆ é™¤", new DialogInterface.OnClickListener() {
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
@@ -197,22 +197,22 @@ public class SearchActivity extends Activity {
 
 	private void showDeleteDialog(final int position) {
 		new AlertDialog.Builder(this)
-				.setTitle("ÊÇ·ñÈ·ÈÏÉ¾³ı£¿")
-				.setPositiveButton("ÊÇ", new DialogInterface.OnClickListener() {
+				.setTitle("æ˜¯å¦ç¡®è®¤åˆ é™¤ï¼Ÿ")
+				.setPositiveButton("æ˜¯", new DialogInterface.OnClickListener() {
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						dialog.dismiss();
-						// ´ÓÊı¾İ¿âÖĞÉ¾³ıÀ´¼ÇÂ¼
+						// ä»æ•°æ®åº“ä¸­åˆ é™¤æ¥è®°å½•
 						mManager.deleteContactById(((ContactItem) adapter
 								.getItem(position)).getId());
-						// É¾³ıÖ®ºó»ñÈ¡×îĞÂµÄÁªÏµÈËĞÅÏ¢
+						// åˆ é™¤ä¹‹åè·å–æœ€æ–°çš„è”ç³»äººä¿¡æ¯
 						updateContacts();
-						Toast.makeText(SearchActivity.this, "ÁªÏµÈËÉ¾³ı³É¹¦",
+						Toast.makeText(SearchActivity.this, "è”ç³»äººåˆ é™¤æˆåŠŸ",
 								Toast.LENGTH_SHORT).show();
 					}
 				})
-				.setNegativeButton("·ñ", new DialogInterface.OnClickListener() {
+				.setNegativeButton("å¦", new DialogInterface.OnClickListener() {
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {

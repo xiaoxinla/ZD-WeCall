@@ -21,7 +21,7 @@ import com.wecall.contacts.database.DatabaseManager;
 import com.wecall.contacts.entity.SimpleContact;
 
 /**
- * ±êÇ©ĞÅÏ¢
+ * æ ‡ç­¾ä¿¡æ¯
  * @author xiaoxin
  * 2015-5-1
  */
@@ -117,11 +117,11 @@ public class LabelInfo extends Activity {
 	}
 	
 	/**
-	 * ÏÔÊ¾É¾³ı¶Ô»°¿ò
+	 * æ˜¾ç¤ºåˆ é™¤å¯¹è¯æ¡†
 	 */
 	private void showDeleteDialog() {
-		new AlertDialog.Builder(this).setTitle("ÊÇ·ñÈ·ÈÏÉ¾³ı£¿")
-				.setPositiveButton("ÊÇ", new DialogInterface.OnClickListener() {
+		new AlertDialog.Builder(this).setTitle("æ˜¯å¦ç¡®è®¤åˆ é™¤ï¼Ÿ")
+				.setPositiveButton("æ˜¯", new DialogInterface.OnClickListener() {
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
@@ -130,7 +130,7 @@ public class LabelInfo extends Activity {
 						finish();
 					}
 				})
-				.setNegativeButton("·ñ", new DialogInterface.OnClickListener() {
+				.setNegativeButton("å¦", new DialogInterface.OnClickListener() {
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {

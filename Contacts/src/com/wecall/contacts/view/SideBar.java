@@ -14,7 +14,7 @@ import android.widget.TextView;
 import com.wecall.contacts.R;
 
 /**
- * ×Ô¶¨Òå²à±ßÀ¸ÊÓÍ¼
+ * è‡ªå®šä¹‰ä¾§è¾¹æ è§†å›¾
  * 
  * @author xiaoxin
  * 
@@ -22,21 +22,21 @@ import com.wecall.contacts.R;
 public class SideBar extends View {
 
 	//private static final String TAG = "SideBar";
-	// ×ÖÄ¸±í
+	// å­—æ¯è¡¨
 	private static final String[] sAlphabet = { "A", "B", "C", "D", "E", "F",
 			"G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S",
 			"T", "U", "V", "W", "X", "Y", "Z", "#" };
-	// Ñ¡ÖĞµÄÎ»ÖÃ
+	// é€‰ä¸­çš„ä½ç½®
 	private int mChoosen = -1;
-	// »æÍ¼
+	// ç»˜å›¾
 	private Paint mPaint = new Paint();
-	// ÏÔÊ¾×ÖÄ¸TextView
+	// æ˜¾ç¤ºå­—æ¯TextView
 	private TextView mLetterShow;
 
 	private onTouchLetterChangeListener mTouchLetterChangeListener;
 
 	/**
-	 * ´¥Ãş²à±ß×ÖÄ¸µÄ½Ó¿Ú
+	 * è§¦æ‘¸ä¾§è¾¹å­—æ¯çš„æ¥å£
 	 * 
 	 * @author xiaoxin
 	 */
@@ -68,37 +68,37 @@ public class SideBar extends View {
 	@Override
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
-		// »­²¼¸ß¶È
+		// ç”»å¸ƒé«˜åº¦
 		int height = getHeight();
-		// »­²¼¿í¶È
+		// ç”»å¸ƒå®½åº¦
 		int width = getWidth();
-		// µ¥¸ö×ÖÄ¸¸ß¶È
+		// å•ä¸ªå­—æ¯é«˜åº¦
 		int singleLetterHeight = height / sAlphabet.length;
 
-		// »­³öÃ¿¸ö×ÖÄ¸
+		// ç”»å‡ºæ¯ä¸ªå­—æ¯
 		for (int i = 0; i < sAlphabet.length; i++) {
-			// ÉèÖÃ»­±ÊÑÕÉ«
+			// è®¾ç½®ç”»ç¬”é¢œè‰²
 			mPaint.setColor(Color.rgb(33, 65, 98));
-			// ÉèÖÃ×ÖÑù
+			// è®¾ç½®å­—æ ·
 			mPaint.setTypeface(Typeface.DEFAULT_BOLD);
-			// ÉèÖÃ¿¹¾â³İ
+			// è®¾ç½®æŠ—é”¯é½¿
 			mPaint.setAntiAlias(true);
 			mPaint.setTextSize(20);
 
-			// ×ÖÄ¸±»Ñ¡ÖĞ¸ßÁÁ
+			// å­—æ¯è¢«é€‰ä¸­é«˜äº®
 			if (i == mChoosen) {
 				mPaint.setColor(Color.parseColor("#3399ff"));
-				// ÉèÖÃ´ÖÌå
+				// è®¾ç½®ç²—ä½“
 				mPaint.setFakeBoldText(true);
 			}
 
 			float xPos = width / 2 - mPaint.measureText(sAlphabet[i]) / 2;
 			float yPos = singleLetterHeight * (i + 1);
 
-			// »­³öÎÄ±¾
+			// ç”»å‡ºæ–‡æœ¬
 			canvas.drawText(sAlphabet[i], xPos, yPos, mPaint);
 
-			// ÖØÖÃ»­±Ê
+			// é‡ç½®ç”»ç¬”
 			mPaint.reset();
 		}
 	}
@@ -107,12 +107,12 @@ public class SideBar extends View {
 	public boolean dispatchTouchEvent(MotionEvent event) {
 		
 		final int action = event.getAction();
-		// µã»÷µÄÎ»ÖÃ
+		// ç‚¹å‡»çš„ä½ç½®
 		final float yPos = event.getY();
-		// ÉÏ¸öÑ¡ÖĞµÄÎ»ÖÃ
+		// ä¸Šä¸ªé€‰ä¸­çš„ä½ç½®
 		final int lastChoosen = mChoosen;
 		final onTouchLetterChangeListener listener = mTouchLetterChangeListener;
-		// Õâ´Îµã»÷µÄ×ÖÄ¸Ë÷Òı
+		// è¿™æ¬¡ç‚¹å‡»çš„å­—æ¯ç´¢å¼•
 		final int index = (int) (yPos / getHeight() * sAlphabet.length);
 
 		switch (action) {
@@ -142,7 +142,7 @@ public class SideBar extends View {
 	}
 
 	/**
-	 * ³õÊ¼»¯sidebar
+	 * åˆå§‹åŒ–sidebar
 	 */
 	@SuppressWarnings("deprecation")
 	public void init(){

@@ -10,7 +10,7 @@ import android.annotation.SuppressLint;
 import com.wecall.contacts.util.PinYin;
 
 /**
- * ÁªÏµÈËµÄÊµÌåÀà
+ * è”ç³»äººçš„å®ä½“ç±»
  * 
  * @author xiaoxin
  * 
@@ -18,27 +18,27 @@ import com.wecall.contacts.util.PinYin;
 @SuppressWarnings("rawtypes")
 public class ContactItem implements Comparable {
 
-	// ÁªÏµÈËid
+	// è”ç³»äººid
 	private int id;
-	// ÁªÏµÈËĞÕÃû
+	// è”ç³»äººå§“å
 	private String name;
-	// Ê××ÖÄ¸
+	// é¦–å­—æ¯
 	private String sortLetter;
-	// µç»°ºÅÂë
+	// ç”µè¯å·ç 
 	private Set<String> phoneNumber;
-	// ±¸×¢
+	// å¤‡æ³¨
 	private String note;
-	// µØÖ·
+	// åœ°å€
 	private String address;
-	// ±êÇ©
-	// Ã»±ØÒª±£´ælabelµÄÆ´Òô
+	// æ ‡ç­¾
+	// æ²¡å¿…è¦ä¿å­˜labelçš„æ‹¼éŸ³
 	// private List<Label> labels;
 	private Set<String> labels;
 
-	// FIXME: ÆäÊµÖ»ĞèÒªÔÚÊı¾İ¿âÖĞ´æÔÚ,Ã»±ØÒª´æÔÚÀàÀïÃæ
-	// ĞÕÃûÈ«Æ´
+	// FIXME: å…¶å®åªéœ€è¦åœ¨æ•°æ®åº“ä¸­å­˜åœ¨,æ²¡å¿…è¦å­˜åœ¨ç±»é‡Œé¢
+	// å§“åå…¨æ‹¼
 	private String fullPinyin;
-	// ĞÕÃûÊ××ÖÄ¸×éºÏ
+	// å§“åé¦–å­—æ¯ç»„åˆ
 	private String simplePinyin;
 
 	public ContactItem() {
@@ -119,7 +119,7 @@ public class ContactItem implements Comparable {
 	}
 
 	// /**
-	// * Ö»·µ»Ø±êÇ©µÄÃû×Ö£¬²»·µ»Ø±êÇ©Àà
+	// * åªè¿”å›æ ‡ç­¾çš„åå­—ï¼Œä¸è¿”å›æ ‡ç­¾ç±»
 	// * @return ArrayList<String>
 	// */
 	// public ArrayList<String> getLabelNames() {
@@ -137,7 +137,7 @@ public class ContactItem implements Comparable {
 	}
 
 	// /**
-	// * Ö»ÓÃ±êÇ©Ãû×Ö×÷²ÎÊı³õÊ¼»¯£¬²»ÓÃ±êÇ©Àà
+	// * åªç”¨æ ‡ç­¾åå­—ä½œå‚æ•°åˆå§‹åŒ–ï¼Œä¸ç”¨æ ‡ç­¾ç±»
 	// * @param labelsName
 	// */
 	// public void setLabelNames(ArrayList<String> labelsName)
@@ -186,7 +186,7 @@ public class ContactItem implements Comparable {
 			return;
 		}
 		String sortString = inputString.substring(0, 1).toUpperCase();
-		// ÕıÔò±í´ïÊ½£¬ÅĞ¶ÏÊ××ÖÄ¸ÊÇ·ñÊÇÓ¢ÎÄ×ÖÄ¸
+		// æ­£åˆ™è¡¨è¾¾å¼ï¼Œåˆ¤æ–­é¦–å­—æ¯æ˜¯å¦æ˜¯è‹±æ–‡å­—æ¯
 		if (sortString.matches("[A-Z]")) {
 			this.sortLetter = sortString;
 		} else {

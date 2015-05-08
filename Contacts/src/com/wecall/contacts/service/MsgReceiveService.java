@@ -24,7 +24,7 @@ import com.wecall.contacts.util.SPUtil;
 public class MsgReceiveService extends PushMsgRecvService {
 
 	private static final String TAG = "MsgReceiveService";
-	// logĞÅÏ¢£¬½ö¹©²âÊÔÊ¹ÓÃ
+	// logä¿¡æ¯ï¼Œä»…ä¾›æµ‹è¯•ä½¿ç”¨
 	private String log = new String();
 
 	@Override
@@ -32,13 +32,13 @@ public class MsgReceiveService extends PushMsgRecvService {
 		// TODO Auto-generated method stub
 		if (event.getType() == PushManager.ACTION_OPEN_CHANNEL) {
 
-			// µ÷ÓÃ´ò¿ª£¬ÇĞ»»½Ó¿ÚµÄÖ´ĞĞ½á¹û
+			// è°ƒç”¨æ‰“å¼€ï¼Œåˆ‡æ¢æ¥å£çš„æ‰§è¡Œç»“æœ
 			ActionResult result = (ActionResult) event.getPayload();
 			log = result + "\n";
 			Log.v(TAG, log);
 
 			if (result.getResultCode() == 1) {
-				// ´ò¿ªÍ¨µÀ³É¹¦£¬¿ÉÒÔÕı³£½ÓÊÕPushºÍµ÷ÓÃ½Ó¿Ú¹¦ÄÜ
+				// æ‰“å¼€é€šé“æˆåŠŸï¼Œå¯ä»¥æ­£å¸¸æ¥æ”¶Pushå’Œè°ƒç”¨æ¥å£åŠŸèƒ½
 				Log.v(TAG, (String) SPUtil.get(getApplicationContext(), "aid",
 						"not exist"));
 			}

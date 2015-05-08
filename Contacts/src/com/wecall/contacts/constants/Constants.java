@@ -3,18 +3,18 @@ package com.wecall.contacts.constants;
 import android.os.Environment;
 
 /**
- * ¶¨Òå³ÌĞòÔËĞĞ¹ı³ÌÖĞËùĞèÒªÓÃµ½µÄÒ»Ğ©³£Á¿
+ * å®šä¹‰ç¨‹åºè¿è¡Œè¿‡ç¨‹ä¸­æ‰€éœ€è¦ç”¨åˆ°çš„ä¸€äº›å¸¸é‡
  * 
  * @author xiaoxin 2015-4-2
  */
 public class Constants {
 
-	// Êı¾İ¿âÃû
+	// æ•°æ®åº“å
 	public static final String DATABASE_NAME = "contact.db";
 
-	// Ö÷±íÃû
+	// ä¸»è¡¨å
 	public static final String TABLE_NAME_MAIN = "main";
-	// Ö÷±í ¸÷ÁĞÃû
+	// ä¸»è¡¨ å„åˆ—å
 	public static final String MAIN_COL_CID = "c_id";
 	public static final String MAIN_COL_NAME = "name";
 	public static final String MAIN_COL_NOTE = "note";
@@ -23,9 +23,9 @@ public class Constants {
 	public static final String MAIN_COL_ADDRESS = "address";
 	public static final String MAIN_COL_OTHER = "other";
 
-	// ËÑË÷±íÃû
+	// æœç´¢è¡¨å
 	public static final String TABLE_NAME_SEARCH = "search";
-	// ËÑË÷±í¸÷ÁĞÃû
+	// æœç´¢è¡¨å„åˆ—å
 	public static final String SEARCH_COL_CID = "c_id";
 	public static final String SEARCH_COL_TYPEID = "type_id";
 	public static final String SEARCH_COL_DATA1 = "data1";
@@ -33,19 +33,19 @@ public class Constants {
 	public static final String SEARCH_COL_DATA3 = "data3";
 	public static final String SEARCH_COL_DATA4 = "data4";
 
-	// ±êÇ©±í
+	// æ ‡ç­¾è¡¨
 	public static final String TABLE_NAME_TAG = "tag";
-	// ±êÇ©±íÁĞÃû
+	// æ ‡ç­¾è¡¨åˆ—å
 	public static final String TAG_COL_TAG_ID = "t_id";
 	public static final String TAG_COL_TAG_NAME = "tagName";
 
-	// //tagToContact±í
+	// //tagToContactè¡¨
 	// public static final String TABLE_NAME_T2C = "t2c";
-	// //ÁĞÃû
+	// //åˆ—å
 	// public static final String T2C_COL_TAG_ID = "t_id";
 	// public static final String T2C_COL_CID = "c_id";
 
-	// ¸÷ÀàĞÍtypeId
+	// å„ç±»å‹typeId
 	public static final int TYPE_NAME = 1;
 	public static final int TYPE_NOTE = 2;
 	public static final int TYPE_PHONE = 3;
@@ -53,14 +53,14 @@ public class Constants {
 	public static final int TYPE_TAG = 5;
 	public static final int TYPE_OTHER = 6;
 
-	// Êı¾İ¿â°æ±¾
+	// æ•°æ®åº“ç‰ˆæœ¬
 	public static final int DATABASE_VERSION = 1;
-	// ±£´æÍ¼Æ¬µÄÄ¿Â¼
+	// ä¿å­˜å›¾ç‰‡çš„ç›®å½•
 	public static final String ALBUM_PATH = Environment
 			.getExternalStorageDirectory() + "/wecall/picture/";
-	// AESÃØÔ¿
+	// AESç§˜é’¥
 	public static final String DEFAULT_AESKEY = "wecall";
-	// RSA¹«Ô¿
+	// RSAå…¬é’¥
 	public static final String PUBLIC_KEY = 
 			"MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDHzqnXfyy+OWQhXMmY31BxyfV3"
 			+ "wE7pYadj5RqtECGX9/abioF0eE7VnQVGaPml2rTT/zCksBS7mzMPCMFEOj0zU7P1"

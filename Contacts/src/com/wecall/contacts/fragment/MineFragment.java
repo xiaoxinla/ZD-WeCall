@@ -28,7 +28,7 @@ import com.wecall.contacts.util.ImageUtil;
 import com.wecall.contacts.util.SPUtil;
 
 /**
- * “我”Fragment
+ * 鈥滄垜鈥滷ragment
  * 
  * @author xiaoxin 2015-4-11
  */
@@ -79,7 +79,7 @@ public class MineFragment extends Fragment {
 	}
 
 	private void setUserInfo() {
-		userName = (String) SPUtil.get(getActivity(), "name", "匿名");
+		userName = (String) SPUtil.get(getActivity(), "name", "鍖垮悕");
 		userPhone = (String) SPUtil.get(getActivity(), "phone", "00000");
 		nameTextView.setText(userName);
 		phoneTextView.setText(userPhone);
@@ -100,7 +100,7 @@ public class MineFragment extends Fragment {
 			switch (requestCode) {
 			case SETTING_REQUEST_CODE:
 				setUserInfo();
-				Toast.makeText(getActivity(), "用户信息修改成功", Toast.LENGTH_SHORT)
+				Toast.makeText(getActivity(), "鐢ㄦ埛淇℃伅淇敼鎴愬姛", Toast.LENGTH_SHORT)
 						.show();
 				break;
 

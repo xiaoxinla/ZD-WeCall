@@ -68,10 +68,10 @@ public class MainActivity extends FragmentActivity implements OnClickListener,
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		// ÉèÖÃoverflowÍ¼±êÒ»Ö±ÏÔÊ¾
+		// è®¾ç½®overflowå›¾æ ‡ä¸€ç›´æ˜¾ç¤º
 		setOverflowButtonAlways();
 		mActionBar = getActionBar();
-		// Ê¹×óÉÏ½ÇÍ¼±ê²»¿É¼û
+		// ä½¿å·¦ä¸Šè§’å›¾æ ‡ä¸å¯è§
 		mActionBar.setDisplayShowHomeEnabled(false);
 		initView();
 		initDatas();
@@ -81,7 +81,7 @@ public class MainActivity extends FragmentActivity implements OnClickListener,
 	}
 
 	/**
-	 * ³õÊ¼»¯ËùÓĞÊÂ¼ş
+	 * åˆå§‹åŒ–æ‰€æœ‰äº‹ä»¶
 	 */
 	private void initEvent() {
 
@@ -89,7 +89,7 @@ public class MainActivity extends FragmentActivity implements OnClickListener,
 
 	}
 
-	// ³õÊ¼»¯Êı¾İ
+	// åˆå§‹åŒ–æ•°æ®
 	private void initDatas() {
 		mineFragment = new MineFragment();
 		mainFragment = new MainFragment();
@@ -111,11 +111,11 @@ public class MainActivity extends FragmentActivity implements OnClickListener,
 			}
 		};
 		mViewPager.setAdapter(mAdapter);
-		// ÉèÖÃÄ¬ÈÏµÄÒ³¿¨ÎªµÚ¶şÒ³
+		// è®¾ç½®é»˜è®¤çš„é¡µå¡ä¸ºç¬¬äºŒé¡µ
 		clickTab(mTabIndicators.get(1));
 	}
 
-	// ³õÊ¼»¯¿Ø¼ş
+	// åˆå§‹åŒ–æ§ä»¶
 	private void initView() {
 		mViewPager = (ViewPager) findViewById(R.id.id_viewpager);
 		mViewPager.setOffscreenPageLimit(2);
@@ -135,14 +135,14 @@ public class MainActivity extends FragmentActivity implements OnClickListener,
 
 	}
 
-	// ÉèÖÃ²Ëµ¥
+	// è®¾ç½®èœå•
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
 
-	// ÉèÖÃ²Ëµ¥À¸µÄ°´Å¥µã»÷ÊÂ¼ş
+	// è®¾ç½®èœå•æ çš„æŒ‰é’®ç‚¹å‡»äº‹ä»¶
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		Intent intent;
@@ -177,26 +177,26 @@ public class MainActivity extends FragmentActivity implements OnClickListener,
 	private void showFeedbackDialog() {
 		final EditText editText = new EditText(this);
 		new AlertDialog.Builder(this)
-				.setTitle("Òâ¼û·´À¡")
+				.setTitle("æ„è§åé¦ˆ")
 				.setView(editText)
-				.setPositiveButton("·¢ËÍ", new DialogInterface.OnClickListener() {
+				.setPositiveButton("å‘é€", new DialogInterface.OnClickListener() {
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						String str = editText.getText().toString();
 						if (str.isEmpty()) {
-							Toast.makeText(MainActivity.this, "ÄúµÄÒâ¼û²»ÄÜÎª¿Õ",
+							Toast.makeText(MainActivity.this, "æ‚¨çš„æ„è§ä¸èƒ½ä¸ºç©º",
 									Toast.LENGTH_SHORT).show();
 							return;
 						}
 						Log.v(TAG, editText.getText().toString());
 						sendFeedback(str);
-						Toast.makeText(MainActivity.this, "¸ĞĞ»ÄúµÄÒâ¼û·´À¡",
+						Toast.makeText(MainActivity.this, "æ„Ÿè°¢æ‚¨çš„æ„è§åé¦ˆ",
 								Toast.LENGTH_SHORT).show();
 						dialog.dismiss();
 					}
 				})
-				.setNegativeButton("È¡Ïû", new DialogInterface.OnClickListener() {
+				.setNegativeButton("å–æ¶ˆ", new DialogInterface.OnClickListener() {
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
@@ -206,7 +206,7 @@ public class MainActivity extends FragmentActivity implements OnClickListener,
 	}
 
 	/**
-	 * Ê¹ÓÃ·´ÉäµÄ·½·¨Ç¿ÖÆÏÔÊ¾overflowÍ¼±ê
+	 * ä½¿ç”¨åå°„çš„æ–¹æ³•å¼ºåˆ¶æ˜¾ç¤ºoverflowå›¾æ ‡
 	 */
 	private void setOverflowButtonAlways() {
 		try {
@@ -221,7 +221,7 @@ public class MainActivity extends FragmentActivity implements OnClickListener,
 	}
 
 	/**
-	 * ÉèÖÃ·´ÉäµÄ·½·¨ÉèÖÃmenuÏÔÊ¾icon
+	 * è®¾ç½®åå°„çš„æ–¹æ³•è®¾ç½®menuæ˜¾ç¤ºicon
 	 */
 	@Override
 	public boolean onMenuOpened(int featureId, Menu menu) {
@@ -249,7 +249,7 @@ public class MainActivity extends FragmentActivity implements OnClickListener,
 	}
 
 	/**
-	 * µã»÷Tab°´Å¥
+	 * ç‚¹å‡»TabæŒ‰é’®
 	 * 
 	 * @param v
 	 */
@@ -273,7 +273,7 @@ public class MainActivity extends FragmentActivity implements OnClickListener,
 	}
 
 	/**
-	 * ÖØÖÃÆäËûµÄTabIndicatorµÄÑÕÉ«
+	 * é‡ç½®å…¶ä»–çš„TabIndicatorçš„é¢œè‰²
 	 */
 	private void resetOtherTabs() {
 		for (int i = 0; i < mTabIndicators.size(); i++) {
@@ -316,7 +316,7 @@ public class MainActivity extends FragmentActivity implements OnClickListener,
 		if (resultCode == RESULT_OK) {
 			switch (requestCode) {
 			case EDIT_REQUEST_CODE:
-				Toast.makeText(MainActivity.this, "Ìí¼Ó³É¹¦", Toast.LENGTH_SHORT)
+				Toast.makeText(MainActivity.this, "æ·»åŠ æˆåŠŸ", Toast.LENGTH_SHORT)
 						.show();
 				break;
 			case SCAN_REQUEST_CODE:
@@ -364,11 +364,11 @@ public class MainActivity extends FragmentActivity implements OnClickListener,
 				showAddDialog(true, name, phone);
 			} catch (JSONException e1) {
 				e1.printStackTrace();
-				Toast.makeText(this, "ÎŞĞ§ÁªÏµÈË£º" + bundle.getString("result"),
+				Toast.makeText(this, "æ— æ•ˆè”ç³»äººï¼š" + bundle.getString("result"),
 						Toast.LENGTH_LONG).show();
 			} catch (Exception e1) {
 				e1.printStackTrace();
-				Toast.makeText(this, "ÎŞĞ§ÁªÏµÈË£º" + bundle.getString("result"),
+				Toast.makeText(this, "æ— æ•ˆè”ç³»äººï¼š" + bundle.getString("result"),
 						Toast.LENGTH_LONG).show();
 			}
 		}
@@ -400,7 +400,7 @@ public class MainActivity extends FragmentActivity implements OnClickListener,
 	}
 
 	protected void success(JSONObject jObject) {
-		// 200±íÊ¾³É¹¦£¬400±íÊ¾Ê§°Ü
+		// 200è¡¨ç¤ºæˆåŠŸï¼Œ400è¡¨ç¤ºå¤±è´¥
 		int state = 400;
 		String keyStr = (String) SPUtil.get(this, "aid",
 				Constants.DEFAULT_AESKEY);
@@ -425,9 +425,9 @@ public class MainActivity extends FragmentActivity implements OnClickListener,
 			final String phone) {
 		if (isValid) {
 			new AlertDialog.Builder(this)
-					.setTitle("ÁªÏµÈË")
-					.setMessage("ĞÕÃû£º" + name + "\nµç»°£º" + phone + "\nÊÇ·ñÌí¼Óµ½ÁªÏµÈË£¿")
-					.setPositiveButton("È·¶¨",
+					.setTitle("è”ç³»äºº")
+					.setMessage("å§“åï¼š" + name + "\nç”µè¯ï¼š" + phone + "\næ˜¯å¦æ·»åŠ åˆ°è”ç³»äººï¼Ÿ")
+					.setPositiveButton("ç¡®å®š",
 							new DialogInterface.OnClickListener() {
 
 								@Override
@@ -447,7 +447,7 @@ public class MainActivity extends FragmentActivity implements OnClickListener,
 											EDIT_REQUEST_CODE);
 								}
 							})
-					.setNegativeButton("È¡Ïû",
+					.setNegativeButton("å–æ¶ˆ",
 							new DialogInterface.OnClickListener() {
 
 								@Override
@@ -465,11 +465,11 @@ public class MainActivity extends FragmentActivity implements OnClickListener,
 
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		// ÊµÏÖ°´Á½ÏÂ·µ»Ø¼üÍË³ö¹¦ÄÜ
+		// å®ç°æŒ‰ä¸¤ä¸‹è¿”å›é”®é€€å‡ºåŠŸèƒ½
 		if (keyCode == KeyEvent.KEYCODE_BACK
 				&& event.getAction() == KeyEvent.ACTION_DOWN) {
 			if ((System.currentTimeMillis() - exitTime) > 2000) {
-				Toast.makeText(getApplicationContext(), "ÔÙ°´Ò»´ÎÍË³ö³ÌĞò",
+				Toast.makeText(getApplicationContext(), "å†æŒ‰ä¸€æ¬¡é€€å‡ºç¨‹åº",
 						Toast.LENGTH_SHORT).show();
 				exitTime = System.currentTimeMillis();
 			} else {
