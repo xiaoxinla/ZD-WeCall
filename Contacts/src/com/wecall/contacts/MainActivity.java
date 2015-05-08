@@ -377,7 +377,7 @@ OnPageChangeListener {
 
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		// 实现按两下返回键退出功能
+		// 实现按两次返回键退出功能
 		if (keyCode == KeyEvent.KEYCODE_BACK
 				&& event.getAction() == KeyEvent.ACTION_DOWN) {
 			if ((System.currentTimeMillis() - exitTime) > 2000) {
