@@ -1,7 +1,8 @@
 package com.wecall.contacts.entity;
 
-
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import android.annotation.SuppressLint;
@@ -33,13 +34,12 @@ public class ContactItem implements Comparable {
 	// 没必要保存label的拼音
 	// private List<Label> labels;
 	private Set<String> labels;
-	
+
 	// FIXME: 其实只需要在数据库中存在,没必要存在类里面
 	// 姓名全拼
 	private String fullPinyin;
 	// 姓名首字母组合
 	private String simplePinyin;
-	
 
 	public ContactItem() {
 		phoneNumber = new HashSet<String>();
@@ -63,12 +63,11 @@ public class ContactItem implements Comparable {
 	public void setName(String name) {
 		if (name == null)
 			this.name = null;
-		else
-		{
+		else {
 			this.name = new String(name);
 			fullPinyin = PinYin.getPinYin(this.name);
 			simplePinyin = PinYin.getSimplePinYin(this.name);
-			setSortLetter(fullPinyin);		
+			setSortLetter(fullPinyin);
 		}
 	}
 
@@ -89,7 +88,7 @@ public class ContactItem implements Comparable {
 	}
 
 	public void setPhoneNumber(Set<String> phoneNumber) {
-		if(phoneNumber != null)
+		if (phoneNumber != null)
 			this.phoneNumber = new HashSet<String>(phoneNumber);
 	}
 
@@ -118,38 +117,38 @@ public class ContactItem implements Comparable {
 	public Set<String> getLabels() {
 		return labels;
 	}
-	
-//	/**
-//	 * 只返回标签的名字，不返回标签类
-//	 * @return ArrayList<String>
-//	 */
-//	public ArrayList<String> getLabelNames() {
-//		ArrayList<String> list = new ArrayList<String>();
-//		for(Label l: this.labels)
-//		{
-//			list.add(l.getLname());
-//		}
-//		return list;
-//	}
+
+	// /**
+	// * 只返回标签的名字，不返回标签类
+	// * @return ArrayList<String>
+	// */
+	// public ArrayList<String> getLabelNames() {
+	// ArrayList<String> list = new ArrayList<String>();
+	// for(Label l: this.labels)
+	// {
+	// list.add(l.getLname());
+	// }
+	// return list;
+	// }
 
 	public void setLabels(Set<String> labels) {
 		if (labels != null)
 			this.labels = new HashSet<String>(labels);
 	}
-	
-//	/**
-//	 * 只用标签名字作参数初始化，不用标签类
-//	 * @param labelsName
-//	 */
-//	public void setLabelNames(ArrayList<String> labelsName)
-//	{
-//		Label l = new Label();
-//		for (String s: labelsName)
-//		{
-//			l.setLname(s);
-//			this.labels.add(l);
-//		}
-//	}
+
+	// /**
+	// * 只用标签名字作参数初始化，不用标签类
+	// * @param labelsName
+	// */
+	// public void setLabelNames(ArrayList<String> labelsName)
+	// {
+	// Label l = new Label();
+	// for (String s: labelsName)
+	// {
+	// l.setLname(s);
+	// this.labels.add(l);
+	// }
+	// }
 
 	public int getId() {
 		return id;
@@ -179,10 +178,10 @@ public class ContactItem implements Comparable {
 		}
 		return getFullPinyin().compareTo(tmpItem.getFullPinyin());
 	}
-	
-	@SuppressLint("DefaultLocale") 
-	private void setSortLetter(String inputString){
-		if(inputString.isEmpty()){
+
+	@SuppressLint("DefaultLocale")
+	private void setSortLetter(String inputString) {
+		if (inputString.isEmpty()) {
 			this.sortLetter = "#";
 			return;
 		}
@@ -195,26 +194,40 @@ public class ContactItem implements Comparable {
 		}
 	}
 
-//	public Map<String, Integer> contains(String str){
-//		Map<String, Integer> map = new HashMap<String, Integer>();
-//		if(name!=null&&name.indexOf(str)!=-1){
-//			map.put("name",name.indexOf(str));
-//		}
-//		if(phoneNumber!=null&&phoneNumber.indexOf(str)!=-1){
-//			map.put("phone",phoneNumber.indexOf(str));
-//		}
-//		if(address!=null&&address.indexOf(str)!=-1){
-//			map.put("address",address.indexOf(str));
-//		}
-//		if(note!=null&&note.indexOf(str)!=-1){
-//			map.put("note",note.indexOf(str));
-//		}
-//		if(fullPinyin!=null&&fullPinyin.indexOf(str)!=-1){
-//			map.put("fullpinyin",fullPinyin.indexOf(str));
-//		}
-//		if(simplePinyin!=null&&simplePinyin.indexOf(str)!=-1){
-//			map.put("simplepinyin",simplePinyin.indexOf(str));
-//		}
-//		return map;
-//	}
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof ContactItem) {
+			ContactItem item = (ContactItem) o;
+			return id == item.id;
+		}
+		return super.equals(o);
+	}
+
+	public Map<String, Integer> contains(String str) {
+		Map<String, Integer> map = new HashMap<String, Integer>();
+		if (name != null && name.indexOf(str) != -1) {
+			map.put("name", name.indexOf(str));
+		}
+		if (phoneNumber != null) {
+			for (String phone : phoneNumber) {
+				if (phone != null && phone.indexOf(str) != -1) {
+					map.put("phone", phone.indexOf(str));
+					break;
+				}
+			}
+		}
+		if (address != null && address.indexOf(str) != -1) {
+			map.put("address", address.indexOf(str));
+		}
+		if (note != null && note.indexOf(str) != -1) {
+			map.put("note", note.indexOf(str));
+		}
+		if (fullPinyin != null && fullPinyin.indexOf(str) != -1) {
+			map.put("fullpinyin", fullPinyin.indexOf(str));
+		}
+		if (simplePinyin != null && simplePinyin.indexOf(str) != -1) {
+			map.put("simplepinyin", simplePinyin.indexOf(str));
+		}
+		return map;
+	}
 }

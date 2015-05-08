@@ -27,7 +27,6 @@ import com.wecall.contacts.ContactInfo;
 import com.wecall.contacts.R;
 import com.wecall.contacts.adapter.SortAdapter;
 import com.wecall.contacts.database.DatabaseManager;
-import com.wecall.contacts.entity.ContactItem;
 import com.wecall.contacts.entity.SimpleContact;
 import com.wecall.contacts.view.SideBar;
 import com.wecall.contacts.view.SideBar.onTouchLetterChangeListener;
@@ -147,7 +146,7 @@ public class MainFragment extends Fragment {
 
 	protected void showOperationDialog(final int position) {
 		new AlertDialog.Builder(getActivity())
-		.setTitle(((ContactItem) adapter.getItem(position)).getName())
+		.setTitle(((SimpleContact) adapter.getItem(position)).getName())
 		.setPositiveButton("编辑", new DialogInterface.OnClickListener() {
 
 			@Override
@@ -157,7 +156,7 @@ public class MainFragment extends Fragment {
 				Intent intent = new Intent(getActivity(),
 						ContactEditor.class);
 				Bundle bundle = new Bundle();
-				bundle.putInt("cid", ((ContactItem) adapter
+				bundle.putInt("cid", ((SimpleContact) adapter
 						.getItem(position)).getId());
 				bundle.putInt("type", 2);
 				intent.putExtras(bundle);
@@ -184,7 +183,7 @@ public class MainFragment extends Fragment {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				dialog.dismiss();
-				mManager.deleteContactById(((ContactItem) adapter
+				mManager.deleteContactById(((SimpleContact) adapter
 						.getItem(position)).getId());
 				updateContacts();
 				Toast.makeText(getActivity(), "联系人删除成功",

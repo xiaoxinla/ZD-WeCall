@@ -20,14 +20,13 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 import android.widget.SearchView;
-import android.widget.Toast;
 import android.widget.SearchView.OnQueryTextListener;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.wecall.contacts.adapter.SearchAdapter;
 import com.wecall.contacts.database.DatabaseManager;
 import com.wecall.contacts.entity.ContactItem;
-import com.wecall.contacts.entity.SimpleContact;
 
 /**
  * 搜索页
@@ -47,7 +46,7 @@ public class SearchActivity extends Activity {
 	private DatabaseManager mManager;
 
 	// 联系人信息
-	private List<SimpleContact> contactList = new ArrayList<SimpleContact>();
+	private List<ContactItem> contactList = new ArrayList<ContactItem>();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -81,7 +80,7 @@ public class SearchActivity extends Activity {
 		mResultText = (TextView) findViewById(R.id.tv_result_search);
 		mContactListView = (ListView) findViewById(R.id.lv_search_contact_list);
 		mManager = new DatabaseManager(this);
-		contactList = mManager.queryAllContacts();
+		contactList = new ArrayList<ContactItem>();
 		Collections.sort(contactList);
 		adapter = new SearchAdapter(this, null, null);
 		mContactListView.setAdapter(adapter);
@@ -115,14 +114,12 @@ public class SearchActivity extends Activity {
 
 			@Override
 			public boolean onQueryTextSubmit(String arg0) {
-				Log.v(TAG, "onQueryTextSubmit" + arg0);
 				filterData(arg0);
 				return false;
 			}
 
 			@Override
 			public boolean onQueryTextChange(String arg0) {
-				Log.v(TAG, "onQueryTextChange" + arg0);
 				filterData(arg0);
 				return false;
 			}
@@ -145,27 +142,26 @@ public class SearchActivity extends Activity {
 	 * 
 	 * @param filterStr
 	 */
+	@SuppressWarnings("unchecked")
 	@SuppressLint("DefaultLocale")
 	private void filterData(String filterStr) {
-		List<SimpleContact> filterDateList = new ArrayList<SimpleContact>();
+		contactList.clear();
+		contactList = (List<ContactItem>) mManager.ftsSearch(filterStr).get(0);
+		Log.v(TAG, "contactList:"+contactList.toString());
 		List<Map<String, Integer>> mapList = new ArrayList<Map<String, Integer>>();
 		if (!TextUtils.isEmpty(filterStr)) {
-			filterDateList.clear();
-			for (SimpleContact contactItem : contactList) {
-				String convertStr = filterStr.toLowerCase();
-				Map<String, Integer> originMap = contactItem
-						.contains(filterStr);
-				Map<String, Integer> convertMap = contactItem
-						.contains(convertStr);
-				if (originMap != null && convertMap != null
-						&& originMap.size() != 0 && convertMap.size() != 0) {
-					filterDateList.add(contactItem);
-					mapList.add(originMap);
+			for (ContactItem contactItem : contactList) {
+//				String convertStr = filterStr.toLowerCase();
+				Map<String, Integer> map = contactItem.contains(filterStr);
+				// Map<String, Integer> convertMap = contactItem
+				// .contains(convertStr);
+				if (map != null && map.size() != 0) {
+					mapList.add(map);
 				}
 			}
 		}
-		mResultText.setText("搜索到" + filterDateList.size() + "位联系人");
-		adapter.updateListView(filterDateList, mapList, filterStr.length());
+		mResultText.setText("搜索到" + contactList.size() + "位联系人");
+		adapter.updateListView(contactList, mapList, filterStr.length());
 	}
 
 	protected void showOperationDialog(final int position) {
@@ -227,7 +223,8 @@ public class SearchActivity extends Activity {
 
 	@SuppressWarnings("unchecked")
 	private void updateContacts() {
-		contactList = mManager.queryAllContacts();
+		contactList = (List<ContactItem>) mManager.ftsSearch(
+				mSearchView.getQuery().toString()).get(0);
 		Collections.sort(contactList);
 		filterData(mSearchView.getQuery().toString());
 	}

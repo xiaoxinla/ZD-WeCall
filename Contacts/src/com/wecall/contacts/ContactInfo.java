@@ -10,10 +10,8 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.text.SpannableStringBuilder;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -30,8 +28,9 @@ import com.google.zxing.WriterException;
 import com.wecall.contacts.constants.Constants;
 import com.wecall.contacts.database.DatabaseManager;
 import com.wecall.contacts.entity.ContactItem;
-import com.wecall.contacts.util.EncodeUtil;
+import com.wecall.contacts.util.AESUtil;
 import com.wecall.contacts.util.ImageUtil;
+import com.wecall.contacts.util.SPUtil;
 import com.wecall.contacts.util.StringUtil;
 import com.wecall.contacts.view.FlowLayout;
 import com.wecall.contacts.view.TextViewWithTitle;
@@ -176,10 +175,7 @@ public class ContactInfo extends Activity {
 
 	private void updateView(int cid) {
 		contact = mManager.queryContactById(cid);
-
-		SpannableStringBuilder styled = StringUtil.colorString(
-				contact.getName(), 0, 1, Color.RED);
-		nameTV.setText(styled);
+		nameTV.setText(contact.getName());
 		// nameTV.setText(bundle.getString("cname"));
 		if(StringUtil.formatString(contact.getAddress()).length()>14){
 			addressTVT.setText(StringUtil.formatString(contact.getAddress()).substring(0, 13)+"...");
@@ -235,34 +231,38 @@ public class ContactInfo extends Activity {
 	}
 
 	private Bitmap getQRCode() {
+		int did = (Integer) SPUtil.get(this, "did", -1);
+		String aesKey = (String) SPUtil.get(this, "aid",
+				Constants.DEFAULT_AESKEY);
 		Bitmap bitmap = null;
 		String name = contact.getName();
 		String phone = "";
 		//TODO Multi Case
 		Set<String> phoneSet = contact.getPhoneNumber();
 		for(String str:phoneSet){
-
 			phone = str;
 		}
+		JSONObject jsonObject = new JSONObject();
+		String codedJson = "";
 		try {
-			JSONObject jsonObject = new JSONObject();
-			String codedJson;
+			jsonObject.put("did", did);
+			JSONObject jsonObject2 = new JSONObject();
+			jsonObject2.put("name", name);
+			jsonObject2.put("phone", phone);
+			String data = "";
 			try {
-				jsonObject.put("name", name);
-				jsonObject.put("phone", phone);
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
-			Log.v("TAG", jsonObject.toString());
-			try {
-				codedJson = EncodeUtil.encrypt(Constants.AESKEY,
-						jsonObject.toString());
+				data=AESUtil.encrypt(aesKey, jsonObject2.toString());
 			} catch (Exception e) {
-				codedJson = jsonObject.toString();
 				e.printStackTrace();
 			}
-			bitmap = ImageUtil.CreateQRCode(codedJson, 300);
-		} catch (WriterException e) {
+			jsonObject.put("data", data);
+			codedJson = jsonObject.toString();
+			try {
+				bitmap = ImageUtil.CreateQRCode(codedJson, 300);
+			} catch (WriterException e) {
+				e.printStackTrace();
+			}
+		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 		return bitmap;

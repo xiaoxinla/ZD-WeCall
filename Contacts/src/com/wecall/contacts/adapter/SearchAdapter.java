@@ -9,7 +9,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.text.SpannableStringBuilder;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,26 +18,26 @@ import android.widget.TextView;
 
 import com.wecall.contacts.R;
 import com.wecall.contacts.constants.Constants;
-import com.wecall.contacts.entity.SimpleContact;
+import com.wecall.contacts.entity.ContactItem;
 import com.wecall.contacts.util.ImageUtil;
 import com.wecall.contacts.util.StringUtil;
 
 public class SearchAdapter extends BaseAdapter {
 
-	private static final String TAG = "SearchAdapter";
+	// private static final String TAG = "SearchAdapter";
 	private Context mContext;
-	private List<SimpleContact> mList;
+	private List<ContactItem> mList;
 	private List<Map<String, Integer>> mIndex;
 	private int strlen = 0;
 
-	public SearchAdapter(Context context, List<SimpleContact> list,
+	public SearchAdapter(Context context, List<ContactItem> list,
 			List<Map<String, Integer>> index) {
 		this.mContext = context;
 		this.mList = list;
 		this.mIndex = index;
 	}
 
-	public SearchAdapter(Context context, List<SimpleContact> list,
+	public SearchAdapter(Context context, List<ContactItem> list,
 			List<Map<String, Integer>> index, int strlen) {
 		this.mContext = context;
 		this.mList = list;
@@ -67,9 +66,9 @@ public class SearchAdapter extends BaseAdapter {
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		ViewHolder holder = null;
-		SimpleContact item = mList.get(position);
+		ContactItem item = mList.get(position);
 		Map<String, Integer> map = mIndex.get(position);
-//		Log.v(TAG, "item:" + item.toString() + "map:" + map.toString());
+		// Log.v(TAG, "item:" + item.toString() + "map:" + map.toString());
 		if (convertView == null) {
 			convertView = LayoutInflater.from(mContext).inflate(
 					R.layout.searchlist_item, null);
@@ -96,7 +95,7 @@ public class SearchAdapter extends BaseAdapter {
 				item.getName());
 		SpannableStringBuilder ssbOther = new SpannableStringBuilder();
 		for (Entry<String, Integer> entity : map.entrySet()) {
-			Log.v(TAG, entity.toString());
+			// Log.v(TAG, entity.toString());
 			if (entity.getKey().equals("name")) {
 				int index = entity.getValue();
 				ssbName = StringUtil.colorString(ssbName, index, strlen,
@@ -105,22 +104,38 @@ public class SearchAdapter extends BaseAdapter {
 
 			if (entity.getKey().equals("phone")) {
 				int index = entity.getValue();
-//				ssbOther = StringUtil.colorString(item.getPhoneNumber(), index,
-//						index + strlen, Color.RED);
-				//TODO add phone inflater
+				for (String str : item.getPhoneNumber()) {
+					ssbOther = StringUtil.colorString(str, index, index
+							+ strlen, Color.RED);
+					break;
+				}
+			}
+			if (entity.getKey().equals("address")) {
+				SpannableStringBuilder tmp = new SpannableStringBuilder();
+				int index = entity.getValue();
+				tmp = StringUtil.colorString(item.getAddress(), index, index
+						+ strlen, Color.RED);
+				ssbOther.append(tmp);
+			}
+			if (entity.getKey().equals("note")) {
+				SpannableStringBuilder tmp = new SpannableStringBuilder();
+				int index = entity.getValue();
+				tmp = StringUtil.colorString(item.getNote(), index, index
+						+ strlen, Color.RED);
+				ssbOther.append(tmp);
 			}
 		}
 		holder.tvName.setText(ssbName);
-		if(ssbOther==null||ssbOther.length()==0){
+		if (ssbOther == null || ssbOther.length() == 0) {
 			holder.tvOther.setVisibility(View.GONE);
-		}else {
+		} else {
 			holder.tvOther.setVisibility(View.VISIBLE);
 			holder.tvOther.setText(ssbOther);
 		}
 		return convertView;
 	}
 
-	public void updateListView(List<SimpleContact> list,
+	public void updateListView(List<ContactItem> list,
 			List<Map<String, Integer>> index, int strlen) {
 		this.mList = list;
 		this.mIndex = index;

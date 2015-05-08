@@ -21,9 +21,9 @@ import android.widget.Toast;
 
 import com.google.zxing.WriterException;
 import com.wecall.contacts.R;
-import com.wecall.contacts.Setting;
+import com.wecall.contacts.SettingActivity;
 import com.wecall.contacts.constants.Constants;
-import com.wecall.contacts.util.EncodeUtil;
+import com.wecall.contacts.util.AESUtil;
 import com.wecall.contacts.util.ImageUtil;
 import com.wecall.contacts.util.SPUtil;
 
@@ -67,7 +67,7 @@ public class MineFragment extends Fragment {
 
 			@Override
 			public void onClick(View arg0) {
-				Intent intent = new Intent(getActivity(), Setting.class);
+				Intent intent = new Intent(getActivity(), SettingActivity.class);
 				Bundle bundle = new Bundle();
 				bundle.putString("name", userName);
 				bundle.putString("phone", userPhone);
@@ -79,9 +79,8 @@ public class MineFragment extends Fragment {
 	}
 
 	private void setUserInfo() {
-		userName = (String) SPUtil.get(getActivity(), "name", "小新");
-		userPhone = (String) SPUtil.get(getActivity(), "phone", "13929514504");
-
+		userName = (String) SPUtil.get(getActivity(), "name", "匿名");
+		userPhone = (String) SPUtil.get(getActivity(), "phone", "00000");
 		nameTextView.setText(userName);
 		phoneTextView.setText(userPhone);
 		Bitmap userBitmap = ImageUtil.getLocalBitmap(Constants.ALBUM_PATH,
@@ -91,28 +90,7 @@ public class MineFragment extends Fragment {
 		} else {
 			userPhoto.setImageBitmap(userBitmap);
 		}
-		JSONObject jsonObject = new JSONObject();
-		Bitmap bitmap = null;
-		try {
-			jsonObject.put("name", userName);
-			jsonObject.put("phone", userPhone);
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-		String codedJson;
-		try {
-			try {
-				codedJson = EncodeUtil.encrypt(Constants.AESKEY,
-						jsonObject.toString());
-			} catch (Exception e) {
-				codedJson = jsonObject.toString();
-				e.printStackTrace();
-			}
-			bitmap = ImageUtil.CreateQRCode(codedJson, 300);
-		} catch (WriterException e) {
-			e.printStackTrace();
-		}
-		qrcodeImage.setImageBitmap(bitmap);
+		setQRCode();
 	}
 
 	@Override
@@ -123,7 +101,7 @@ public class MineFragment extends Fragment {
 			case SETTING_REQUEST_CODE:
 				setUserInfo();
 				Toast.makeText(getActivity(), "用户信息修改成功", Toast.LENGTH_SHORT)
-				.show();
+						.show();
 				break;
 
 			default:
@@ -133,4 +111,36 @@ public class MineFragment extends Fragment {
 		super.onActivityResult(requestCode, resultCode, data);
 	}
 
+	private void setQRCode() {
+		int did = (Integer) SPUtil.get(getActivity(), "did", -1);
+		String aesKey = (String) SPUtil.get(getActivity(), "aid",
+				Constants.DEFAULT_AESKEY);
+		JSONObject jsonObject = new JSONObject();
+		Bitmap bitmap = null;
+		String codedJson = "";
+		try {
+			jsonObject.put("did", did);
+			JSONObject jsonObject2 = new JSONObject();
+			jsonObject2.put("name", userName);
+			jsonObject2.put("phone", userPhone);
+			String data = "";
+			try {
+				data = AESUtil.encrypt(aesKey, jsonObject2.toString());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			jsonObject.put("data", data);
+			codedJson = jsonObject.toString();
+			Log.v(TAG, "codedJson:"+codedJson);
+			try {
+				bitmap = ImageUtil.CreateQRCode(codedJson, 300);
+			} catch (WriterException e) {
+				e.printStackTrace();
+			}
+			
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		qrcodeImage.setImageBitmap(bitmap);
+	}
 }

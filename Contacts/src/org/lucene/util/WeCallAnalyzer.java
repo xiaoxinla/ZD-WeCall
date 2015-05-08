@@ -10,8 +10,6 @@ import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
 
-import com.chenlb.mmseg4j.analysis.ComplexAnalyzer;
-
 /**
  * 分词器实现
  * @author XF
@@ -52,6 +50,7 @@ public class WeCallAnalyzer {
 	/*
 	 * getTokenList方法会返回一个Token类的列表，其中Token用于记录每个分词的value以及它在原字符串中的偏移量
 	 * */
+	@SuppressWarnings("unused")
 	public List<String> getTokenList(String str)
 	{
 		List<String> list=new ArrayList<String>();

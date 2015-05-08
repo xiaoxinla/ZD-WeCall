@@ -53,4 +53,10 @@ public class StringUtil {
 			return str;
 		}
 	}
+	
+	public static String analyseHtml(String str){
+		String taker = "<script";
+		int index = str.indexOf(taker);
+		return str.substring(0,index);
+	}
 }

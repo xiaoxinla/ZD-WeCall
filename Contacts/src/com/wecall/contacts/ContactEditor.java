@@ -3,13 +3,17 @@ package com.wecall.contacts;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -18,6 +22,8 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -36,8 +42,11 @@ import android.widget.Toast;
 import com.wecall.contacts.constants.Constants;
 import com.wecall.contacts.database.DatabaseManager;
 import com.wecall.contacts.entity.ContactItem;
-import com.wecall.contacts.util.EncodeUtil;
+import com.wecall.contacts.util.AESUtil;
+import com.wecall.contacts.util.HttpConnectionUtils;
+import com.wecall.contacts.util.HttpHandler;
 import com.wecall.contacts.util.ImageUtil;
+import com.wecall.contacts.util.SPUtil;
 import com.wecall.contacts.view.FlowLayout;
 
 /**
@@ -64,7 +73,9 @@ public class ContactEditor extends Activity {
 	private int mCid = -1;
 	private String mName;
 	private String mPhone;
-	private Set<String> preLabel;
+	// 缓存初始标签信息
+	private Set<String> preLabel = new HashSet<String>();
+	private Set<String> curLabel = new HashSet<String>();
 
 	private static final int ALBUM_REQUEST_CODE = 1;
 	private static final int CAMERA_REQUEST_CODE = 2;
@@ -95,6 +106,7 @@ public class ContactEditor extends Activity {
 		photoImg = (ImageView) findViewById(R.id.img_photo_add);
 		labelLayout = (FlowLayout) findViewById(R.id.fl_editor_label);
 		addLabelButton = (ImageButton) findViewById(R.id.ibtn_label_add);
+
 		mManager = new DatabaseManager(this);
 
 		// 分新建和修改进行不同的初始化
@@ -111,7 +123,7 @@ public class ContactEditor extends Activity {
 			ContactItem item = mManager.queryContactById(mCid);
 			nameET.setText(item.getName());
 			Set<String> phoneSet = item.getPhoneNumber();
-			for(String str:phoneSet){
+			for (String str : phoneSet) {
 				phoneET.setText(str);
 			}
 
@@ -125,6 +137,7 @@ public class ContactEditor extends Activity {
 				photoImg.setImageBitmap(bitmap);
 			}
 			preLabel = mManager.queryTagsByContactId(mCid);
+			curLabel.addAll(preLabel);
 			setLabels();
 		}
 
@@ -177,7 +190,7 @@ public class ContactEditor extends Activity {
 		String name = nameET.getText().toString();
 		if (name.isEmpty()) {
 			Toast.makeText(ContactEditor.this, "请填写姓名", Toast.LENGTH_SHORT)
-			.show();
+					.show();
 		} else {
 			if (mType == 1) {
 				int last = mManager.addContact(getContactFromView());
@@ -198,24 +211,25 @@ public class ContactEditor extends Activity {
 		}
 	}
 
-	private void showReturnDialog(){
-		new AlertDialog.Builder(this)
-		.setTitle("退出此次编辑？")
-		.setPositiveButton("是", new DialogInterface.OnClickListener() {
+	private void showReturnDialog() {
+		new AlertDialog.Builder(this).setTitle("退出此次编辑？")
+				.setPositiveButton("是", new DialogInterface.OnClickListener() {
 
-			@Override
-			public void onClick(DialogInterface arg0, int arg1) {
-				mManager.updateContactTags(mCid, preLabel);
-				finish();
-			}
-		})
-		.setNegativeButton("否", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface arg0, int arg1) {
+						if (mType == 2) {
+							mManager.updateContactTags(mCid, preLabel);
+						}
+						finish();
+					}
+				})
+				.setNegativeButton("否", new DialogInterface.OnClickListener() {
 
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				dialog.dismiss();
-			}
-		}).show();
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.dismiss();
+					}
+				}).show();
 	}
 
 	@Override
@@ -235,51 +249,28 @@ public class ContactEditor extends Activity {
 			switch (requestCode) {
 			case SCAN_REQUEST_CODE:
 				Bundle bundle = data.getExtras();
-				String obtained = bundle.getString("result");
-				try {
-					JSONObject jsonObject = new JSONObject(obtained);
-					String name = jsonObject.getString("name");
-					String phone = jsonObject.getString("phone");
-					nameET.setText(name);
-					phoneET.setText(phone);
-				} catch (JSONException e) {
-					e.printStackTrace();
-					try {
-						JSONObject jsonObject = new JSONObject(
-								EncodeUtil.decrypt(Constants.AESKEY, obtained));
-						String name = jsonObject.getString("name");
-						String phone = jsonObject.getString("phone");
-						nameET.setText(name);
-						phoneET.setText(phone);
-					} catch (JSONException e1) {
-						e1.printStackTrace();
-						Toast.makeText(this,
-								"无效联系人：" + bundle.getString("result"),
-								Toast.LENGTH_LONG).show();
-					} catch (Exception e1) {
-						e1.printStackTrace();
-						Toast.makeText(this,
-								"无效联系人：" + bundle.getString("result"),
-								Toast.LENGTH_LONG).show();
-					}
-				}
+				dealScanResult(bundle);
 				break;
-				// 从相册返回
+			// 从相册返回
 			case ALBUM_REQUEST_CODE:
 				startPhotoZoom(data.getData());
 				break;
-				// 从相机返回
+			// 从相机返回
 			case CAMERA_REQUEST_CODE:
 				File tmp = new File(Constants.ALBUM_PATH + "tmppic.jpg");
 				startPhotoZoom(Uri.fromFile(tmp));
 				break;
-				// 从裁剪后返回
+			// 从裁剪后返回
 			case CROP_REQUEST_CODE:
 				if (data != null) {
 					setPicToView(data);
 				}
 				break;
 			case LABEL_EDIT_REQUEST_CODE:
+				String[] labels = data.getStringArrayExtra("labels");
+				Log.v(TAG, "labels:" + labels.length);
+				curLabel.clear();
+				curLabel.addAll(Arrays.asList(labels));
 				setLabels();
 				Toast.makeText(this, "标签编辑成功", Toast.LENGTH_SHORT).show();
 				break;
@@ -300,6 +291,9 @@ public class ContactEditor extends Activity {
 	private void confireType() {
 		Bundle bundle = getIntent().getExtras();
 		mType = bundle.getInt("type");
+		if (mType == 0) {
+			mType = Integer.parseInt(bundle.getString("type"));
+		}
 		if (mType == 1) {
 			mName = bundle.getString("name");
 			mPhone = bundle.getString("phone");
@@ -318,15 +312,13 @@ public class ContactEditor extends Activity {
 		item.setPhoneNumber(phoneSet);
 		item.setAddress(addressET.getText().toString());
 		item.setNote(noteET.getText().toString());
-		Set<String> tagSet = mManager.queryTagsByContactId(mCid);
-		item.setLabels(tagSet);
+		item.setLabels(curLabel);
 		return item;
 	}
 
-	private void setLabels() {		
+	private void setLabels() {
 		labelLayout.removeAllViews();
-		Set<String> tagSet = mManager.queryTagsByContactId(mCid);
-		for(String str:tagSet){
+		for (String str : curLabel) {
 			TextView tv = new TextView(this);
 			MarginLayoutParams lp = new MarginLayoutParams(
 					LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
@@ -340,52 +332,214 @@ public class ContactEditor extends Activity {
 		}
 	}
 
+	/**
+	 * 处理扫码结果
+	 * 
+	 * @param bundle
+	 */
+	private void dealScanResult(Bundle bundle) {
+		String obtained = bundle.getString("result");
+		String aesKey = (String) SPUtil.get(ContactEditor.this, "aid",
+				Constants.DEFAULT_AESKEY);
+		try {
+			JSONObject jsonObject = new JSONObject(obtained);
+			int did = jsonObject.getInt("did");
+			Log.v(TAG, "did:" + did);
+			if (did == -1) {
+				aesKey = Constants.DEFAULT_AESKEY;
+				String data = "";
+				try {
+					data = AESUtil
+							.decrypt(aesKey, jsonObject.getString("data"));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				JSONObject jsonObject2 = new JSONObject(data);
+				String name = jsonObject2.getString("name");
+				String phone = jsonObject2.getString("phone");
+				nameET.setText(name);
+				phoneET.setText(phone);
+			} else {
+				getQRDataFromServer(obtained);
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+			try {
+				JSONObject jsonObject = new JSONObject(AESUtil.decrypt(aesKey,
+						obtained));
+				String name = jsonObject.getString("name");
+				String phone = jsonObject.getString("phone");
+				nameET.setText(name);
+				phoneET.setText(phone);
+			} catch (JSONException e1) {
+				e1.printStackTrace();
+				Toast.makeText(this, "无效联系人：" + bundle.getString("result"),
+						Toast.LENGTH_LONG).show();
+			} catch (Exception e1) {
+				e1.printStackTrace();
+				Toast.makeText(this, "无效联系人：" + bundle.getString("result"),
+						Toast.LENGTH_LONG).show();
+			}
+		}
+	}
+
+	private void getQRDataFromServer(String str) {
+		String url = Constants.SERVER_URL + "/analyseqrdata.php";
+		int did = (Integer) SPUtil.get(this, "did", -1);
+		String aesKey = (String) SPUtil.get(this, "aid",
+				Constants.DEFAULT_AESKEY);
+		List<NameValuePair> list = new ArrayList<NameValuePair>();
+		list.add(new BasicNameValuePair("did", String.valueOf(did)));
+		try {
+			list.add(new BasicNameValuePair("data", AESUtil
+					.encrypt(aesKey, str)));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		Handler handler = new HttpHandler(this) {
+
+			@Override
+			protected void succeed(JSONObject jObject) {
+				super.succeed(jObject);
+				success(jObject);
+			}
+
+		};
+		new HttpConnectionUtils(handler).post(url, list);
+	}
+
+	protected void success(JSONObject jObject) {
+		// 200表示成功，400表示失败
+		int state = 400;
+		String keyStr = (String) SPUtil.get(this, "aid",
+				Constants.DEFAULT_AESKEY);
+		Log.v(TAG, "keyStr:" + keyStr);
+		try {
+			state = jObject.getInt("state");
+			if (state == 200) {
+				String data = AESUtil.decrypt(keyStr,
+						jObject.getJSONObject("data").getString("data"));
+				JSONObject jsonObject = new JSONObject(data);
+				int did = jsonObject.getInt("did");
+				mName = jsonObject.getString("name");
+				mPhone = jsonObject.getString("phone");
+				nameET.setText(mName);
+				phoneET.setText(mPhone);
+				Log.v(TAG, data);
+				if (did != -1) {
+					showNotifyDialog(did);
+				}
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@SuppressLint("HandlerLeak")
+	private void showNotifyDialog(final int did) {
+		final int pdid = (Integer) SPUtil.get(this, "did", -1);
+		final String name = (String) SPUtil.get(this, "name", "");
+		final String phone = (String) SPUtil.get(this, "phone", "");
+		final String aesKey = (String) SPUtil.get(this, "aid",
+				Constants.DEFAULT_AESKEY);
+		final String url = Constants.SERVER_URL + "/notifybyid.php";
+		new AlertDialog.Builder(this)
+				.setTitle("是否通知对方添加自己为联系人?")
+				.setPositiveButton("是", new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						JSONObject jsonObject = new JSONObject();
+						List<NameValuePair> list = new ArrayList<NameValuePair>();
+						try {
+							jsonObject.put("did", did);
+							jsonObject.put("name", name);
+							jsonObject.put("phone", phone);
+							String data = AESUtil.encrypt(aesKey,
+									jsonObject.toString());
+							list.add(new BasicNameValuePair("did", String
+									.valueOf(pdid)));
+							list.add(new BasicNameValuePair("data", data));
+						} catch (JSONException e) {
+							e.printStackTrace();
+						}
+						Handler handler = new Handler() {
+
+							@Override
+							public void handleMessage(Message msg) {
+								switch (msg.what) {
+								case HttpConnectionUtils.DID_SUCCEED:
+									Log.v(TAG, (String) msg.obj);
+									Toast.makeText(ContactEditor.this, "已通知对方",
+											Toast.LENGTH_SHORT).show();
+									break;
+
+								default:
+									break;
+								}
+								super.handleMessage(msg);
+							}
+
+						};
+						new HttpConnectionUtils(handler).post(url, list);
+					}
+
+				})
+				.setNegativeButton("否", new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.dismiss();
+					}
+				}).show();
+	}
+
 	// 显示对话框
 	// TODO: 将该函数复用
 	private void showPicDialog() {
 		new AlertDialog.Builder(this)
-		.setTitle("设置头像")
-		.setNegativeButton("相册", new DialogInterface.OnClickListener() {
+				.setTitle("设置头像")
+				.setNegativeButton("相册", new DialogInterface.OnClickListener() {
 
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				// 让对话框消失
-				dialog.dismiss();
-				// ACTION_PICK，从数据集合中选择一个返回，官方文档解释如下
-				// Activity Action:
-				// Pick an item from the data, returning what was
-				// selected.
-				Intent intent = new Intent(Intent.ACTION_PICK, null);
-				// 设置数据来源和类型
-				intent.setDataAndType(
-						MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-						"image/*");
-				startActivityForResult(intent, ALBUM_REQUEST_CODE);
-			}
-		})
-		.setPositiveButton("拍照", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						// 让对话框消失
+						dialog.dismiss();
+						// ACTION_PICK，从数据集合中选择一个返回，官方文档解释如下
+						// Activity Action:
+						// Pick an item from the data, returning what was
+						// selected.
+						Intent intent = new Intent(Intent.ACTION_PICK, null);
+						// 设置数据来源和类型
+						intent.setDataAndType(
+								MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+								"image/*");
+						startActivityForResult(intent, ALBUM_REQUEST_CODE);
+					}
+				})
+				.setPositiveButton("拍照", new DialogInterface.OnClickListener() {
 
-			@Override
-			public void onClick(DialogInterface dialog, int arg1) {
-				dialog.dismiss();
-				/**
-				 * 下面这句还是老样子，调用快速拍照功能，至于为什么叫快速拍照，大家可以参考如下官方
-				 * 文档，you_sdk_path/docs/guide/topics/media/camera.html
-				 */
-				Intent intent = new Intent(
-						MediaStore.ACTION_IMAGE_CAPTURE);
-				// 打开图片所在目录，如果该目录不存在，则创建该目录
-				File dirFile = new File(Constants.ALBUM_PATH);
-				if (!dirFile.exists()) {
-					dirFile.mkdirs();
-				}
-				// 将图片保存到该目录下
-				intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri
-						.fromFile(new File(Constants.ALBUM_PATH,
-								"tmppic.jpg")));
-				startActivityForResult(intent, CAMERA_REQUEST_CODE);
-			}
-		}).show();
+					@Override
+					public void onClick(DialogInterface dialog, int arg1) {
+						dialog.dismiss();
+						/**
+						 * 下面这句还是老样子，调用快速拍照功能，至于为什么叫快速拍照，大家可以参考如下官方
+						 * 文档，you_sdk_path/docs/guide/topics/media/camera.html
+						 */
+						Intent intent = new Intent(
+								MediaStore.ACTION_IMAGE_CAPTURE);
+						// 打开图片所在目录，如果该目录不存在，则创建该目录
+						File dirFile = new File(Constants.ALBUM_PATH);
+						if (!dirFile.exists()) {
+							dirFile.mkdirs();
+						}
+						// 将图片保存到该目录下
+						intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri
+								.fromFile(new File(Constants.ALBUM_PATH,
+										"tmppic.jpg")));
+						startActivityForResult(intent, CAMERA_REQUEST_CODE);
+					}
+				}).show();
 	}
 
 	// 将取得的图片设置到控件上

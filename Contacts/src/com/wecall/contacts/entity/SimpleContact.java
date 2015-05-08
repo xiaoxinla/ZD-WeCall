@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import android.annotation.SuppressLint;
+import android.util.Log;
 
 import com.wecall.contacts.util.PinYin;
 
@@ -37,6 +38,7 @@ public class SimpleContact implements Comparable{
 	 */
 	public SimpleContact(ContactItem citem)
 	{
+		Log.v("citem", citem.toString());
 		setId(citem.getId());
 		setName(citem.getName());
 	}

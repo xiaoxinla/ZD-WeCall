@@ -34,16 +34,15 @@ public class DatabaseManager {
 
 	private static final String LOG_TAG = "DatabaseHelper Error";
 	private static Gson gson = new Gson();
-	private static Analyzer analyzer = new ComplexAnalyzer();
-	
+	private static Analyzer analyzer = null;
+
 	private DatabaseHelper mHelper;
 
 	public DatabaseManager(Context context) {
 		mHelper = new DatabaseHelper(context);
 		if (gson == null)
 			gson = new Gson();
-		if (analyzer == null)
-			analyzer = new ComplexAnalyzer();
+
 	}
 
 	/**
@@ -66,9 +65,10 @@ public class DatabaseManager {
 			values.put(Constants.MAIN_COL_NAME, item.getName());
 			values.put(Constants.MAIN_COL_NOTE, item.getNote());
 			values.put(Constants.MAIN_COL_ADDRESS, item.getAddress());
-			// 是其他类型的域先转换为json	
-			values.put(Constants.MAIN_COl_PHONE, gson.toJson(item.getPhoneNumber()));	
-			values.put(Constants.MAIN_COL_TAG, gson.toJson(item.getLabels()));	
+			// 是其他类型的域先转换为json
+			values.put(Constants.MAIN_COl_PHONE,
+					gson.toJson(item.getPhoneNumber()));
+			values.put(Constants.MAIN_COL_TAG, gson.toJson(item.getLabels()));
 			// 未来使用,先留空
 			values.put(Constants.MAIN_COL_OTHER, "");
 			// 得到插入到的数据库列数，即id
@@ -104,9 +104,8 @@ public class DatabaseManager {
 			db.endTransaction();
 		}
 		// 优化b树的指令
-		db.execSQL("INSERT INTO " + Constants.TABLE_NAME_SEARCH + 
-				"(" + Constants.TABLE_NAME_SEARCH + ")" + 
-				" VALUES('optimize');");
+		db.execSQL("INSERT INTO " + Constants.TABLE_NAME_SEARCH + "("
+				+ Constants.TABLE_NAME_SEARCH + ")" + " VALUES('optimize');");
 		db.close();
 	}
 
@@ -182,7 +181,8 @@ public class DatabaseManager {
 			int nameIndex = cursor.getColumnIndex(Constants.MAIN_COL_NAME);
 			int noteIndex = cursor.getColumnIndex(Constants.MAIN_COL_NOTE);
 			int phoneIndex = cursor.getColumnIndex(Constants.MAIN_COl_PHONE);
-			int addressIndex = cursor.getColumnIndex(Constants.MAIN_COL_ADDRESS);
+			int addressIndex = cursor
+					.getColumnIndex(Constants.MAIN_COL_ADDRESS);
 			int tagIndex = cursor.getColumnIndex(Constants.MAIN_COL_TAG);
 			// 未来使用,留空
 			// int otherIndex = cursor.getColumnIndex(Constants.MAIN_COL_OTHER);
@@ -267,15 +267,14 @@ public class DatabaseManager {
 	public List<SimpleContact> queryContactByTag(String tagName) {
 		List<SimpleContact> list = new ArrayList<SimpleContact>();
 		SQLiteDatabase db = mHelper.getReadableDatabase();
-		
+
 		int tid = getTagId(db, tagName);
 
 		// 用了MATCH作全文搜索
 		Cursor cursor = db.query(true, Constants.TABLE_NAME_SEARCH,
 				new String[] { Constants.SEARCH_COL_CID },
-				Constants.SEARCH_COL_DATA2 + " MATCH ?", 
-				new String[] { tid + "" }, 
-				null, null, null, null);
+				Constants.SEARCH_COL_DATA2 + " MATCH ?", new String[] { tid
+						+ "" }, null, null, null, null);
 
 		while (cursor.moveToNext()) {
 			int id = cursor.getInt(0);
@@ -343,15 +342,14 @@ public class DatabaseManager {
 		// 未来使用,先留空
 		values.put(Constants.MAIN_COL_OTHER, "");
 		// 更新cid=item.id的列
-		db.update(Constants.TABLE_NAME_MAIN, values, 
-				Constants.MAIN_COL_CID + " = ?", 
-				new String[] { id + "" });
+		db.update(Constants.TABLE_NAME_MAIN, values, Constants.MAIN_COL_CID
+				+ " = ?", new String[] { id + "" });
 
 		// 更新search表
 
 		// FIXME 先删除原有表内容
-		db.delete(Constants.TABLE_NAME_SEARCH, 
-				Constants.SEARCH_COL_CID + " = " + id, null);
+		db.delete(Constants.TABLE_NAME_SEARCH, Constants.SEARCH_COL_CID + " = "
+				+ id, null);
 
 		// 插入新内容
 		addContactToSearch(db, item);
@@ -383,7 +381,8 @@ public class DatabaseManager {
 
 				if (cursor.moveToFirst()) {
 					HashSet<String> tags = gson.fromJson(cursor.getString(0),
-							new TypeToken<HashSet<String>>(){}.getType());
+							new TypeToken<HashSet<String>>() {
+							}.getType());
 					// 如果不存在，需要更新
 					if (tags != null && !tags.contains(tagName)) {
 						// 更新main表
@@ -594,7 +593,8 @@ public class DatabaseManager {
 				// 插入tag表
 				ContentValues tagValues = new ContentValues();
 				tagValues.put(Constants.TAG_COL_TAG_NAME, tag);
-				tid = (int) db.insert(Constants.TABLE_NAME_TAG, null, tagValues);
+				tid = (int) db
+						.insert(Constants.TABLE_NAME_TAG, null, tagValues);
 			}
 			cursor.close();
 		} catch (SQLException e) {
@@ -618,19 +618,21 @@ public class DatabaseManager {
 		List<String> token;
 		// 插入search表
 		// name
-		if ( (input = item.getName()) != null) {
+		if ((input = item.getName()) != null) {
 			token = tokenizer(input);
-			values.clear();			
+			values.clear();
 			values.put(Constants.SEARCH_COL_CID, id);
 			values.put(Constants.SEARCH_COL_TYPEID, Constants.TYPE_NAME);
 			values.put(Constants.SEARCH_COL_DATA1, listToString(token));
-			values.put(Constants.SEARCH_COL_DATA2, listToString(toPinyin(token)));
-			values.put(Constants.SEARCH_COL_DATA3, PinYin.getSimplePinYin(input));
+			values.put(Constants.SEARCH_COL_DATA2,
+					listToString(toPinyin(token)));
+			values.put(Constants.SEARCH_COL_DATA3,
+					PinYin.getSimplePinYin(input));
 			db.insert(Constants.TABLE_NAME_SEARCH, null, values);
 		}
 
 		// note
-		if ( (input = item.getNote()) != null) {
+		if ((input = item.getNote()) != null) {
 			token = tokenizer(input);
 			values.clear();
 			values.put(Constants.SEARCH_COL_CID, id);
@@ -640,18 +642,18 @@ public class DatabaseManager {
 		}
 
 		// address
-		if ( (input = item.getAddress()) != null) {
+		if ((input = item.getAddress()) != null) {
 			token = tokenizer(input);
 			values.clear();
 			values.put(Constants.SEARCH_COL_CID, id);
 			values.put(Constants.SEARCH_COL_TYPEID, Constants.TYPE_ADDRESS);
 			values.put(Constants.SEARCH_COL_DATA1, listToString(token));
-			db.insert(Constants.TABLE_NAME_SEARCH, null, values);			
+			db.insert(Constants.TABLE_NAME_SEARCH, null, values);
 		}
 
 		// phone
 		Set<String> phoneSet = item.getPhoneNumber();
-		if ( !phoneSet.isEmpty() ) {
+		if (!phoneSet.isEmpty()) {
 			Iterator<String> phoneIt = phoneSet.iterator();
 			while (phoneIt.hasNext()) {
 				input = phoneIt.next();
@@ -666,10 +668,10 @@ public class DatabaseManager {
 
 		// tag
 		Set<String> tagSet = item.getLabels();
-		if ( !tagSet.isEmpty() ) {
+		if (!tagSet.isEmpty()) {
 			Iterator<String> tagIt = tagSet.iterator();
 			while (tagIt.hasNext()) {
-				input = tagIt.next();				
+				input = tagIt.next();
 				int tid = getTagId(db, input);
 				token = tokenizer(input);
 				values.clear();
@@ -684,59 +686,58 @@ public class DatabaseManager {
 		values = null;
 		token = null;
 	}
-	
+
 	/**
 	 * 全文搜索接口
+	 * 
 	 * @param text
-	 * @return List
-	 * 			返回的列表中L.get(0)是一个List<ContactItem>，保存搜索到的联系人的全部信息
-	 * 			返回的列表中L.get(1)是一个List<Integer>表示在List<ContactItem>中对应位置的联系人与搜索内容匹配的项，
-	 * 				用Constant.TYPE..来表示
-	 * 			e.g. 
+	 * @return List 返回的列表中L.get(0)是一个List<ContactItem>，保存搜索到的联系人的全部信息
+	 *         返回的列表中L.get
+	 *         (1)是一个List<Integer>表示在List<ContactItem>中对应位置的联系人与搜索内容匹配的项，
+	 *         用Constant.TYPE..来表示 e.g.
 	 */
-	public List<Object> ftsSearch(String text)
-	{
+	public List<Object> ftsSearch(String text) {
 		List<Object> ret = new ArrayList<Object>();
 		SQLiteDatabase db = mHelper.getWritableDatabase();
 		List<ContactItem> contactList = new ArrayList<ContactItem>();
 		List<Integer> flagList = new ArrayList<Integer>();
-		
-		if (isNumeric(text) || isLetter(text) ) {
-			Cursor cursor = db.rawQuery("SELECT " + Constants.SEARCH_COL_CID +
-					" FROM " + Constants.TABLE_NAME_SEARCH +
-					" WHERE " + Constants.TABLE_NAME_SEARCH +
-					" MATCH '" + text + "*';", null);
-			
-			while(cursor.moveToNext()) {
-				ContactItem item = queryContactById(cursor.getInt(0));		
+
+		if (isNumeric(text) || isLetter(text)) {
+			Cursor cursor = db.rawQuery("SELECT " + Constants.SEARCH_COL_CID
+					+ " FROM " + Constants.TABLE_NAME_SEARCH + " WHERE "
+					+ Constants.TABLE_NAME_SEARCH + " MATCH '" + text + "*';",
+					null);
+
+			while (cursor.moveToNext()) {
+				ContactItem item = queryContactById(cursor.getInt(0));
 				contactList.add(item);
 				flagList.add(Constants.TYPE_PHONE);
 			}
-			
-			cursor.close();	
+
+			cursor.close();
 		} else {
 			List<String> token = tokenizer(text);
 			String query = listToString(token);
-			Cursor cursor = db.rawQuery("SELECT " + Constants.SEARCH_COL_CID +
-					" , " + Constants.SEARCH_COL_TYPEID + 
-					" FROM " + Constants.TABLE_NAME_SEARCH +
-					" WHERE " + Constants.TABLE_NAME_SEARCH +
-					" MATCH '" + query + "*';", null);			
+			Cursor cursor = db.rawQuery("SELECT " + Constants.SEARCH_COL_CID
+					+ " , " + Constants.SEARCH_COL_TYPEID + " FROM "
+					+ Constants.TABLE_NAME_SEARCH + " WHERE "
+					+ Constants.TABLE_NAME_SEARCH + " MATCH '" + query + "*';",
+					null);
 
-			while(cursor.moveToNext()) {
-				ContactItem item = queryContactById(cursor.getInt(0));		
+			while (cursor.moveToNext()) {
+				ContactItem item = queryContactById(cursor.getInt(0));
 				contactList.add(item);
 				flagList.add(cursor.getInt(1));
 			}
-			
+
 			cursor.close();
 		}
-		
+
 		db.close();
-		
+
 		ret.add(contactList);
 		ret.add(flagList);
-		
+
 		return ret;
 	}
 
@@ -745,6 +746,7 @@ public class DatabaseManager {
 	 * 
 	 * @deprecated
 	 */
+	@SuppressWarnings("unchecked")
 	public void test() {
 		List<Object> list = ftsSearch("9");
 		List<ContactItem> contacts = (List<ContactItem>) list.get(0);
@@ -754,70 +756,63 @@ public class DatabaseManager {
 			Log.i(LOG_TAG, tagList.get(i).toString());
 		}
 	}
-	
+
 	// 判断字符串是否纯数字
 	private static boolean isNumeric(String str) {
 		for (int i = 0; i < str.length(); i++) {
-			System.out.println(str.charAt(i));
+			// System.out.println(str.charAt(i));
+			Log.v(LOG_TAG, "isNumeric:" + str.charAt(i));
 			if (!Character.isDigit(str.charAt(i))) {
 				return false;
 			}
 		}
 		return true;
 	}
-	
+
 	// 判断字符串是否纯英文字母
 	private static boolean isLetter(String str) {
 
 		for (int i = 0; i < str.length(); i++) {
-			System.out.println(str.charAt(i));
+			// System.out.println(str.charAt(i));
+			Log.v(LOG_TAG, "isLetter:" + str.charAt(i));
 			char ch = str.charAt(i);
-			if ( !((ch >= 'a' && ch <= 'z' ) || (ch >= 'A' && ch <= 'Z')) ) {
+			if (!((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z'))) {
 				return false;
 			}
 		}
 		return true;
 	}
-    
+
 	// 分词器，以列表返回分词后的结果
 	private List<String> tokenizer(String str) {
+		if (analyzer == null) {
+			analyzer = new ComplexAnalyzer();
+		}
 		WeCallAnalyzer wca = new WeCallAnalyzer(analyzer);
 		List<String> tokenList = wca.getTokenList(str);
 		return tokenList;
 	}
-	
+
 	// 将list中的没一项转为拼音
 	private List<String> toPinyin(List<String> list) {
 		List<String> newList = new ArrayList<String>();
-		
-		for (String term: list) {
+
+		for (String term : list) {
 			newList.add(PinYin.getPinYin(term));
 		}
-		
-		return newList;
-	}
-	
-	// 将list中的每一项转为简拼
-	private List<String> toSimplePinyin(List<String> list) {
 
-		List<String> newList = new ArrayList<String>();
-		
-		for (String term: list) {
-			newList.add(PinYin.getSimplePinYin(term));
-		}
-		
 		return newList;
 	}
-	
+
 	// 将list转为空格分割的字符串
 	private String listToString(List<String> list) {
 		StringBuffer strBuf = new StringBuffer();
-		
-		for (String term: list) {
+
+		for (String term : list) {
 			strBuf.append(term);
 			strBuf.append(' ');
 		}
-		
+
 		return strBuf.toString();
 	}
 }

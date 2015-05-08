@@ -2,7 +2,13 @@ package com.wecall.contacts;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -29,7 +35,9 @@ import android.widget.Toast;
 import com.wecall.contacts.constants.Constants;
 import com.wecall.contacts.database.DatabaseManager;
 import com.wecall.contacts.entity.ContactItem;
+import com.wecall.contacts.util.AESUtil;
 import com.wecall.contacts.util.CommonUtil;
+import com.wecall.contacts.util.HttpConnectionUtils;
 import com.wecall.contacts.util.ImageUtil;
 import com.wecall.contacts.util.SPUtil;
 
@@ -38,7 +46,7 @@ import com.wecall.contacts.util.SPUtil;
  * 
  * @author xiaoxin 2015-4-5
  */
-public class Setting extends Activity {
+public class SettingActivity extends Activity {
 
 	private static final String TAG = "Setting";
 	// 不同请求的请求码
@@ -109,10 +117,11 @@ public class Setting extends Activity {
 			break;
 		case R.id.action_save_label:
 			// 向配置文件中写入配置信息
-			SPUtil.put(Setting.this, "name", nameET.getText().toString());
-			SPUtil.put(Setting.this, "phone", phoneET.getText().toString());
+			SPUtil.put(SettingActivity.this, "name", nameET.getText().toString());
+			SPUtil.put(SettingActivity.this, "phone", phoneET.getText().toString());
 			ImageUtil.renameImage(Constants.ALBUM_PATH + "showuser.jpg",
 					Constants.ALBUM_PATH + "user.jpg");
+			updateUserInfo();
 			// 设置成功，并结束
 			setResult(RESULT_OK);
 			finish();
@@ -136,7 +145,7 @@ public class Setting extends Activity {
 
 			@Override
 			public void onClick(View arg0) {
-				startActivity(new Intent(Setting.this, AboutActivity.class));
+				startActivity(new Intent(SettingActivity.this, AboutActivity.class));
 			}
 		});
 
@@ -164,13 +173,13 @@ public class Setting extends Activity {
 			@SuppressLint("ShowToast")
 			@Override
 			public void onClick(View arg0) {
-				Toast.makeText(Setting.this, "联系人正在加载中，请稍后...",
+				Toast.makeText(SettingActivity.this, "联系人正在加载中，请稍后...",
 						Toast.LENGTH_LONG).show();
 				new Thread(new Runnable() {
 
 					@Override
 					public void run() {
-						contactList = CommonUtil.getLocalContacts(Setting.this);
+						contactList = CommonUtil.getLocalContacts(SettingActivity.this);
 						handler.sendEmptyMessage(LOCAL_CONTACTS_OBTAINED);
 					}
 				}).start();
@@ -179,13 +188,13 @@ public class Setting extends Activity {
 	}
 
 	private void updateContacts() {
-		mManager = new DatabaseManager(Setting.this);
+		mManager = new DatabaseManager(SettingActivity.this);
 		new Thread(new Runnable() {
 
 			@Override
 			public void run() {
 				mManager.addContacts(contactList);
-				CommonUtil.notifyMessage(Setting.this, R.drawable.icon, "加载完毕",
+				CommonUtil.notifyMessage(SettingActivity.this, R.drawable.icon, "加载完毕",
 						"联系人加载完毕", "共加载" + contactList.size() + "位联系人");
 			}
 		}).start();
@@ -353,6 +362,43 @@ public class Setting extends Activity {
 			showReturnDialog();
 		}
 		return super.onKeyDown(keyCode, event);
+	}
+	
+	@SuppressLint("HandlerLeak") private void updateUserInfo(){
+		int did = (Integer) SPUtil.get(this, "did", -1);
+		String url = Constants.SERVER_URL + "/updateinfo.php";
+		if(did==-1){
+			return ;
+		}
+		String aesKey = (String) SPUtil.get(this, "aid", "");
+		Handler handler = new Handler(){
+
+			@Override
+			public void handleMessage(Message msg) {
+				switch (msg.what) {
+				case HttpConnectionUtils.DID_SUCCEED:
+					Log.v(TAG, (String)msg.obj);
+					break;
+
+				default:
+					break;
+				}
+				super.handleMessage(msg);
+			}
+			
+		};
+		JSONObject jsonObject = new JSONObject();
+		try {
+			jsonObject.put("name", mName);
+			jsonObject.put("phone", mPhone);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		String data = AESUtil.encrypt(aesKey, jsonObject.toString());
+		List<NameValuePair> list = new ArrayList<NameValuePair>();
+		list.add(new BasicNameValuePair("did", ""+did));
+		list.add(new BasicNameValuePair("data", data));
+		new HttpConnectionUtils(handler).post(url, list);
 	}
 
 }

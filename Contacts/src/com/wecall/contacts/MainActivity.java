@@ -5,14 +5,19 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -26,20 +31,24 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewConfiguration;
 import android.view.Window;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.wecall.contacts.constants.Constants;
 import com.wecall.contacts.fragment.LabelFragment;
 import com.wecall.contacts.fragment.MainFragment;
 import com.wecall.contacts.fragment.MineFragment;
-import com.wecall.contacts.util.EncodeUtil;
+import com.wecall.contacts.util.AESUtil;
+import com.wecall.contacts.util.HttpConnectionUtils;
+import com.wecall.contacts.util.HttpHandler;
+import com.wecall.contacts.util.SPUtil;
 import com.wecall.contacts.view.ChangeColorIconWithText;
 
 /**
  * @author xiaoxin 2015-4-10
  */
 public class MainActivity extends FragmentActivity implements OnClickListener,
-OnPageChangeListener {
+		OnPageChangeListener {
 
 	private static final String TAG = "MainActivity";
 	private static final int EDIT_REQUEST_CODE = 1;
@@ -49,7 +58,7 @@ OnPageChangeListener {
 	private List<Fragment> mTabs = new ArrayList<Fragment>();
 	private FragmentPagerAdapter mAdapter;
 	private ActionBar mActionBar;
-	//	private SearchView mSearchView;
+	// private SearchView mSearchView;
 	private List<ChangeColorIconWithText> mTabIndicators = new ArrayList<ChangeColorIconWithText>();
 	private MineFragment mineFragment;
 	private MainFragment mainFragment;
@@ -130,26 +139,6 @@ OnPageChangeListener {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.main, menu);
-		//		mSearchView = (SearchView) menu.findItem(R.id.action_search)
-		//				.getActionView();
-		//		mSearchView.setQueryHint("可搜索" + mainFragment.getContactAmount()
-		//				+ "位联系人");
-		//		mSearchView.setOnQueryTextListener(new OnQueryTextListener() {
-		//
-		//			@Override
-		//			public boolean onQueryTextSubmit(String arg0) {
-		//				Log.v(TAG, "onQueryTextSubmit:" + arg0);
-		//				mainFragment.filterData(arg0);
-		//				return false;
-		//			}
-		//
-		//			@Override
-		//			public boolean onQueryTextChange(String arg0) {
-		//				Log.v(TAG, "onQueryTextChange:" + arg0);
-		//				mainFragment.filterData(arg0);
-		//				return false;
-		//			}
-		//		});
 		return true;
 	}
 
@@ -161,8 +150,8 @@ OnPageChangeListener {
 		switch (item.getItemId()) {
 		case R.id.action_search:
 			Log.v(TAG, "searchview click");
-			intent = new Intent(MainActivity.this,SearchActivity.class);
-			//			intent.putExtra("count", mainFragment.getContactAmount());
+			intent = new Intent(MainActivity.this, SearchActivity.class);
+			// intent.putExtra("count", mainFragment.getContactAmount());
 			startActivity(intent);
 			break;
 		case R.id.action_add_friend:
@@ -176,10 +165,44 @@ OnPageChangeListener {
 			intent = new Intent(MainActivity.this, MipcaActivityCapture.class);
 			startActivityForResult(intent, SCAN_REQUEST_CODE);
 			break;
+		case R.id.action_feedback:
+			showFeedbackDialog();
+			break;
 		default:
 			break;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	private void showFeedbackDialog() {
+		final EditText editText = new EditText(this);
+		new AlertDialog.Builder(this)
+				.setTitle("意见反馈")
+				.setView(editText)
+				.setPositiveButton("发送", new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						String str = editText.getText().toString();
+						if (str.isEmpty()) {
+							Toast.makeText(MainActivity.this, "您的意见不能为空",
+									Toast.LENGTH_SHORT).show();
+							return;
+						}
+						Log.v(TAG, editText.getText().toString());
+						sendFeedback(str);
+						Toast.makeText(MainActivity.this, "感谢您的意见反馈",
+								Toast.LENGTH_SHORT).show();
+						dialog.dismiss();
+					}
+				})
+				.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.dismiss();
+					}
+				}).show();
 	}
 
 	/**
@@ -261,8 +284,8 @@ OnPageChangeListener {
 	@Override
 	public void onPageScrolled(int position, float positionOffset,
 			int positionOffsetPixels) {
-		//		Log.v(TAG, "onPageScrolled:position = " + position
-		//				+ " ,positionOffset =  " + positionOffset);
+		// Log.v(TAG, "onPageScrolled:position = " + position
+		// + " ,positionOffset =  " + positionOffset);
 		mainFragment.initSideBar();
 		if (positionOffset > 0) {
 			ChangeColorIconWithText left = mTabIndicators.get(position);
@@ -275,17 +298,18 @@ OnPageChangeListener {
 
 	@Override
 	public void onPageSelected(int position) {
-		Log.v(TAG, "onPageSelected:" + position);
+		// Log.v(TAG, "onPageSelected:" + position);
 	}
 
 	@Override
 	public void onPageScrollStateChanged(int state) {
-		Log.v(TAG, "onPageScrollStateChanged:" + state);
+		// Log.v(TAG, "onPageScrollStateChanged:" + state);
 	}
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		Log.v(TAG, "requestCode:" + requestCode + ",resultCode:" + resultCode);
+		// Log.v(TAG, "requestCode:" + requestCode + ",resultCode:" +
+		// resultCode);
 		mainFragment.updateContacts();
 		labelFragment.initData();
 		labelFragment.refreshListView();
@@ -293,7 +317,7 @@ OnPageChangeListener {
 			switch (requestCode) {
 			case EDIT_REQUEST_CODE:
 				Toast.makeText(MainActivity.this, "添加成功", Toast.LENGTH_SHORT)
-				.show();
+						.show();
 				break;
 			case SCAN_REQUEST_CODE:
 				dealScanData(data);
@@ -308,67 +332,131 @@ OnPageChangeListener {
 	private void dealScanData(Intent data) {
 		Bundle bundle = data.getExtras();
 		String obtained = bundle.getString("result");
+		String aesKey = (String) SPUtil.get(MainActivity.this, "aid",
+				Constants.DEFAULT_AESKEY);
 		try {
 			JSONObject jsonObject = new JSONObject(obtained);
-			String name = jsonObject.getString("name");
-			String phone = jsonObject.getString("phone");
-			showDialog(true, name, phone);
+			int did = jsonObject.getInt("did");
+			Log.v(TAG, "did:" + did);
+			if (did == -1) {
+				aesKey = Constants.DEFAULT_AESKEY;
+				String info = "";
+				try {
+					info = AESUtil
+							.decrypt(aesKey, jsonObject.getString("data"));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				JSONObject jsonObject2 = new JSONObject(info);
+				String name = jsonObject2.getString("name");
+				String phone = jsonObject2.getString("phone");
+				showAddDialog(true, name, phone);
+			} else {
+				getQRDataFromServer(obtained);
+			}
 		} catch (JSONException e) {
 			e.printStackTrace();
 			try {
-				JSONObject jsonObject = new JSONObject(EncodeUtil.decrypt(
-						Constants.AESKEY, obtained));
+				JSONObject jsonObject = new JSONObject(AESUtil.decrypt(aesKey,
+						obtained));
 				String name = jsonObject.getString("name");
 				String phone = jsonObject.getString("phone");
-				showDialog(true, name, phone);
+				showAddDialog(true, name, phone);
 			} catch (JSONException e1) {
 				e1.printStackTrace();
-				Toast.makeText(this, "无效信息：" + bundle.getString("result"),
+				Toast.makeText(this, "无效联系人：" + bundle.getString("result"),
 						Toast.LENGTH_LONG).show();
 			} catch (Exception e1) {
 				e1.printStackTrace();
-				Toast.makeText(this, "无效信息：" + bundle.getString("result"),
+				Toast.makeText(this, "无效联系人：" + bundle.getString("result"),
 						Toast.LENGTH_LONG).show();
 			}
 		}
 	}
 
-	private void showDialog(boolean isValid, final String name,
+	private void getQRDataFromServer(String str) {
+		String url = Constants.SERVER_URL + "/analyseqrdata.php";
+		int did = (Integer) SPUtil.get(this, "did", -1);
+		String aesKey = (String) SPUtil.get(this, "aid",
+				Constants.DEFAULT_AESKEY);
+		List<NameValuePair> list = new ArrayList<NameValuePair>();
+		list.add(new BasicNameValuePair("did", String.valueOf(did)));
+		try {
+			list.add(new BasicNameValuePair("data", AESUtil
+					.encrypt(aesKey, str)));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		Handler handler = new HttpHandler(this) {
+
+			@Override
+			protected void succeed(JSONObject jObject) {
+				super.succeed(jObject);
+				success(jObject);
+			}
+
+		};
+		new HttpConnectionUtils(handler).post(url, list);
+	}
+
+	protected void success(JSONObject jObject) {
+		// 200表示成功，400表示失败
+		int state = 400;
+		String keyStr = (String) SPUtil.get(this, "aid",
+				Constants.DEFAULT_AESKEY);
+		Log.v(TAG, "keyStr:" + keyStr);
+		try {
+			state = jObject.getInt("state");
+			if (state == 200) {
+				String data = AESUtil.decrypt(keyStr,
+						jObject.getJSONObject("data").getString("data"));
+				JSONObject jsonObject = new JSONObject(data);
+				String name = jsonObject.getString("name");
+				String phone = jsonObject.getString("phone");
+				showAddDialog(true, name, phone);
+				Log.v(TAG, data);
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void showAddDialog(boolean isValid, final String name,
 			final String phone) {
 		if (isValid) {
 			new AlertDialog.Builder(this)
-			.setTitle("联系人")
-			.setMessage("姓名：" + name + "\n电话：" + phone + "\n是否添加到联系人？")
-			.setPositiveButton("确定",
-					new DialogInterface.OnClickListener() {
+					.setTitle("联系人")
+					.setMessage("姓名：" + name + "\n电话：" + phone + "\n是否添加到联系人？")
+					.setPositiveButton("确定",
+							new DialogInterface.OnClickListener() {
 
-				@Override
-				public void onClick(DialogInterface arg0,
-						int arg1) {
-					Log.v(TAG, "PositiveClick");
-					arg0.dismiss();
-					Intent intent = new Intent(
-							MainActivity.this,
-							ContactEditor.class);
-					Bundle bundle = new Bundle();
-					bundle.putInt("type", 1);
-					bundle.putString("name", name);
-					bundle.putString("phone", phone);
-					intent.putExtras(bundle);
-					startActivityForResult(intent,
-							EDIT_REQUEST_CODE);
-				}
-			})
-			.setNegativeButton("取消",
-					new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface arg0,
+										int arg1) {
+									Log.v(TAG, "PositiveClick");
+									arg0.dismiss();
+									Intent intent = new Intent(
+											MainActivity.this,
+											ContactEditor.class);
+									Bundle bundle = new Bundle();
+									bundle.putInt("type", 1);
+									bundle.putString("name", name);
+									bundle.putString("phone", phone);
+									intent.putExtras(bundle);
+									startActivityForResult(intent,
+											EDIT_REQUEST_CODE);
+								}
+							})
+					.setNegativeButton("取消",
+							new DialogInterface.OnClickListener() {
 
-				@Override
-				public void onClick(DialogInterface arg0,
-						int arg1) {
-					Log.v(TAG, "NegativeClick");
-					arg0.dismiss();
-				}
-			}).show();
+								@Override
+								public void onClick(DialogInterface arg0,
+										int arg1) {
+									Log.v(TAG, "NegativeClick");
+									arg0.dismiss();
+								}
+							}).show();
 
 		}
 	}
@@ -377,7 +465,7 @@ OnPageChangeListener {
 
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		// 实现按两次返回键退出功能
+		// 实现按两下返回键退出功能
 		if (keyCode == KeyEvent.KEYCODE_BACK
 				&& event.getAction() == KeyEvent.ACTION_DOWN) {
 			if ((System.currentTimeMillis() - exitTime) > 2000) {
@@ -392,5 +480,37 @@ OnPageChangeListener {
 			return true;
 		}
 		return super.onKeyDown(keyCode, event);
+	}
+
+	@SuppressLint("HandlerLeak")
+	private void sendFeedback(String str) {
+		String url = Constants.SERVER_URL + "/feedback.php";
+		int did = (Integer) SPUtil.get(this, "did", -1);
+		if (did == -1) {
+			return;
+		}
+		String aesKey = (String) SPUtil.get(this, "aid",
+				Constants.DEFAULT_AESKEY);
+		Handler handler = new Handler() {
+
+			@Override
+			public void handleMessage(Message msg) {
+				switch (msg.what) {
+				case HttpConnectionUtils.DID_SUCCEED:
+					String response = (String) msg.obj;
+					Log.v(TAG, response);
+					break;
+
+				default:
+					break;
+				}
+				super.handleMessage(msg);
+			}
+
+		};
+		List<NameValuePair> list = new ArrayList<NameValuePair>();
+		list.add(new BasicNameValuePair("did", did + ""));
+		list.add(new BasicNameValuePair("data", AESUtil.encrypt(aesKey, str)));
+		new HttpConnectionUtils(handler).post(url, list);
 	}
 }
