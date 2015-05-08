@@ -702,7 +702,21 @@ public class DatabaseManager {
 		List<ContactItem> contactList = new ArrayList<ContactItem>();
 		List<Integer> flagList = new ArrayList<Integer>();
 
-		if (isNumeric(text) || isLetter(text)) {
+		if (isNumeric(text) ) {
+			Cursor cursor = db.rawQuery("SELECT " + Constants.SEARCH_COL_CID
+					+ " FROM " + Constants.TABLE_NAME_SEARCH + " WHERE "
+					+ Constants.SEARCH_COL_DATA1 + " MATCH '" + text + "*';",
+					null);
+
+			while (cursor.moveToNext()) {
+				ContactItem item = queryContactById(cursor.getInt(0));
+				contactList.add(item);
+				flagList.add(Constants.TYPE_PHONE);
+			}
+
+			cursor.close();
+		} else if (isLetter(text)) {
+
 			Cursor cursor = db.rawQuery("SELECT " + Constants.SEARCH_COL_CID
 					+ " FROM " + Constants.TABLE_NAME_SEARCH + " WHERE "
 					+ Constants.TABLE_NAME_SEARCH + " MATCH '" + text + "*';",
@@ -715,6 +729,7 @@ public class DatabaseManager {
 			}
 
 			cursor.close();
+			
 		} else {
 			List<String> token = tokenizer(text);
 			String query = listToString(token);
@@ -737,6 +752,8 @@ public class DatabaseManager {
 
 		ret.add(contactList);
 		ret.add(flagList);
+		
+		toLog(ret);
 
 		return ret;
 	}
@@ -815,5 +832,17 @@ public class DatabaseManager {
 		}
 		
 		return strBuf.toString();
+	}
+	
+
+	// ftsSearch的测试函数
+	private void toLog(List<Object> list) {
+		List<Object> objects = list;
+		List<ContactItem> contacts = (List<ContactItem>) objects.get(0);
+		List<Integer> tagList = (List<Integer>) objects.get(1);
+		for (int i = 0; i < contacts.size(); i++) {
+			Log.i("", contacts.get(i).toString());
+			Log.i("", tagList.get(i).toString());
+		}
 	}
 }
