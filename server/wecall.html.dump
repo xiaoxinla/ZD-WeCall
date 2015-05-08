@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="style.css">
+		<title>WeCall - 微讯</title>
+	</head>
+	<body>
+		<div class="left">
+			<img class="icon" src="icon.png" alt="WeCall Icon">
+			<h1>WeCall - 微讯</h1>
+			<p>微讯作为一款联系人管理应用，可以让用户方便的查找联系人，支持关键词匹配，模糊查找，二维码扫码等功能</p>
+			<a href=""><img src="Android_download_button.png" alt="Android 下载"></a>
+		</div>
+		<div class="right">
+			<img src="app_index.jpg" alt="应用首页">
+		</div>
+		<div id="footer">
+			<p>声明</p>
+		</div>
+	</body>
+</html>

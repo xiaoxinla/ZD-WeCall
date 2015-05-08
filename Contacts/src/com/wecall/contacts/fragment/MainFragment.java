@@ -205,45 +205,11 @@ public class MainFragment extends Fragment {
 	 * @return
 	 */
 	public int getContactAmount() {
+		if(contactList==null){
+			return 0;
+		}
 		return contactList.size();
 	}
-
-	// /**
-	// * 根据输入框中的值来过滤数据并更新ListView 可根据拼音，汉字，缩写来过滤
-	// *
-	// * @param filterStr
-	// */
-	// @SuppressLint("DefaultLocale")
-	// public void filterData(String filterStr) {
-	// List<ContactItem> filterDateList = new ArrayList<ContactItem>();
-	//
-	// if (TextUtils.isEmpty(filterStr)) {
-	// filterDateList = contactList;
-	// } else {
-	// filterDateList.clear();
-	// for (ContactItem contactItem : contactList) {
-	// // String filterStrInPinyin = PinYin.getPinYin(filterStr);
-	// // String name = contactItem.getName();
-	// // String fullPinyin = contactItem.getFullPinyin();
-	// // String simplePinyin = contactItem.getSimplePinyin();
-	// // if (name.contains(filterStr)
-	// // || fullPinyin.contains(filterStrInPinyin)
-	// // || simplePinyin.contains(filterStrInPinyin)) {
-	// // filterDateList.add(contactItem);
-	// // }
-	// String convertStr = filterStr.toLowerCase();
-	// Map<String, Integer> originMap = contactItem
-	// .contains(filterStr);
-	// Map<String, Integer> convertMap = contactItem
-	// .contains(convertStr);
-	// if (originMap != null && convertMap != null
-	// && originMap.size() != 0 && convertMap.size() != 0) {
-	// filterDateList.add(contactItem);
-	// }
-	// }
-	// }
-	// adapter.updateListView(filterDateList);
-	// }
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {

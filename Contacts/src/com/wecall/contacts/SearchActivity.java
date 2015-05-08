@@ -8,9 +8,12 @@ import java.util.Map;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
@@ -38,12 +41,45 @@ public class SearchActivity extends Activity {
 	private static final String TAG = "SearchActivity";
 	private static final int INFO_REQUEST_CODE = 1;
 	private static final int EDIT_REQUEST_CODE = 2;
+	protected static final int SEARCH_FINISH = 0;
 
 	private SearchView mSearchView;
 	private TextView mResultText;
 	private ListView mContactListView;
 	private SearchAdapter adapter;
 	private DatabaseManager mManager;
+	private ProgressDialog progressDialog;
+	@SuppressLint("HandlerLeak")
+	private Handler handler = new Handler() {
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+			case SEARCH_FINISH:
+				if (progressDialog != null && progressDialog.isShowing()) {
+					progressDialog.dismiss();
+				}
+				String filterStr = mSearchView.getQuery().toString();
+				List<Map<String, Integer>> mapList = new ArrayList<Map<String, Integer>>();
+				if (!TextUtils.isEmpty(filterStr)) {
+					for (ContactItem contactItem : contactList) {
+						// String convertStr = filterStr.toLowerCase();
+						Map<String, Integer> map = contactItem
+								.contains(filterStr);
+						// Map<String, Integer> convertMap = contactItem
+						// .contains(convertStr);
+						if (map != null && map.size() != 0) {
+							mapList.add(map);
+						}
+					}
+				}
+				mResultText.setText("搜索到" + contactList.size() + "位联系人");
+				adapter.updateListView(contactList, mapList, filterStr.length());
+				break;
+
+			default:
+				break;
+			}
+		};
+	};
 
 	// 联系人信息
 	private List<ContactItem> contactList = new ArrayList<ContactItem>();
@@ -74,14 +110,12 @@ public class SearchActivity extends Activity {
 	/**
 	 * 初始化数据和控件
 	 */
-	@SuppressWarnings("unchecked")
 	private void init() {
 		mSearchView = (SearchView) findViewById(R.id.sv_search);
 		mResultText = (TextView) findViewById(R.id.tv_result_search);
 		mContactListView = (ListView) findViewById(R.id.lv_search_contact_list);
 		mManager = new DatabaseManager(this);
 		contactList = new ArrayList<ContactItem>();
-		Collections.sort(contactList);
 		adapter = new SearchAdapter(this, null, null);
 		mContactListView.setAdapter(adapter);
 
@@ -108,8 +142,9 @@ public class SearchActivity extends Activity {
 						return false;
 					}
 				});
+		int amount = getIntent().getIntExtra("amount", 0);
 
-		mSearchView.setQueryHint("可搜索" + contactList.size() + "位联系人");
+		mSearchView.setQueryHint("可搜索" + amount + "位联系人");
 		mSearchView.setOnQueryTextListener(new OnQueryTextListener() {
 
 			@Override
@@ -144,24 +179,20 @@ public class SearchActivity extends Activity {
 	 */
 	@SuppressWarnings("unchecked")
 	@SuppressLint("DefaultLocale")
-	private void filterData(String filterStr) {
-		contactList.clear();
-		contactList = (List<ContactItem>) mManager.ftsSearch(filterStr).get(0);
-		Log.v(TAG, "contactList:"+contactList.toString());
-		List<Map<String, Integer>> mapList = new ArrayList<Map<String, Integer>>();
-		if (!TextUtils.isEmpty(filterStr)) {
-			for (ContactItem contactItem : contactList) {
-//				String convertStr = filterStr.toLowerCase();
-				Map<String, Integer> map = contactItem.contains(filterStr);
-				// Map<String, Integer> convertMap = contactItem
-				// .contains(convertStr);
-				if (map != null && map.size() != 0) {
-					mapList.add(map);
-				}
+	private void filterData(final String filterStr) {
+		progressDialog = ProgressDialog.show(SearchActivity.this, "查找中...",
+				"正在查找中...", false);
+		new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				contactList.clear();
+				contactList = (List<ContactItem>) mManager.ftsSearch(filterStr)
+						.get(0);
+				Log.v(TAG, "contactList:" + contactList.toString());
+				handler.sendEmptyMessage(SEARCH_FINISH);
 			}
-		}
-		mResultText.setText("搜索到" + contactList.size() + "位联系人");
-		adapter.updateListView(contactList, mapList, filterStr.length());
+		}).start();
 	}
 
 	protected void showOperationDialog(final int position) {

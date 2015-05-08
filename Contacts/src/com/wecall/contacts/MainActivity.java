@@ -151,7 +151,11 @@ public class MainActivity extends FragmentActivity implements OnClickListener,
 		case R.id.action_search:
 			Log.v(TAG, "searchview click");
 			intent = new Intent(MainActivity.this, SearchActivity.class);
-			// intent.putExtra("count", mainFragment.getContactAmount());
+			if(mainFragment!=null){
+				intent.putExtra("amount", mainFragment.getContactAmount());
+			}else {
+				intent.putExtra("count", 0);
+			}
 			startActivity(intent);
 			break;
 		case R.id.action_add_friend:
