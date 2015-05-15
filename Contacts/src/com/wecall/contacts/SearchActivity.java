@@ -41,7 +41,6 @@ public class SearchActivity extends Activity {
 	private ListView mContactListView;
 	private SearchAdapter adapter;
 	private DatabaseManager mManager;
-	
 
 	// 联系人信息
 	private List<List<Object>> contactList = new ArrayList<List<Object>>();
@@ -83,13 +82,14 @@ public class SearchActivity extends Activity {
 
 		mContactListView.setOnItemClickListener(new OnItemClickListener() {
 
+			@SuppressWarnings("unchecked")
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
 				Intent intent = new Intent(SearchActivity.this,
 						ContactInfo.class);
 				intent.putExtra("cid",
-						((ContactItem) adapter.getItem(arg2)).getId());
+						(Integer) ((List<Object>) adapter.getItem(arg2)).get(0));
 				startActivityForResult(intent, INFO_REQUEST_CODE);
 			}
 		});
@@ -142,10 +142,10 @@ public class SearchActivity extends Activity {
 	@SuppressLint("DefaultLocale")
 	private void filterData(final String filterStr) {
 		contactList.clear();
-		contactList =  mManager.ftsSearch(filterStr);
+		contactList = mManager.ftsSearch(filterStr);
 		Log.v(TAG, "contactList:" + contactList.toString());
 		mResultText.setText("搜索到" + contactList.size() + "位联系人");
-		adapter.updateListView(contactList, filterStr.length(),filterStr);
+		adapter.updateListView(contactList, filterStr.length(), filterStr);
 	}
 
 	protected void showOperationDialog(final int position) {
@@ -206,8 +206,7 @@ public class SearchActivity extends Activity {
 	}
 
 	private void updateContacts() {
-		contactList =  mManager.ftsSearch(
-				mSearchView.getQuery().toString());
+		contactList = mManager.ftsSearch(mSearchView.getQuery().toString());
 		filterData(mSearchView.getQuery().toString());
 	}
 }

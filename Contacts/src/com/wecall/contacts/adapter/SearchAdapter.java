@@ -1,9 +1,7 @@
 package com.wecall.contacts.adapter;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.Map.Entry;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -19,7 +17,6 @@ import android.widget.TextView;
 
 import com.wecall.contacts.R;
 import com.wecall.contacts.constants.Constants;
-import com.wecall.contacts.entity.ContactItem;
 import com.wecall.contacts.util.ImageUtil;
 import com.wecall.contacts.util.StringUtil;
 
@@ -101,6 +98,7 @@ public class SearchAdapter extends BaseAdapter {
 			}
 			break;
 		case Constants.TYPE_PHONE:
+			@SuppressWarnings("unchecked")
 			Set<String> phones = (Set<String>) item.get(3);
 			for(String s:phones){
 				str = s;

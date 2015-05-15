@@ -234,7 +234,10 @@ public class DatabaseManager {
 
 		try {
 			while (cursor.moveToNext()) {
-				labels.add(cursor.getString(index));
+				String tag = cursor.getString(index);
+				if(tag!=null&&!tag.isEmpty()){
+					labels.add(tag);
+				}
 			}
 		} catch (SQLException se) {
 			se.printStackTrace();

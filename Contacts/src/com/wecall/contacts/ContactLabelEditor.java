@@ -89,7 +89,10 @@ public class ContactLabelEditor extends Activity {
 					Toast.makeText(ContactLabelEditor.this, "请输入标签名",
 							Toast.LENGTH_SHORT).show();
 				} else {
+					otherList.remove(str);
 					addedList.add(str);
+					labelOther.removeAllViews();
+					setOtherLabel();
 					labelAdded.removeAllViews();
 					setAddedLabel();
 					input.setText("");
