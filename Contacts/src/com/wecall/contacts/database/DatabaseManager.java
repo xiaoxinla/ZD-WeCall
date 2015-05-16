@@ -694,7 +694,6 @@ public class DatabaseManager {
 	 * @return 
 	 */
 	public List< List<Object> > ftsSearch(String text) {
-		Log.i("fts", "begin");
 		List< List<Object> > ret = new ArrayList<List<Object>>();
 		SQLiteDatabase db = mHelper.getWritableDatabase();
 		Cursor cursor = null;
@@ -725,9 +724,7 @@ public class DatabaseManager {
 					null);
 			
 		}	
-		
-		Log.i("fts", "half");
-		
+				
 		if (cursor != null) {
 			while (cursor.moveToNext()) {
 				List<Object> item = new ArrayList<Object>();
@@ -742,34 +739,38 @@ public class DatabaseManager {
 				int tagIndex = mainCursor.getColumnIndex(Constants.MAIN_COL_TAG);
 				int noteIndex = mainCursor.getColumnIndex(Constants.MAIN_COL_NOTE);
 
-				int typeId = cursor.getInt(1);
-				item.add(id);
-				item.add(mainCursor.getString(nameIndex));
-				item.add(typeId);
-				
-				if (typeId == Constants.TYPE_NAME){
+				if (mainCursor.moveToFirst()) {
+					int typeId = cursor.getInt(1);
+					item.add(id);
 					item.add(mainCursor.getString(nameIndex));
+					item.add(typeId);
 					
-				} else if (typeId == Constants.TYPE_NOTE) {
-					item.add(mainCursor.getString(noteIndex));
-					
-				} else if (typeId == Constants.TYPE_PHONE) {
-					String phone = mainCursor.getString(phoneIndex);
-					HashSet<String> phoneList = gson.fromJson( phone,
-							new TypeToken<HashSet<String>>() {
-							}.getType());
-					item.add(phoneList);
-					
-				} else if (typeId == Constants.TYPE_ADDRESS) {
-					item.add(mainCursor.getString(addressIndex));
-					
-				} else if (typeId == Constants.TYPE_TAG) {
-					String tag = mainCursor.getString(tagIndex);
-					HashSet<String> tagList = gson.fromJson( tag,
-							new TypeToken<HashSet<String>>() {
-							}.getType());
-					item.add(tagList);
-				} 
+					if (typeId == Constants.TYPE_NAME){
+						item.add(mainCursor.getString(nameIndex));
+						
+					} else if (typeId == Constants.TYPE_NOTE) {
+						item.add(mainCursor.getString(noteIndex));
+						
+					} else if (typeId == Constants.TYPE_PHONE) {
+						String phone = mainCursor.getString(phoneIndex);
+						HashSet<String> phoneList = gson.fromJson( phone,
+								new TypeToken<HashSet<String>>() {
+								}.getType());
+						item.add(phoneList);
+						
+					} else if (typeId == Constants.TYPE_ADDRESS) {
+						item.add(mainCursor.getString(addressIndex));
+						
+					} else if (typeId == Constants.TYPE_TAG) {
+						String tag = mainCursor.getString(tagIndex);
+						HashSet<String> tagList = gson.fromJson( tag,
+								new TypeToken<HashSet<String>>() {
+								}.getType());
+						item.add(tagList);
+					} 
+				}
+				
+				mainCursor.close();
 				
 				ret.add(item);
 			}
@@ -778,9 +779,7 @@ public class DatabaseManager {
 		}
 
 		db.close();
-
-		Log.i("fts", "done");
-
+		
 		return ret;
 	}
 
