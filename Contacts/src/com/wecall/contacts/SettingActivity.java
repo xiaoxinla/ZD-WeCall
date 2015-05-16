@@ -116,9 +116,11 @@ public class SettingActivity extends Activity {
 			showReturnDialog();
 			break;
 		case R.id.action_save_label:
+			mName = nameET.getText().toString();
+			mPhone = phoneET.getText().toString();
 			// 向配置文件中写入配置信息
-			SPUtil.put(SettingActivity.this, "name", nameET.getText().toString());
-			SPUtil.put(SettingActivity.this, "phone", phoneET.getText().toString());
+			SPUtil.put(SettingActivity.this, "name", mName);
+			SPUtil.put(SettingActivity.this, "phone", mPhone);
 			ImageUtil.renameImage(Constants.ALBUM_PATH + "showuser.jpg",
 					Constants.ALBUM_PATH + "user.jpg");
 			updateUserInfo();

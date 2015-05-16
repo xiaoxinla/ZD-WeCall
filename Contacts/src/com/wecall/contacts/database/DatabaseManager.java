@@ -234,7 +234,10 @@ public class DatabaseManager {
 
 		try {
 			while (cursor.moveToNext()) {
-				labels.add(cursor.getString(index));
+				String tag = cursor.getString(index);
+				if(tag!=null&&!tag.isEmpty()){
+					labels.add(tag);
+				}
 			}
 		} catch (SQLException se) {
 			se.printStackTrace();
@@ -769,10 +772,9 @@ public class DatabaseManager {
 						item.add(tagList);
 					} 
 				}
-				
-				mainCursor.close();
-				
+
 				ret.add(item);
+				mainCursor.close();
 			}
 
 			cursor.close();
@@ -788,7 +790,6 @@ public class DatabaseManager {
 	 * 
 	 * @deprecated
 	 */
-	@SuppressWarnings("unchecked")
 	public void test() {
 		
 	}
@@ -843,13 +844,13 @@ public class DatabaseManager {
 	// 将list转为空格分割的字符串
 	private String listToString(List<String> list) {
 		StringBuffer strBuf = new StringBuffer();
-		
+
 		for (int i = 0; i < list.size(); i++) {
 			strBuf.append(list.get(i));
 			if (i < list.size() - 1)
 				strBuf.append(' ');
 		}
-		
+
 		return strBuf.toString();
 	}	
 
@@ -863,4 +864,5 @@ public class DatabaseManager {
 			Log.i("", tagList.get(i).toString());
 		}
 	}
+
 }
