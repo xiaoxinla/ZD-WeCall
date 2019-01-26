@@ -791,7 +791,7 @@ public class DatabaseManager {
 	 * @deprecated
 	 */
 	public void test() {
-
+		
 	}
 
 	// 判断字符串是否纯数字
@@ -852,6 +852,17 @@ public class DatabaseManager {
 		}
 
 		return strBuf.toString();
+	}	
+
+	// ftsSearch的测试函数
+	private void toLog(List<Object> list) {
+		List<Object> objects = list;
+		List<ContactItem> contacts = (List<ContactItem>) objects.get(0);
+		List<Integer> tagList = (List<Integer>) objects.get(1);
+		for (int i = 0; i < contacts.size(); i++) {
+			Log.i("", contacts.get(i).toString());
+			Log.i("", tagList.get(i).toString());
+		}
 	}
 
 }
